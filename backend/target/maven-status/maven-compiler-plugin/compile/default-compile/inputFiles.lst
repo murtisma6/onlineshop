@@ -1,0 +1,17 @@
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\BackendApplication.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AnalyticsController.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AuthController.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\ProductController.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\AnalyticsRequest.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\LoginRequest.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\ProductDto.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\RegisterRequest.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\UserDto.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\AnalyticsEvent.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\EventType.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Product.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Role.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\User.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\AnalyticsEventRepository.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\ProductRepository.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\UserRepository.java
