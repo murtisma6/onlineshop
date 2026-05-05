@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost")
+@CrossOrigin(origins = {"http://localhost", "http://192.168.0.105"})
 public class ProductController {
 
     @Autowired
@@ -213,7 +213,7 @@ public class ProductController {
         dto.setSellerCity(product.getStore().getSeller().getCity());
         
         List<String> urls = product.getImages().stream()
-                .map(img -> "http://localhost:8080/api/products/" + product.getId() + "/images/" + img.getId())
+                .map(img -> "http://192.168.0.105:8080/api/products/" + product.getId() + "/images/" + img.getId())
                 .collect(Collectors.toList());
         dto.setImageUrls(urls);
 

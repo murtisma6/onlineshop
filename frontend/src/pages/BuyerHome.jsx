@@ -9,6 +9,7 @@ const BuyerHome = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -63,7 +64,14 @@ const BuyerHome = ({ user }) => {
       userId: user ? user.id : null
     }).catch(e => console.error(e));
 
-    const waUrl = `https://wa.me/${product.sellerContact.replace(/[^0-9]/g, '')}?text=Hi, I am interested in your product: ${product.name}`;
+    const productImage = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : '';
+    const message = `Hi, I am interested in your product:
+*Name:* ${product.name}
+*Price:* ₹${product.price}
+*Details:* ${product.description || 'No description provided'}
+${productImage ? `*Image:* ${productImage}` : ''}`;
+
+    const waUrl = `https://wa.me/${product.sellerContact.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
   };
 
@@ -72,14 +80,17 @@ const BuyerHome = ({ user }) => {
       
       {/* Left Sidebar Menu */}
       <aside style={{ 
-        width: '220px', 
+        width: isSidebarOpen ? '200px' : '0px', 
         background: 'linear-gradient(180deg, #0f172a 0%, #111827 100%)', 
         color: '#ffffff',
         flexShrink: 0,
-        borderRight: '1px solid rgba(255,255,255,0.05)',
-        boxShadow: '4px 0 10px rgba(0,0,0,0.1)'
+        borderRight: isSidebarOpen ? '1px solid rgba(255,255,255,0.05)' : 'none',
+        boxShadow: isSidebarOpen ? '4px 0 10px rgba(0,0,0,0.1)' : 'none',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        overflow: 'hidden'
       }}>
-        <div style={{ padding: '2rem 1rem', position: 'sticky', top: '70px' }}>
+        <div style={{ width: '200px' }}>
+          <div style={{ padding: '1.5rem 1rem', position: 'sticky', top: '70px' }}>
           <h2 style={{ 
             fontSize: '0.9rem', 
             textTransform: 'uppercase', 
@@ -177,13 +188,36 @@ const BuyerHome = ({ user }) => {
                 )}
               </div>
             ))}
+            </div>
           </div>
         </div>
       </aside>
 
       {/* Main Content: Products */}
-      <main style={{ flex: 1, padding: '1.5rem 1rem', backgroundColor: '#f8fafc' }}>
+      <main style={{ flex: 1, padding: '1.5rem 1rem', backgroundColor: '#f8fafc', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minWidth: 0 }}>
         <div style={{ width: '100%', margin: '0' }}>
+          
+        <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+            className="btn"
+            style={{ 
+              backgroundColor: '#ffffff', 
+              color: '#475569', 
+              border: '1px solid #cbd5e1', 
+              padding: '0.4rem 0.8rem', 
+              fontSize: '0.85rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              borderRadius: '0.5rem',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+          >
+            {isSidebarOpen ? '◀ Hide Menu' : '▶ Show Menu'}
+          </button>
+        </div>
+
         {loading ? (
           <div style={{ textAlign: 'center', marginTop: '4rem', color: '#64748b' }}>
              <p>Loading amazing products...</p>

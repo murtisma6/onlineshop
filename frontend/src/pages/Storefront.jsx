@@ -14,6 +14,7 @@ const Storefront = () => {
   
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     loadStoreAndProducts();
@@ -98,15 +99,18 @@ const Storefront = () => {
         
         {/* Left Sidebar Menu */}
         <aside style={{ 
-          width: '240px', 
+          width: isSidebarOpen ? '200px' : '0px', 
           backgroundColor: '#ffffff', 
           color: '#1e293b',
           flexShrink: 0,
-          borderRight: '1px solid #e2e8f0',
-          boxShadow: '4px 0 10px rgba(0,0,0,0.02)',
-          minHeight: 'calc(100vh - 250px)'
+          borderRight: isSidebarOpen ? '1px solid #e2e8f0' : 'none',
+          boxShadow: isSidebarOpen ? '4px 0 10px rgba(0,0,0,0.02)' : 'none',
+          minHeight: 'calc(100vh - 250px)',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden'
         }}>
-          <div style={{ padding: '2rem 1.5rem', position: 'sticky', top: '70px' }}>
+          <div style={{ width: '200px' }}>
+            <div style={{ padding: '1.5rem 1rem', position: 'sticky', top: '70px' }}>
             <h2 style={{ 
               fontSize: '0.9rem', 
               textTransform: 'uppercase', 
@@ -206,10 +210,33 @@ const Storefront = () => {
               ))}
             </div>
           </div>
-        </aside>
+        </div>
+      </aside>
 
         {/* Main Content: Products */}
-        <main style={{ flex: 1, padding: '3rem 1rem', maxWidth: '1400px', margin: '0 auto' }}>
+        <main style={{ flex: 1, padding: '1.5rem', width: '100%', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minWidth: 0 }}>
+          
+          <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+              className="btn"
+              style={{ 
+                backgroundColor: '#ffffff', 
+                color: '#475569', 
+                border: '1px solid #cbd5e1', 
+                padding: '0.4rem 0.8rem', 
+                fontSize: '0.85rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                borderRadius: '0.5rem',
+                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+              }}
+            >
+              {isSidebarOpen ? '◀ Hide Menu' : '▶ Show Menu'}
+            </button>
+          </div>
+
           <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #e2e8f0', paddingBottom: '1rem' }}>
             <h2 style={{ fontSize: '1.5rem', color: '#1e293b' }}>
               {selectedCategory ? `${selectedCategory} ${selectedSubcategory ? `> ${selectedSubcategory}` : ''}` : 'Store Catalog'}

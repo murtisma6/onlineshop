@@ -29,7 +29,14 @@ const ProductDetail = () => {
 
   const handleWhatsAppClick = () => {
     if (!product) return;
-    const waUrl = `https://wa.me/${product.sellerContact.replace(/[^0-9]/g, '')}?text=Hi, I am interested in your product: ${product.name}`;
+    const productImage = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : '';
+    const message = `Hi, I am interested in your product:
+*Name:* ${product.name}
+*Price:* ₹${product.price}
+*Details:* ${product.description || 'No description provided'}
+${productImage ? `*Image:* ${productImage}` : ''}`;
+    
+    const waUrl = `https://wa.me/${product.sellerContact.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
   };
 
