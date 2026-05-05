@@ -20,4 +20,14 @@ public class Store {
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Product> products = new java.util.ArrayList<>();
+
+    @Column(unique = true)
+    private String uniqueUrl;
+
+    @PrePersist
+    public void generateUniqueUrl() {
+        if (this.uniqueUrl == null || this.uniqueUrl.isEmpty()) {
+            this.uniqueUrl = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 8).toLowerCase();
+        }
+    }
 }

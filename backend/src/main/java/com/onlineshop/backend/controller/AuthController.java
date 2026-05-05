@@ -3,6 +3,7 @@ package com.onlineshop.backend.controller;
 import com.onlineshop.backend.dto.LoginRequest;
 import com.onlineshop.backend.dto.RegisterRequest;
 import com.onlineshop.backend.dto.UserDto;
+import com.onlineshop.backend.model.Role;
 import com.onlineshop.backend.model.User;
 import com.onlineshop.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +106,47 @@ public class AuthController {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(mapToDto(userOpt.get()));
+    }
+
+    @PostMapping("/make-admin/{id}")
+    public ResponseEntity<?> makeAdmin(@PathVariable Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setRole(Role.ADMIN);
+            userRepository.save(user);
+            return ResponseEntity.ok(mapToDto(user));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/user/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDto request) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        User user = userOpt.get();
+        
+        // Only allow updating email if not verified
+        if (!user.isEmailVerified() && request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+        
+        // Only allow updating phone if not verified
+        if (!user.isPhoneVerified() && request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+        }
+        
+        // Other fields can be updated
+        if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
+        if (request.getLastName() != null) user.setLastName(request.getLastName());
+        if (request.getWhatsapp() != null) user.setWhatsapp(request.getWhatsapp());
+        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        if (request.getCity() != null) user.setCity(request.getCity());
+        if (request.getPincode() != null) user.setPincode(request.getPincode());
+        if (request.getState() != null) user.setState(request.getState());
+        
+        userRepository.save(user);
+        return ResponseEntity.ok(mapToDto(user));
     }
 
     private UserDto mapToDto(User user) {

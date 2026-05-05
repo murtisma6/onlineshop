@@ -10,4 +10,12 @@ public interface AnalyticsEventRepository extends JpaRepository<AnalyticsEvent, 
     @Modifying
     @Transactional
     void deleteByProductId(Long productId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(a) FROM AnalyticsEvent a WHERE a.product.id = :productId AND a.eventType = :eventType")
+    Long countByProductIdAndEventType(@org.springframework.data.repository.query.Param("productId") Long productId, @org.springframework.data.repository.query.Param("eventType") com.onlineshop.backend.model.EventType eventType);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(a) FROM AnalyticsEvent a WHERE a.product.store.id = :storeId AND a.eventType = :eventType")
+    Long countByStoreIdAndEventType(@org.springframework.data.repository.query.Param("storeId") Long storeId, @org.springframework.data.repository.query.Param("eventType") com.onlineshop.backend.model.EventType eventType);
+
+    java.util.List<AnalyticsEvent> findTop100ByOrderByTimestampDesc();
 }

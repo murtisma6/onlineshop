@@ -209,11 +209,19 @@ public class ProductController {
         dto.setSellerContact(product.getSellerContact());
         dto.setStoreId(product.getStore().getId());
         dto.setStoreName(product.getStore().getName());
+        dto.setStoreUniqueUrl(product.getStore().getUniqueUrl());
+        dto.setSellerCity(product.getStore().getSeller().getCity());
         
         List<String> urls = product.getImages().stream()
                 .map(img -> "http://localhost:8080/api/products/" + product.getId() + "/images/" + img.getId())
                 .collect(Collectors.toList());
         dto.setImageUrls(urls);
+
+        Long views = analyticsEventRepository.countByProductIdAndEventType(product.getId(), com.onlineshop.backend.model.EventType.PRODUCT_VIEW);
+        Long clicks = analyticsEventRepository.countByProductIdAndEventType(product.getId(), com.onlineshop.backend.model.EventType.WHATSAPP_CLICK);
+        dto.setViews(views);
+        dto.setClicks(clicks);
+
         return dto;
     }
 }

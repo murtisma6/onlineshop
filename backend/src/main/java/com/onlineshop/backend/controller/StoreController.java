@@ -45,6 +45,8 @@ public class StoreController {
         responseDto.setId(store.getId());
         responseDto.setName(store.getName());
         responseDto.setSellerId(store.getSeller().getId());
+        responseDto.setProductCount(0);
+        responseDto.setUniqueUrl(store.getUniqueUrl());
 
         return ResponseEntity.ok(responseDto);
     }
@@ -53,13 +55,47 @@ public class StoreController {
     public ResponseEntity<List<StoreDto>> getStoresBySeller(@PathVariable Long sellerId) {
         List<Store> stores = storeRepository.findBySellerId(sellerId);
         List<StoreDto> dtos = stores.stream().map(s -> {
+            if (s.getUniqueUrl() == null || s.getUniqueUrl().isEmpty()) {
+                s.setUniqueUrl(java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 8).toLowerCase());
+                storeRepository.save(s);
+            }
             StoreDto dto = new StoreDto();
             dto.setId(s.getId());
             dto.setName(s.getName());
             dto.setSellerId(s.getSeller().getId());
+            dto.setProductCount(s.getProducts().size());
+            dto.setUniqueUrl(s.getUniqueUrl());
+            
+            Long views = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.PRODUCT_VIEW);
+            Long clicks = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.WHATSAPP_CLICK);
+            dto.setTotalViews(views);
+            dto.setTotalClicks(clicks);
+            
             return dto;
         }).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/url/{uniqueUrl}")
+    public ResponseEntity<StoreDto> getStoreByUniqueUrl(@PathVariable String uniqueUrl) {
+        Optional<Store> storeOpt = storeRepository.findByUniqueUrl(uniqueUrl);
+        if (storeOpt.isPresent()) {
+            Store s = storeOpt.get();
+            StoreDto dto = new StoreDto();
+            dto.setId(s.getId());
+            dto.setName(s.getName());
+            dto.setSellerId(s.getSeller().getId());
+            dto.setProductCount(s.getProducts().size());
+            dto.setUniqueUrl(s.getUniqueUrl());
+            
+            Long views = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.PRODUCT_VIEW);
+            Long clicks = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.WHATSAPP_CLICK);
+            dto.setTotalViews(views);
+            dto.setTotalClicks(clicks);
+            
+            return ResponseEntity.ok(dto);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

@@ -14,7 +14,7 @@ const SellerDashboard = ({ user }) => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
-  const [sellerContact, setSellerContact] = useState('');
+  const [sellerContact, setSellerContact] = useState(user?.whatsapp || '');
   const [images, setImages] = useState([]);
   const [status, setStatus] = useState('');
   const [myProducts, setMyProducts] = useState([]);
@@ -30,6 +30,11 @@ const SellerDashboard = ({ user }) => {
     loadStores();
     loadCategories();
   }, [user]);
+
+  // Keep WhatsApp in sync with user profile
+  useEffect(() => {
+    setSellerContact(user?.whatsapp || '');
+  }, [user?.whatsapp]);
 
   // When category changes, reset subcategory
   useEffect(() => {
@@ -173,7 +178,7 @@ const SellerDashboard = ({ user }) => {
     setDescription(product.description || '');
     setCategory(product.category || '');
     setSubcategory(product.subcategory || '');
-    setSellerContact(product.sellerContact || '');
+    setSellerContact(user?.whatsapp || '');
     
     if (product.imageUrls) {
       const parsedImages = product.imageUrls.map(url => ({
@@ -197,7 +202,7 @@ const SellerDashboard = ({ user }) => {
     setDescription('');
     setCategory('');
     setSubcategory('');
-    setSellerContact('');
+    setSellerContact(user?.whatsapp || '');
     setImages([]);
     setExistingImages([]);
     setStatus('');
@@ -206,18 +211,18 @@ const SellerDashboard = ({ user }) => {
   if (!selectedStore) {
     return (
       <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
-        <div style={{ backgroundColor: '#0f172a', padding: '2rem 0', marginBottom: '-4rem' }}>
-          <div className="container">
+        <div style={{ backgroundColor: '#0f172a', padding: '1.5rem 0', marginBottom: '1rem' }}>
+          <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', textAlign: 'left' }}>
             <h1 style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>My Stores</h1>
             <p style={{ color: '#cbd5e1' }}>Select a store to manage inventory or create a new one.</p>
           </div>
         </div>
         
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+        <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '2rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
             
             {/* Create Store Card */}
-            <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', boxShadow: 'var(--shadow-lg)' }}>
+            <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)' }}>
               <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Create New Store</h2>
               {storeStatus && <p style={{ color: storeStatus.includes('successfully') ? 'green' : 'red', marginBottom: '1rem' }}>{storeStatus}</p>}
               <form onSubmit={handleCreateStore} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -238,7 +243,7 @@ const SellerDashboard = ({ user }) => {
               <div 
                 key={store.id} 
                 className="glass" 
-                style={{ position: 'relative', padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', boxShadow: 'var(--shadow-md)', cursor: 'pointer', transition: 'transform 0.2s', ':hover': { transform: 'translateY(-5px)' } }}
+                style={{ position: 'relative', padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', cursor: 'pointer', transition: 'all 0.2s', ':hover': { transform: 'translateY(-5px)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' } }}
                 onClick={() => selectStore(store)}
               >
                 <button 
@@ -248,12 +253,61 @@ const SellerDashboard = ({ user }) => {
                   Delete Store
                 </button>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem', marginTop: '0.5rem' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#eef2ff', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem', fontWeight: 'bold' }}>
-                    S
-                  </div>
                   <h2 style={{ fontSize: '1.5rem', margin: 0 }}>{store.name}</h2>
                 </div>
-                <p style={{ color: '#64748b' }}>Manage products for this store &rarr;</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <div style={{ color: '#64748b', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ backgroundColor: '#f0fdf4', color: '#16a34a', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                      {store.productCount}
+                    </span>
+                    <span>Active Products Listed</span>
+                  </div>
+                  <div style={{ color: '#64748b', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.2rem' }}>👁️</span>
+                      <strong>{store.totalViews || 0}</strong> Views
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '1.2rem' }}>👆</span>
+                      <strong>{store.totalClicks || 0}</strong> Clicks
+                    </div>
+                  </div>
+                </div>
+                
+                {store.uniqueUrl && (
+                  <div style={{ marginTop: '1rem' }} onClick={(e) => e.stopPropagation()}>
+                    <button 
+                      onClick={() => {
+                        const url = `${window.location.origin}/store/${store.uniqueUrl}`;
+                        navigator.clipboard.writeText(url);
+                        alert('Store link copied to clipboard!');
+                      }}
+                      style={{ 
+                        backgroundColor: '#f1f5f9', 
+                        color: '#334155', 
+                        border: '1px solid #cbd5e1', 
+                        padding: '0.4rem 0.8rem', 
+                        borderRadius: '0.25rem', 
+                        fontSize: '0.8rem', 
+                        fontWeight: 600, 
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
+                      title="Copy public store link for buyers"
+                    >
+                      <span>🔗</span> Copy Store Link
+                    </button>
+                  </div>
+                )}
+
+                <div style={{ marginTop: '1.5rem', color: '#4f46e5', fontWeight: 600, fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
+                  Manage Inventory &rarr;
+                </div>
               </div>
             ))}
             
@@ -265,8 +319,8 @@ const SellerDashboard = ({ user }) => {
 
   return (
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
-      <div style={{ backgroundColor: '#0f172a', padding: '2rem 0', marginBottom: '-4rem' }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ backgroundColor: '#0f172a', padding: '1.5rem 0', marginBottom: '1rem' }}>
+        <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>{selectedStore.name}</h1>
             <p style={{ color: '#cbd5e1' }}>Manage your inventory and list new products.</p>
@@ -277,7 +331,7 @@ const SellerDashboard = ({ user }) => {
         </div>
       </div>
       
-      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', position: 'relative', zIndex: 10, paddingTop: '2rem' }}>
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
@@ -286,7 +340,7 @@ const SellerDashboard = ({ user }) => {
         }}>
           
           {/* Left Column: Form */}
-          <div className="glass" style={{ padding: '2.5rem', borderRadius: '1rem', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff' }}>
+          <div className="glass" style={{ padding: '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#eef2ff', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem', fontWeight: 'bold', fontSize: '1.2rem' }}>
                 {editingProductId ? '✎' : '+'}
@@ -352,7 +406,17 @@ const SellerDashboard = ({ user }) => {
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>WhatsApp Contact</label>
-                  <input type="text" placeholder="+1234567890" className="input-field" value={sellerContact} onChange={(e) => setSellerContact(e.target.value)} required style={{ border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }} />
+                  <input 
+                    type="text" 
+                    placeholder="+1234567890" 
+                    className="input-field" 
+                    value={sellerContact} 
+                    onChange={(e) => setSellerContact(e.target.value)} 
+                    required 
+                    readOnly
+                    style={{ border: '1px solid #cbd5e1', backgroundColor: '#f1f5f9', cursor: 'not-allowed' }} 
+                    title="WhatsApp number is pulled from your account settings"
+                  />
                 </div>
               </div>
               <div>
@@ -436,7 +500,7 @@ const SellerDashboard = ({ user }) => {
           </div>
 
           {/* Right Column: List */}
-          <div className="glass" style={{ padding: '2.5rem', borderRadius: '1rem', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff', minHeight: '600px' }}>
+          <div className="glass" style={{ padding: '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff', minHeight: '600px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#f0fdf4', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem', fontWeight: 'bold', fontSize: '1.2rem' }}>
@@ -477,6 +541,10 @@ const SellerDashboard = ({ user }) => {
                             <span>{product.category || 'Uncategorized'}</span>
                             <span>&bull;</span>
                             <span>{product.subcategory || 'Uncategorized'}</span>
+                          </div>
+                          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
+                            <span title="Total Views">👁️ {product.views || 0}</span>
+                            <span title="WhatsApp Clicks">👆 {product.clicks || 0}</span>
                           </div>
                         </div>
                         <p style={{ color: '#4f46e5', fontWeight: 'bold', fontSize: '1.2rem', margin: 0 }}>₹{product.price}</p>

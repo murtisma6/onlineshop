@@ -7,4 +7,8 @@ public class StoreDto {
     private Long id;
     private String name;
     private Long sellerId;
+    private int productCount;
+    private String uniqueUrl;
+    private Long totalViews;
+    private Long totalClicks;
 }

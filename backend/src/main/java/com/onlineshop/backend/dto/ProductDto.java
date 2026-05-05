@@ -14,5 +14,9 @@ public class ProductDto {
     private String sellerContact;
     private Long storeId;
     private String storeName;
+    private String storeUniqueUrl;
     private java.util.List<String> imageUrls;
+    private Long views;
+    private Long clicks;
+    private String sellerCity;
 }

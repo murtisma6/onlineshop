@@ -1,8 +1,10 @@
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\BackendApplication.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AdminController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AnalyticsController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AuthController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\ProductController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\StoreController.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\AnalyticsEventDto.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\AnalyticsRequest.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\LoginRequest.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\dto\ProductDto.java

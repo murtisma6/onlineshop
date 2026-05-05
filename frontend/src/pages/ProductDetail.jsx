@@ -121,9 +121,30 @@ const ProductDetail = () => {
             
             <h1 style={{ fontSize: '2.5rem', color: '#0f172a', marginBottom: '0.5rem', lineHeight: 1.2 }}>{product.name}</h1>
             
-            <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>🏪</span> Sold by <strong>{product.storeName}</strong>
-            </p>
+            <div style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>🏪</span> Sold by {' '}
+              <strong 
+                onClick={() => {
+                  if (product.storeUniqueUrl) navigate(`/store/${product.storeUniqueUrl}`);
+                }}
+                style={{ 
+                  color: product.storeUniqueUrl ? '#3b82f6' : '#1e293b', 
+                  cursor: product.storeUniqueUrl ? 'pointer' : 'default',
+                  textDecoration: product.storeUniqueUrl ? 'underline' : 'none',
+                  transition: 'color 0.2s'
+                }}
+                onMouseOver={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#2563eb' : null}
+                onMouseOut={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#3b82f6' : null}
+                title={product.storeUniqueUrl ? "Visit Store" : ""}
+              >
+                {product.storeName}
+              </strong>
+              {product.sellerCity && (
+                <span style={{ fontSize: '0.9rem', backgroundColor: '#f1f5f9', padding: '0.2rem 0.6rem', borderRadius: '1rem', color: '#64748b', marginLeft: '0.5rem' }}>
+                  📍 {product.sellerCity}
+                </span>
+              )}
+            </div>
             
             <div style={{ borderTop: '2px solid #f1f5f9', borderBottom: '2px solid #f1f5f9', padding: '1.5rem 0', marginBottom: '2rem' }}>
               <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#4f46e5', margin: 0 }}>
