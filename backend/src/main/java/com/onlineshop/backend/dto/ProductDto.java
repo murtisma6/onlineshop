@@ -8,7 +8,11 @@ public class ProductDto {
     private Long id;
     private String name;
     private BigDecimal price;
+    private String description;
+    private String category;
+    private String subcategory;
     private String sellerContact;
-    private Long sellerId;
-    private String imageUrl;
+    private Long storeId;
+    private String storeName;
+    private java.util.List<String> imageUrls;
 }

@@ -20,4 +20,43 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column
+    private String phone;
+
+    @Column
+    private String whatsapp;
+
+    @Column(columnDefinition = "TEXT")
+    private String address;
+
+    @Column
+    private String city;
+
+    @Column
+    private String pincode;
+
+    @Column
+    private String state;
+
+    @Column(nullable = false)
+    private boolean emailVerified = false;
+
+    @Column(nullable = false)
+    private boolean phoneVerified = false;
+
+    @Column
+    private String emailOtp;
+
+    @Column
+    private String phoneOtp;
 }

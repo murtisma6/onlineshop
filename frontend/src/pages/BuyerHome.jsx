@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchProducts, trackEvent } from '../api';
 
 const BuyerHome = ({ user, onLogout }) => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +30,8 @@ const BuyerHome = ({ user, onLogout }) => {
     loadProducts();
   }, [user]);
 
-  const handleWhatsAppClick = (product) => {
+  const handleWhatsAppClick = (e, product) => {
+    e.stopPropagation();
     // Track click event
     trackEvent({
       eventType: 'WHATSAPP_CLICK',
@@ -42,18 +45,11 @@ const BuyerHome = ({ user, onLogout }) => {
   };
 
   return (
-    <div className="container" style={{ paddingTop: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ color: 'var(--primary-color)' }}>Shop Premium</h1>
-        {user ? (
-          <button onClick={onLogout} className="btn" style={{ border: '1px solid var(--border)' }}>Logout</button>
-        ) : (
-          <a href="/login" className="btn btn-primary">Login</a>
-        )}
-      </div>
-
+    <div className="container" style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
       {loading ? (
-        <p>Loading amazing products...</p>
+        <div style={{ textAlign: 'center', marginTop: '4rem', color: 'var(--text-secondary)' }}>
+           <p>Loading amazing products...</p>
+        </div>
       ) : (
         <div style={{ 
           display: 'grid', 
@@ -61,29 +57,40 @@ const BuyerHome = ({ user, onLogout }) => {
           gap: '2rem' 
         }}>
           {products.map(product => (
-            <div key={product.id} className="glass" style={{ 
-              borderRadius: '1rem', 
-              overflow: 'hidden',
-              transition: 'transform 0.2s',
-              cursor: 'pointer'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            <div 
+              key={product.id} 
+              className="glass" 
+              style={{ 
+                borderRadius: '1rem', 
+                overflow: 'hidden',
+                transition: 'transform 0.2s',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+              onClick={() => navigate(`/product/${product.id}`)}
             >
               <div style={{ height: '200px', backgroundColor: '#f1f5f9', overflow: 'hidden' }}>
                 <img 
-                  src={product.imageUrl} 
+                  src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : ''} 
                   alt={product.name} 
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </div>
               <div style={{ padding: '1.5rem' }}>
-                <h3 style={{ marginBottom: '0.5rem', fontSize: '1.25rem' }}>{product.name}</h3>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.75rem', backgroundColor: '#e2e8f0', padding: '0.2rem 0.5rem', borderRadius: '1rem', color: 'var(--text-secondary)' }}>{product.category || 'Uncategorized'}</span>
+                  <span style={{ fontSize: '0.75rem', backgroundColor: '#e2e8f0', padding: '0.2rem 0.5rem', borderRadius: '1rem', color: 'var(--text-secondary)' }}>{product.subcategory || 'Uncategorized'}</span>
+                </div>
+                <h3 style={{ marginBottom: '0.25rem', fontSize: '1.25rem' }}>{product.name}</h3>
+                <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <span style={{ fontSize: '1.2rem' }}>🏪</span> {product.storeName}
+                </p>
                 <p style={{ fontWeight: 'bold', fontSize: '1.5rem', color: 'var(--primary-color)', marginBottom: '1.5rem' }}>
-                  ${product.price}
+                  ₹{product.price}
                 </p>
                 <button 
-                  onClick={() => handleWhatsAppClick(product)}
+                  onClick={(e) => handleWhatsAppClick(e, product)}
                   className="btn btn-success" 
                   style={{ width: '100%' }}
                 >

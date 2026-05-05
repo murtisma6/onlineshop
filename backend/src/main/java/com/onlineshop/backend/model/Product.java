@@ -3,6 +3,8 @@ package com.onlineshop.backend.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -18,16 +20,22 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(name = "image_data", columnDefinition="BYTEA", nullable = false)
-    private byte[] imageData;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @Column(nullable = false)
-    private String imageContentType;
+    @Column
+    private String category;
+
+    @Column
+    private String subcategory;
 
     @Column(nullable = false)
     private String sellerContact;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = false)
-    private User seller;
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();
 }

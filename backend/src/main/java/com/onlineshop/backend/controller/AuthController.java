@@ -29,27 +29,100 @@ public class AuthController {
         user.setUsername(request.getUsername());
         user.setPasswordHash(request.getPassword()); 
         user.setRole(request.getRole());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setWhatsapp(request.getWhatsapp());
+        user.setAddress(request.getAddress());
+        user.setCity(request.getCity());
+        user.setPincode(request.getPincode());
+        user.setState(request.getState());
         
         userRepository.save(user);
         
-        UserDto dto = new UserDto();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setRole(user.getRole());
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(mapToDto(user));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
         if (userOpt.isPresent() && userOpt.get().getPasswordHash().equals(request.getPassword())) {
-            User user = userOpt.get();
-            UserDto dto = new UserDto();
-            dto.setId(user.getId());
-            dto.setUsername(user.getUsername());
-            dto.setRole(user.getRole());
-            return ResponseEntity.ok(dto);
+            return ResponseEntity.ok(mapToDto(userOpt.get()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<?> sendOtp(@RequestParam Long userId, @RequestParam String type) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        User user = userOpt.get();
+        String otp = String.format("%06d", new java.util.Random().nextInt(999999));
+        
+        if ("email".equalsIgnoreCase(type)) {
+            user.setEmailOtp(otp);
+            System.out.println(">>> [MOCK EMAIL] To: " + user.getEmail() + " | OTP: " + otp);
+        } else if ("phone".equalsIgnoreCase(type)) {
+            user.setPhoneOtp(otp);
+            System.out.println(">>> [MOCK SMS] To: " + user.getPhone() + " | OTP: " + otp);
+        } else {
+            return ResponseEntity.badRequest().body("Invalid type");
+        }
+        userRepository.save(user);
+        return ResponseEntity.ok("OTP sent");
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestParam Long userId, @RequestParam String type, @RequestParam String otp) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        User user = userOpt.get();
+        
+        if ("email".equalsIgnoreCase(type)) {
+            if (otp.equals(user.getEmailOtp())) {
+                user.setEmailVerified(true);
+                user.setEmailOtp(null);
+            } else {
+                return ResponseEntity.badRequest().body("Invalid OTP");
+            }
+        } else if ("phone".equalsIgnoreCase(type)) {
+            if (otp.equals(user.getPhoneOtp())) {
+                user.setPhoneVerified(true);
+                user.setPhoneOtp(null);
+            } else {
+                return ResponseEntity.badRequest().body("Invalid OTP");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Invalid type");
+        }
+        userRepository.save(user);
+        return ResponseEntity.ok(mapToDto(user));
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(mapToDto(userOpt.get()));
+    }
+
+    private UserDto mapToDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setRole(user.getRole());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
+        dto.setWhatsapp(user.getWhatsapp());
+        dto.setAddress(user.getAddress());
+        dto.setCity(user.getCity());
+        dto.setPincode(user.getPincode());
+        dto.setState(user.getState());
+        dto.setEmailVerified(user.isEmailVerified());
+        dto.setPhoneVerified(user.isPhoneVerified());
+        return dto;
     }
 }
