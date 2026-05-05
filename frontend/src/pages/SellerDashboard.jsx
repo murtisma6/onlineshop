@@ -213,8 +213,8 @@ const SellerDashboard = ({ user }) => {
       <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
         <div style={{ backgroundColor: '#0f172a', padding: '1.5rem 0', marginBottom: '1rem' }}>
           <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', textAlign: 'left' }}>
-            <h1 style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>My Stores</h1>
-            <p style={{ color: '#cbd5e1' }}>Select a store to manage inventory or create a new one.</p>
+            <h1 className="dashboard-title" style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>My Stores</h1>
+            <p className="dashboard-subtitle" style={{ color: '#cbd5e1' }}>Select a store to manage inventory or create a new one.</p>
           </div>
         </div>
         
@@ -279,8 +279,26 @@ const SellerDashboard = ({ user }) => {
                     <button 
                       onClick={() => {
                         const url = `${window.location.origin}/store/${store.uniqueUrl}`;
-                        navigator.clipboard.writeText(url);
-                        alert('Store link copied to clipboard!');
+                        if (navigator.clipboard && window.isSecureContext) {
+                          navigator.clipboard.writeText(url).then(() => {
+                            alert('Store link copied to clipboard!');
+                          }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                          });
+                        } else {
+                          // Fallback for non-HTTPS/older browsers
+                          const textArea = document.createElement("textarea");
+                          textArea.value = url;
+                          document.body.appendChild(textArea);
+                          textArea.select();
+                          try {
+                            document.execCommand('copy');
+                            alert('Store link copied to clipboard!');
+                          } catch (err) {
+                            console.error('Fallback copy failed', err);
+                          }
+                          document.body.removeChild(textArea);
+                        }
                       }}
                       style={{ 
                         backgroundColor: '#f1f5f9', 
@@ -322,8 +340,8 @@ const SellerDashboard = ({ user }) => {
       <div style={{ backgroundColor: '#0f172a', padding: '1.5rem 0', marginBottom: '1rem' }}>
         <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>{selectedStore.name}</h1>
-            <p style={{ color: '#cbd5e1' }}>Manage your inventory and list new products.</p>
+            <h1 className="dashboard-title" style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>{selectedStore.name}</h1>
+            <p className="dashboard-subtitle" style={{ color: '#cbd5e1' }}>Manage your inventory and list new products.</p>
           </div>
           <button onClick={() => setSelectedStore(null)} className="btn" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.2)' }}>
             &larr; Back to Stores
@@ -525,8 +543,8 @@ const SellerDashboard = ({ user }) => {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '0.5rem' }}>
                 {myProducts.map(product => (
-                  <div key={product.id} style={{ display: 'flex', border: '1px solid #e2e8f0', borderRadius: '0.75rem', overflow: 'hidden', backgroundColor: '#ffffff', transition: 'box-shadow 0.2s', ':hover': { boxShadow: 'var(--shadow-md)' } }}>
-                    <div style={{ width: '100px', height: '100px', flexShrink: 0, backgroundColor: '#f1f5f9' }}>
+                  <div key={product.id} className="inventory-card">
+                    <div className="inventory-card-image">
                       <img 
                         src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : ''} 
                         alt={product.name} 

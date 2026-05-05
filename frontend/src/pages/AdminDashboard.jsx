@@ -123,8 +123,8 @@ const AdminDashboard = ({ user }) => {
   return (
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)', padding: '2rem' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '2.5rem', color: '#0f172a', margin: 0 }}>Admin Dashboard</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <h1 className="dashboard-title" style={{ fontSize: '2.5rem', color: '#0f172a', margin: 0 }}>Admin Dashboard</h1>
           <button 
             onClick={refreshData} 
             className="btn btn-secondary"
@@ -136,34 +136,35 @@ const AdminDashboard = ({ user }) => {
 
         {/* System Health */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
-          <div className="glass" style={{ padding: '1.5rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
-            <h3 style={{ color: '#64748b', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>System Status</h3>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: dashboardData.health.status === 'UP' ? '#10b981' : '#ef4444' }}>
+          <div className="glass admin-card" style={{ borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
+            <h3 className="admin-stat-title">System Status</h3>
+            <div className="admin-stat-value" style={{ color: dashboardData.health.status === 'UP' ? '#10b981' : '#ef4444' }}>
               {dashboardData.health.status}
             </div>
           </div>
-          <div className="glass" style={{ padding: '1.5rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
-            <h3 style={{ color: '#64748b', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Memory Usage</h3>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#3b82f6' }}>
-              {(dashboardData.health.usedMemory / 1024 / 1024).toFixed(2)} MB / {(dashboardData.health.totalMemory / 1024 / 1024).toFixed(2)} MB
+          <div className="glass admin-card" style={{ borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
+            <h3 className="admin-stat-title">Memory Usage</h3>
+            <div className="admin-stat-value" style={{ color: '#3b82f6', fontSize: '1.2rem' }}>
+              {(dashboardData.health.usedMemory / 1024 / 1024).toFixed(1)}M / {(dashboardData.health.totalMemory / 1024 / 1024).toFixed(0)}M
             </div>
             <div style={{ width: '100%', backgroundColor: '#e2e8f0', height: '8px', borderRadius: '4px', marginTop: '0.5rem' }}>
               <div style={{ width: `${(dashboardData.health.usedMemory / dashboardData.health.totalMemory) * 100}%`, backgroundColor: '#3b82f6', height: '100%', borderRadius: '4px' }}></div>
             </div>
           </div>
-          <div className="glass" style={{ padding: '1.5rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
-            <h3 style={{ color: '#64748b', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Total Stores</h3>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b5cf6' }}>
+          <div className="glass admin-card" style={{ borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
+            <h3 className="admin-stat-title">Total Stores</h3>
+            <div className="admin-stat-value" style={{ color: '#8b5cf6' }}>
               {dashboardData.stores.length}
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem' }}>
+        <div className="grid-2-col" style={{ marginBottom: '3rem' }}>
           {/* Stores Overview */}
           <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', maxHeight: '500px', overflowY: 'auto' }}>
             <h2 style={{ fontSize: '1.5rem', color: '#1e293b', marginBottom: '1.5rem' }}>Global Stores Overview</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', minWidth: '300px' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left', color: '#64748b' }}>
                   <th style={{ padding: '0.75rem 0' }}>Store Name</th>
@@ -185,13 +186,15 @@ const AdminDashboard = ({ user }) => {
                   <tr><td colSpan="4" style={{ textAlign: 'center', padding: '1rem', color: '#94a3b8' }}>No stores found</td></tr>
                 )}
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
 
           {/* Traffic Log */}
           <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', maxHeight: '500px', overflowY: 'auto' }}>
             <h2 style={{ fontSize: '1.5rem', color: '#1e293b', marginBottom: '1.5rem' }}>Recent Traffic Log</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem', minWidth: '300px' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left', color: '#64748b' }}>
                   <th style={{ padding: '0.75rem 0' }}>Time</th>
@@ -215,7 +218,8 @@ const AdminDashboard = ({ user }) => {
                   <tr><td colSpan="4" style={{ textAlign: 'center', padding: '1rem', color: '#94a3b8' }}>No recent traffic</td></tr>
                 )}
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -229,7 +233,7 @@ const AdminDashboard = ({ user }) => {
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div className="grid-2-col">
             <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Bulk Create Users</h3>
@@ -243,7 +247,8 @@ const AdminDashboard = ({ user }) => {
                 <textarea 
                   value={usersJson}
                   onChange={(e) => setUsersJson(e.target.value)}
-                  style={{ width: '100%', flex: 1, minHeight: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace', fontSize: '0.85rem' }}
+                  className="admin-json-area"
+                  style={{ width: '100%', flex: 1, minHeight: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace' }}
                   placeholder="Paste JSON here..."
                   required
                 />
@@ -264,7 +269,8 @@ const AdminDashboard = ({ user }) => {
                 <textarea 
                   value={storesJson}
                   onChange={(e) => setStoresJson(e.target.value)}
-                  style={{ width: '100%', flex: 1, minHeight: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace', fontSize: '0.85rem' }}
+                  className="admin-json-area"
+                  style={{ width: '100%', flex: 1, minHeight: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace' }}
                   placeholder="Paste JSON here..."
                   required
                 />

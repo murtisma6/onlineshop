@@ -98,8 +98,112 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-@media (min-width: 768px) {
-  .container {
-    padding: 0 2rem;
+
+@media (max-width: 640px) {
+  .nav-title {
+    font-size: 0.85rem !important;
+  }
+  .btn-nav {
+    font-size: 0.65rem !important;
+    padding: 0.3rem 0.5rem !important;
+  }
+  .nav-logo-svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .dashboard-title {
+    font-size: 1.25rem !important;
+  }
+  .dashboard-subtitle {
+    font-size: 0.85rem !important;
+  }
+  .grid-2-col {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
 }
+
+.grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.grid-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .grid-inner {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-card {
+    padding: 1rem !important;
+  }
+  .admin-stat-title {
+    font-size: 0.75rem !important;
+  }
+  .admin-stat-value {
+    font-size: 1.1rem !important;
+  }
+  .admin-json-area {
+    height: 120px !important;
+    font-size: 0.75rem !important;
+  }
+  .admin-table {
+    font-size: 0.65rem !important;
+  }
+  .admin-table th, .admin-table td {
+    padding: 0.3rem 0.1rem !important;
+  }
+
+  .inventory-card {
+    flex-direction: column !important;
+  }
+  .inventory-card-image {
+    width: 100% !important;
+    height: 160px !important;
+  }
+}
+
+.admin-card {
+  padding: 1.5rem;
+}
+
+.admin-stat-title {
+  color: #64748b;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.admin-stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+
+.inventory-card {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--surface);
+  transition: box-shadow 0.2s;
+}
+
+.inventory-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.inventory-card-image {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  background-color: #f1f5f9;
+}
+
+
+

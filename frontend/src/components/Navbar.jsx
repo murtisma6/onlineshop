@@ -17,31 +17,30 @@ const Navbar = ({ user, onLogout }) => {
       zIndex: 1000
     }}>
       <div 
-        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
         onClick={() => navigate('/')}
         title="Home"
       >
-        <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className="nav-logo-svg" width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M20 5L5 18V35H14V25H26V35H35V18L20 5Z" fill="#3b82f6" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M20 5L35 18M20 5L5 18" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        <span style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>Buyer's Home</span>
+        <span className="nav-title" style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>Buyer's Home</span>
       </div>
       <div>
         {user ? (
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <span style={{ color: '#cbd5e1', fontSize: '0.9rem' }}>Welcome, {user.username}</span>
-            <button onClick={() => navigate('/account')} className="btn" style={{ backgroundColor: 'transparent', color: '#60a5fa', border: '1px solid #3b82f6' }}>My Account</button>
+          <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
+            <button onClick={() => navigate('/account')} className="btn btn-nav" style={{ backgroundColor: 'transparent', color: '#60a5fa', border: '1px solid #3b82f6' }}>My Account</button>
             {user.role === 'SELLER' && (
-              <button onClick={() => navigate('/seller')} className="btn" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.2)' }}>Dashboard</button>
+              <button onClick={() => navigate('/seller')} className="btn btn-nav" style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.2)' }}>Dashboard</button>
             )}
             {user.role === 'ADMIN' && (
-              <button onClick={() => navigate('/admin')} className="btn" style={{ backgroundColor: '#10b981', color: '#ffffff', border: '1px solid #059669', fontWeight: 'bold' }}>Admin Dashboard</button>
+              <button onClick={() => navigate('/admin')} className="btn btn-nav" style={{ backgroundColor: '#10b981', color: '#ffffff', border: '1px solid #059669', fontWeight: 'bold' }}>Admin Dashboard</button>
             )}
-            <button onClick={() => { onLogout(); navigate('/'); }} className="btn" style={{ backgroundColor: 'transparent', color: '#cbd5e1', border: '1px solid #475569' }}>Logout</button>
+            <button onClick={() => { onLogout(); navigate('/'); }} className="btn btn-nav" style={{ backgroundColor: 'transparent', color: '#cbd5e1', border: '1px solid #475569' }}>Logout</button>
           </div>
         ) : (
-          <button onClick={() => navigate('/login')} className="btn" style={{ backgroundColor: '#ffffff', color: '#0f172a', fontWeight: 'bold' }}>Login</button>
+          <button onClick={() => navigate('/login')} className="btn btn-nav" style={{ backgroundColor: '#ffffff', color: '#0f172a', fontWeight: 'bold' }}>Login</button>
         )}
       </div>
     </nav>

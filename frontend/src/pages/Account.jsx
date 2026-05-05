@@ -104,7 +104,7 @@ const Account = ({ user, setUser }) => {
         )}
         
         <form onSubmit={handleUpdateProfile}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div className="grid-2-col">
             
             <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', boxShadow: 'var(--shadow-md)' }}>
               <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Personal Information</h2>
@@ -113,7 +113,7 @@ const Account = ({ user, setUser }) => {
                 <div><strong style={{ color: '#64748b' }}>Username:</strong> {profile.username}</div>
                 <div><strong style={{ color: '#64748b' }}>Role:</strong> {profile.role}</div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="grid-inner">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b' }}>First Name</label>
                     <input type="text" name="firstName" value={editMode ? formData.firstName : profile.firstName} onChange={handleInputChange} readOnly={!editMode} className="input-field" style={{ backgroundColor: !editMode ? '#f8fafc' : 'white' }} />
@@ -188,7 +188,7 @@ const Account = ({ user, setUser }) => {
                   <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b' }}>City</label>
                   <input type="text" name="city" value={editMode ? formData.city : profile.city} onChange={handleInputChange} readOnly={!editMode} className="input-field" style={{ backgroundColor: !editMode ? '#f8fafc' : 'white' }} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="grid-inner">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b' }}>State</label>
                     <input type="text" name="state" value={editMode ? formData.state : profile.state} onChange={handleInputChange} readOnly={!editMode} className="input-field" style={{ backgroundColor: !editMode ? '#f8fafc' : 'white' }} />
