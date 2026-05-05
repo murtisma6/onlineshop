@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { fetchProductById } from '../api';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromStore = location.state?.fromStore;
+  const storeName = location.state?.storeName;
+  
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -50,8 +54,12 @@ const ProductDetail = () => {
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
       <div style={{ backgroundColor: '#0f172a', padding: '1rem 0' }}>
         <div className="container">
-          <button onClick={() => navigate('/')} className="btn" style={{ backgroundColor: 'transparent', color: '#cbd5e1', border: '1px solid #475569', padding: '0.5rem 1rem' }}>
-            &larr; Back to Gallery
+          <button 
+            onClick={() => fromStore ? navigate(`/store/${fromStore}`) : navigate('/')} 
+            className="btn" 
+            style={{ backgroundColor: 'transparent', color: '#cbd5e1', border: '1px solid #475569', padding: '0.5rem 1rem' }}
+          >
+            &larr; {fromStore ? `Back to ${storeName || 'Store'}` : 'Back to Gallery'}
           </button>
         </div>
       </div>

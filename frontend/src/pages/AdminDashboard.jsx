@@ -20,6 +20,7 @@ const AdminDashboard = ({ user }) => {
     }
 
     const loadData = async () => {
+      setLoading(true);
       try {
         const [dashRes, trafficRes] = await Promise.all([
           fetchAdminDashboard(),
@@ -27,6 +28,7 @@ const AdminDashboard = ({ user }) => {
         ]);
         setDashboardData(dashRes.data);
         setTrafficData(trafficRes.data);
+        setError('');
       } catch (err) {
         console.error('Failed to load admin data', err);
         setError('Failed to load dashboard data.');
@@ -36,6 +38,21 @@ const AdminDashboard = ({ user }) => {
     };
     loadData();
   }, [user, navigate]);
+
+  const refreshData = async () => {
+    try {
+      const [dashRes, trafficRes] = await Promise.all([
+        fetchAdminDashboard(),
+        fetchAdminTraffic()
+      ]);
+      setDashboardData(dashRes.data);
+      setTrafficData(trafficRes.data);
+      setBulkStatus({ type: 'success', message: 'Data refreshed successfully!' });
+      setTimeout(() => setBulkStatus({ type: '', message: '' }), 3000);
+    } catch (err) {
+      setBulkStatus({ type: 'error', message: 'Failed to refresh data' });
+    }
+  };
 
   const handleBulkUsers = async (e) => {
     e.preventDefault();
@@ -47,6 +64,40 @@ const AdminDashboard = ({ user }) => {
       setUsersJson('');
     } catch (err) {
       setBulkStatus({ type: 'error', message: err.message || 'Invalid JSON format or server error' });
+    }
+  };
+
+  const copyUserSample = () => {
+    const sample = [
+      { "username": "seller1", "email": "seller1@example.com", "role": "SELLER", "passwordHash": "pass123" },
+      { "username": "buyer1", "email": "buyer1@example.com", "role": "BUYER", "passwordHash": "pass123" }
+    ];
+    setUsersJson(JSON.stringify(sample, null, 2));
+  };
+
+  const copyStoreSample = () => {
+    const sample = [
+      { "sellerId": 1, "name": "Premium Gadgets" },
+      { "sellerId": 2, "name": "Fashion Hub" }
+    ];
+    setStoresJson(JSON.stringify(sample, null, 2));
+  };
+
+  const formatUsersJson = () => {
+    try {
+      const parsed = JSON.parse(usersJson);
+      setUsersJson(JSON.stringify(parsed, null, 2));
+    } catch (e) {
+      setBulkStatus({ type: 'error', message: 'Invalid JSON format' });
+    }
+  };
+
+  const formatStoresJson = () => {
+    try {
+      const parsed = JSON.parse(storesJson);
+      setStoresJson(JSON.stringify(parsed, null, 2));
+    } catch (e) {
+      setBulkStatus({ type: 'error', message: 'Invalid JSON format' });
     }
   };
 
@@ -72,7 +123,16 @@ const AdminDashboard = ({ user }) => {
   return (
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)', padding: '2rem' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <h1 style={{ fontSize: '2.5rem', color: '#0f172a', marginBottom: '2rem' }}>Admin Dashboard</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '2.5rem', color: '#0f172a', margin: 0 }}>Admin Dashboard</h1>
+          <button 
+            onClick={refreshData} 
+            className="btn btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem' }}
+          >
+            <span>🔄</span> Refresh Stats
+          </button>
+        </div>
 
         {/* System Health */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
@@ -170,14 +230,20 @@ const AdminDashboard = ({ user }) => {
           )}
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-            <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Bulk Create Users</h3>
-              <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '1rem' }}>Paste JSON array of user objects. Example: <br/><code>[{"{"}"username": "john", "email": "john@example.com", "role": "SELLER", "passwordHash": "pass"{"}"}]</code></p>
-              <form onSubmit={handleBulkUsers}>
+            <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Bulk Create Users</h3>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button onClick={copyUserSample} className="btn" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', backgroundColor: '#f1f5f9' }}>Sample</button>
+                  <button onClick={formatUsersJson} className="btn" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', backgroundColor: '#f1f5f9' }}>Format</button>
+                </div>
+              </div>
+              <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '1rem' }}>Paste JSON array of user objects.</p>
+              <form onSubmit={handleBulkUsers} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <textarea 
                   value={usersJson}
                   onChange={(e) => setUsersJson(e.target.value)}
-                  style={{ width: '100%', height: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace' }}
+                  style={{ width: '100%', flex: 1, minHeight: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace', fontSize: '0.85rem' }}
                   placeholder="Paste JSON here..."
                   required
                 />
@@ -185,14 +251,20 @@ const AdminDashboard = ({ user }) => {
               </form>
             </div>
 
-            <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Bulk Create Stores</h3>
-              <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '1rem' }}>Paste JSON array of store objects. Example: <br/><code>[{"{"}"sellerId": 1, "name": "John's Electronics"{"}"}]</code></p>
-              <form onSubmit={handleBulkStores}>
+            <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Bulk Create Stores</h3>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button onClick={copyStoreSample} className="btn" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', backgroundColor: '#f1f5f9' }}>Sample</button>
+                  <button onClick={formatStoresJson} className="btn" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', backgroundColor: '#f1f5f9' }}>Format</button>
+                </div>
+              </div>
+              <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '1rem' }}>Paste JSON array of store objects.</p>
+              <form onSubmit={handleBulkStores} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <textarea 
                   value={storesJson}
                   onChange={(e) => setStoresJson(e.target.value)}
-                  style={{ width: '100%', height: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace' }}
+                  style={{ width: '100%', flex: 1, minHeight: '150px', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', marginBottom: '1rem', fontFamily: 'monospace', fontSize: '0.85rem' }}
                   placeholder="Paste JSON here..."
                   required
                 />

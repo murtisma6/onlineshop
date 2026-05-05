@@ -252,7 +252,7 @@ const Storefront = () => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)';
                 }}
-                onClick={() => navigate(`/product/${product.id}`)}
+                onClick={() => navigate(`/product/${product.id}`, { state: { fromStore: store.uniqueUrl, storeName: store.name } })}
               >
                 <div style={{ height: '240px', backgroundColor: '#f1f5f9', overflow: 'hidden', position: 'relative' }}>
                   <img 
@@ -284,7 +284,7 @@ const Storefront = () => {
                       className="btn btn-primary"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/product/${product.id}`);
+                        navigate(`/product/${product.id}`, { state: { fromStore: store.uniqueUrl, storeName: store.name } });
                       }}
                       style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}
                     >
