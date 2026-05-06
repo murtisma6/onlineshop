@@ -289,16 +289,31 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                         marginBottom: '0.75rem', 
                         display: 'inline-flex', 
                         alignItems: 'center', 
-                        gap: '0.3rem',
+                        gap: '0.5rem',
                         cursor: product.storeUniqueUrl ? 'pointer' : 'default',
-                        transition: 'color 0.2s'
+                        transition: 'color 0.2s',
+                        backgroundColor: 'rgba(241, 245, 249, 0.5)',
+                        padding: '0.3rem 0.6rem',
+                        borderRadius: '0.5rem',
+                        border: '1px solid #f1f5f9'
                       }}
                       onMouseOver={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#2563eb' : null}
                       onMouseOut={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#3b82f6' : null}
                       title={product.storeUniqueUrl ? "Visit Store" : ""}
                     >
-                      <span>🏪</span> <span style={{ textDecoration: product.storeUniqueUrl ? 'underline' : 'none' }}>{product.storeName}</span>
+                      {product.storeLogoUrl ? (
+                        <img 
+                          src={product.storeLogoUrl} 
+                          alt={product.storeName} 
+                          style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #ffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} 
+                        />
+                      ) : (
+                        <span style={{ fontSize: '1.1rem' }}>🏪</span>
+                      )}
+                      <span style={{ textDecoration: product.storeUniqueUrl ? 'underline' : 'none', fontWeight: '700', fontSize: '0.9rem' }}>{product.storeName}</span>
                     </div>
+
+
                     {product.sellerCity && (
                       <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '-0.5rem' }}>
                         <span>📍</span> {product.sellerCity}

@@ -19,4 +19,5 @@ public class ProductDto {
     private Long views;
     private Long clicks;
     private String sellerCity;
+    private String storeLogoUrl;
 }

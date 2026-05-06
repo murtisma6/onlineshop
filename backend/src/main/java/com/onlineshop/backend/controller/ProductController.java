@@ -222,6 +222,10 @@ public class ProductController {
         dto.setViews(views);
         dto.setClicks(clicks);
 
+        if (product.getStore().getLogoPath() != null) {
+            dto.setStoreLogoUrl("http://192.168.0.105:8080/api/stores/" + product.getStore().getId() + "/logo");
+        }
+
         return dto;
     }
 }

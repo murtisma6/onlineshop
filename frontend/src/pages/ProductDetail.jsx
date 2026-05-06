@@ -136,8 +136,17 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
             
             <h1 style={{ fontSize: '2.5rem', color: '#0f172a', marginBottom: '0.5rem', lineHeight: 1.2 }}>{product.name}</h1>
             
-            <div style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.5rem' }}>🏪</span> Sold by {' '}
+            <div style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              {product.storeLogoUrl ? (
+                <img 
+                  src={product.storeLogoUrl} 
+                  alt={product.storeName} 
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }} 
+                />
+              ) : (
+                <span style={{ fontSize: '1.75rem' }}>🏪</span>
+              )}
+              <span style={{ fontWeight: '500' }}>Sold by {' '}</span>
               <strong 
                 onClick={() => {
                   if (product.storeUniqueUrl) navigate(`/store/${product.storeUniqueUrl}`);
