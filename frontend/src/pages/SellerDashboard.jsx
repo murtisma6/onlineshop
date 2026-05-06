@@ -417,7 +417,7 @@ const SellerDashboard = ({ user }) => {
 
       {isSettingsOpen && (
         <div className="container" style={{ marginBottom: '2rem' }}>
-          <div className="glass" style={{ padding: '2.5rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)' }}>
+          <div className="glass" style={{ padding: window.innerWidth < 768 ? '1.5rem' : '2.5rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem' }}>
               <span style={{ fontSize: '1.5rem', marginRight: '0.75rem' }}>⚙</span>
               <h2 style={{ fontSize: '1.5rem', color: '#1e293b', margin: 0 }}>Store Customization</h2>
@@ -429,7 +429,7 @@ const SellerDashboard = ({ user }) => {
               </div>
             )}
             
-            <form onSubmit={handleUpdateStore} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'end' }}>
+            <form onSubmit={handleUpdateStore} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Store Display Name</label>
                 <input 
@@ -444,28 +444,29 @@ const SellerDashboard = ({ user }) => {
               
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Header Ribbon Color</label>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                   <input 
                     type="color" 
                     value={editRibbonColor} 
                     onChange={(e) => setEditRibbonColor(e.target.value)} 
-                    style={{ width: '60px', height: '42px', padding: '2px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', backgroundColor: '#ffffff' }}
+                    style={{ width: '50px', height: '42px', padding: '2px', borderRadius: '8px', border: '1px solid #cbd5e1', cursor: 'pointer', backgroundColor: '#ffffff' }}
                   />
                   <input 
                     type="text" 
                     className="input-field" 
                     value={editRibbonColor} 
                     onChange={(e) => setEditRibbonColor(e.target.value)} 
-                    style={{ width: '120px', fontSize: '0.9rem', fontFamily: 'monospace' }}
+                    style={{ width: '100px', fontSize: '0.9rem', fontFamily: 'monospace', flexShrink: 0 }}
                   />
                   <div style={{ 
                     flex: 1, 
+                    minWidth: '100px',
                     height: '42px', 
                     backgroundColor: editRibbonColor, 
                     borderRadius: '8px', 
                     display: 'flex', 
                     alignItems: 'center', 
-                    justifyContent: 'center',
+                    justifyContent: 'center', 
                     color: '#ffffff',
                     fontWeight: 'bold',
                     fontSize: '0.85rem',
@@ -478,7 +479,7 @@ const SellerDashboard = ({ user }) => {
                 </div>
               </div>
 
-              <div style={{ gridColumn: 'span 2' }}>
+              <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Header Tagline / Welcome Message</label>
                 <textarea 
                   className="input-field" 
@@ -491,7 +492,7 @@ const SellerDashboard = ({ user }) => {
 
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Store Logo</label>
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', flexWrap: 'wrap' }}>
                   {(selectedStore.logoUrl || storeLogo) ? (
                     <div style={{ position: 'relative' }}>
                       <img 
@@ -541,9 +542,12 @@ const SellerDashboard = ({ user }) => {
                 </div>
               </div>
               
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="submit" className="btn btn-primary" style={{ flex: 1, height: '42px', fontWeight: 'bold' }}>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1, minWidth: '200px', height: '42px', fontWeight: 'bold' }}>
                   Update Store Settings
+                </button>
+                <button type="button" onClick={(e) => handleDeleteStore(selectedStore, e)} className="btn" style={{ backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', flex: 1, minWidth: '200px' }}>
+                  Delete Store
                 </button>
               </div>
             </form>
