@@ -6,12 +6,17 @@ com\onlineshop\backend\model\Role.class
 com\onlineshop\backend\repository\StoreRepository.class
 com\onlineshop\backend\dto\AnalyticsEventDto.class
 com\onlineshop\backend\model\EventType.class
+com\onlineshop\backend\controller\ProductController.class
 com\onlineshop\backend\dto\RegisterRequest.class
 com\onlineshop\backend\dto\UserDto.class
 com\onlineshop\backend\repository\AnalyticsEventRepository.class
+com\onlineshop\backend\controller\AuthController.class
+com\onlineshop\backend\repository\UserRepository.class
+com\onlineshop\backend\controller\StoreController.class
 com\onlineshop\backend\dto\StoreDto.class
 com\onlineshop\backend\model\AnalyticsEvent.class
 com\onlineshop\backend\repository\ProductRepository.class
+com\onlineshop\backend\controller\AnalyticsController.class
 com\onlineshop\backend\dto\ProductDto.class
 com\onlineshop\backend\dto\LoginRequest.class
 com\onlineshop\backend\controller\AdminController.class

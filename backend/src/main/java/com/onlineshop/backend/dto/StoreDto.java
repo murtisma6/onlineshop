@@ -11,4 +11,7 @@ public class StoreDto {
     private String uniqueUrl;
     private Long totalViews;
     private Long totalClicks;
+    private String ribbonColor;
+    private String headerTagline;
+    private String logoUrl;
 }

@@ -29,6 +29,10 @@ export const deleteProduct = (id) => api.delete(`/products/${id}`);
 export const fetchSellerStores = (sellerId) => api.get(`/stores/seller/${sellerId}`);
 export const fetchStoreByUrl = (url) => api.get(`/stores/url/${url}`);
 export const createStore = (storeData) => api.post('/stores', storeData);
+export const updateStore = (id, formData) => api.put(`/stores/${id}`, formData, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});
+export const deleteStoreLogo = (id) => api.delete(`/stores/${id}/logo`);
 export const deleteStore = (id) => api.delete(`/stores/${id}`);
 
 export const trackEvent = (data) => api.post('/analytics', data);

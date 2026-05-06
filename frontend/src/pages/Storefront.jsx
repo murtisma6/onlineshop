@@ -83,16 +83,52 @@ const Storefront = () => {
 
   return (
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
-      {/* Storefront Header */}
-      <div style={{ background: 'linear-gradient(to right, #ffffff, #f1f5f9)', padding: '3rem 0', color: '#0f172a', textAlign: 'center', borderBottom: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', fontSize: '2.5rem', fontWeight: 'bold', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)' }}>
-            {store.name.charAt(0).toUpperCase()}
+      {/* Storefront Header - Themed with Custom Color */}
+      <div style={{ 
+        background: `linear-gradient(135deg, ${store.ribbonColor || '#4f46e5'} 0%, ${store.ribbonColor || '#3b82f6'} 80%)`, 
+        padding: '4rem 0', 
+        color: '#ffffff', 
+        textAlign: 'center', 
+        position: 'relative',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        overflow: 'hidden'
+      }}>
+        {/* Decorative glass effect overlay */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(rgba(255,255,255,0.1), transparent)', pointerEvents: 'none' }}></div>
+        
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', position: 'relative', zIndex: 1 }}>
+          <div style={{ 
+            width: '90px', 
+            height: '90px', 
+            borderRadius: '50%', 
+            backgroundColor: 'rgba(255,255,255,0.2)', 
+            backdropFilter: 'blur(8px)',
+            color: '#ffffff', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            margin: '0 auto 1.5rem auto', 
+            fontSize: '2.5rem', 
+            fontWeight: 'bold', 
+            border: '2px solid rgba(255,255,255,0.4)',
+            boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+            overflow: 'hidden'
+          }}>
+            {store.logoUrl ? (
+              <img src={store.logoUrl} alt={store.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              store.name.charAt(0).toUpperCase()
+            )}
           </div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.5rem', letterSpacing: '1px', color: '#0f172a' }}>{store.name}</h1>
-          <p style={{ fontSize: '1.1rem', color: '#64748b' }}>Welcome to our store! Browse our collection below.</p>
+
+          <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '0.5rem', letterSpacing: '1px', textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>{store.name}</h1>
+          <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.9)', maxWidth: '600px', margin: '0 auto', fontWeight: '500' }}>
+            {store.headerTagline || 'Welcome to our store! Browse our collection below.'}
+          </p>
         </div>
       </div>
+
+
 
       {/* Main Content Area */}
       <div style={{ display: 'flex' }}>

@@ -24,6 +24,18 @@ public class Store {
     @Column(unique = true)
     private String uniqueUrl;
 
+    @Column
+    private String ribbonColor = "#4f46e5"; // Default Indigo
+
+    @Column
+    private String headerTagline = "Welcome to our store! Browse our collection below.";
+
+    @Column
+    private String logoPath;
+
+
+
+
     @PrePersist
     public void generateUniqueUrl() {
         if (this.uniqueUrl == null || this.uniqueUrl.isEmpty()) {
