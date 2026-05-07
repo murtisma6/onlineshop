@@ -175,14 +175,14 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                 
                 {selectedCategory === cat && (
                   <div style={{ 
-                    marginLeft: '1rem', 
-                    marginTop: '0.3rem', 
+                    marginLeft: '0.75rem', 
+                    marginTop: '0.1rem', 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    gap: '0.4rem',
-                    padding: '0.5rem 0.5rem 1rem 1rem',
+                    gap: '0.05rem',
+                    padding: '0.2rem 0.25rem 0.4rem 0.75rem',
                     borderLeft: '1px solid rgba(59, 130, 246, 0.2)',
-                    marginBottom: '0.5rem'
+                    marginBottom: '0.2rem'
                   }}>
                     {Array.from(categoryMap[cat]).sort().map(subcat => (
                       <label 
@@ -190,12 +190,12 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                         style={{ 
                           display: 'flex', 
                           alignItems: 'center', 
-                          gap: '0.6rem', 
+                          gap: '0.5rem', 
                           cursor: 'pointer', 
-                          fontSize: '0.8rem', 
+                          fontSize: '0.78rem', 
                           color: selectedSubcategories.includes(subcat) ? '#60a5fa' : '#cbd5e1',
                           transition: 'color 0.2s',
-                          padding: '0.2rem 0'
+                          padding: '0.1rem 0'
                         }}
                       >
                         <input 
@@ -241,13 +241,15 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent'}
               >
-                <span>📍 Locations {selectedLocations.length > 0 && `(${selectedLocations.length})`}</span>
-                <span style={{ 
-                  fontSize: '0.6rem', 
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Locations {selectedLocations.length > 0 && `(${selectedLocations.length})`}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ 
                   transition: 'transform 0.3s ease', 
                   transform: isLocationFilterOpen ? 'rotate(90deg)' : 'rotate(0deg)',
-                  opacity: 0.5
-                }}>▶</span>
+                  opacity: 0.6
+                }}><polyline points="9 18 15 12 9 6"/></svg>
               </div>
               
               {isLocationFilterOpen && (

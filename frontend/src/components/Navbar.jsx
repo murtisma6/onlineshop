@@ -42,7 +42,30 @@ const Navbar = ({ user, onLogout }) => {
         </svg>
         <span className="nav-title" style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>{user ? "Buyers Digital Store" : "Digital Store"}</span>
       </div>
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <button
+          onClick={() => navigate('/own-your-digistore')}
+          style={{
+            backgroundColor: 'transparent',
+            color: '#60a5fa',
+            border: '1px solid rgba(96,165,250,0.4)',
+            padding: '0.45rem 1rem',
+            borderRadius: '0.5rem',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            transition: 'all 0.2s',
+            whiteSpace: 'nowrap',
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgba(96,165,250,0.1)'; e.currentTarget.style.borderColor = '#60a5fa'; }}
+          onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'rgba(96,165,250,0.4)'; }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Own your DigiStore
+        </button>
         {user ? (
           <div style={{ position: 'relative' }} ref={dropdownRef}>
             <button 

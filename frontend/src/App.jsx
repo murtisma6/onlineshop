@@ -9,6 +9,7 @@ import ProductDetail from './pages/ProductDetail';
 import Account from './pages/Account';
 import Storefront from './pages/Storefront';
 import AdminDashboard from './pages/AdminDashboard';
+import DigiStorePricing from './pages/DigiStorePricing';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -59,6 +60,9 @@ function App() {
             
             {/* Storefront Route */}
             <Route path="/store/:uniqueUrl" element={<Storefront />} />
+
+            {/* DigiStore Pricing Route */}
+            <Route path="/own-your-digistore" element={<DigiStorePricing />} />
             
             {/* Protected Seller Route */}
             <Route 
