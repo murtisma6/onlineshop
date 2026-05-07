@@ -33,8 +33,9 @@ public class Store {
     @Column
     private String logoPath;
 
-
-
+    @Column
+    @org.hibernate.annotations.UpdateTimestamp
+    private java.time.LocalDateTime updatedAt;
 
     @PrePersist
     public void generateUniqueUrl() {

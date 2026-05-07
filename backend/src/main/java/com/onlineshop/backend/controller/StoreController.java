@@ -124,6 +124,7 @@ public class StoreController {
             }
         }
 
+        store.setUpdatedAt(java.time.LocalDateTime.now());
         storeRepository.save(store);
         return ResponseEntity.ok(mapToDto(store));
     }
@@ -165,6 +166,7 @@ public class StoreController {
         Long clicks = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.WHATSAPP_CLICK);
         dto.setTotalViews(views);
         dto.setTotalClicks(clicks);
+        dto.setUpdatedAt(s.getUpdatedAt());
         
         return dto;
     }

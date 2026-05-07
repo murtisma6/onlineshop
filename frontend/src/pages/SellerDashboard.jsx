@@ -314,9 +314,11 @@ const SellerDashboard = ({ user }) => {
               <div 
                 key={store.id} 
                 className="glass" 
-                style={{ position: 'relative', padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', cursor: 'pointer', transition: 'all 0.2s', ':hover': { transform: 'translateY(-5px)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' } }}
+                style={{ position: 'relative', padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', cursor: 'pointer', transition: 'all 0.2s', overflow: 'hidden' }}
                 onClick={() => selectStore(store)}
               >
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', backgroundColor: '#1E3147' }}></div>
+                <div style={{ position: 'absolute', top: '10px', left: '1rem', fontSize: '0.6rem', fontWeight: 'bold', color: '#1E3147', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Digital Store</div>
                 <button 
                   onClick={(e) => handleDeleteStore(store, e)}
                   style={{ position: 'absolute', top: '1rem', right: '1rem', backgroundColor: '#fee2e2', color: '#b91c1c', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '0.25rem', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', zIndex: 10 }}
@@ -343,6 +345,10 @@ const SellerDashboard = ({ user }) => {
                       <strong>{store.totalClicks || 0}</strong> Clicks
                     </div>
                   </div>
+                </div>
+                
+                <div style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  Last updated: {store.updatedAt ? new Date(store.updatedAt).toLocaleDateString() : 'N/A'}
                 </div>
                 
                 {store.uniqueUrl && (

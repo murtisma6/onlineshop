@@ -71,6 +71,9 @@ public class ProductController {
             product.setStore(storeOpt.get());
 
             productRepository.save(product);
+            Store store = storeOpt.get();
+            store.setUpdatedAt(java.time.LocalDateTime.now());
+            storeRepository.save(store);
 
             if (images != null && images.length > 0) {
                 if (images.length > 5) {
@@ -119,6 +122,9 @@ public class ProductController {
             product.setSellerContact(sellerContact);
 
             productRepository.save(product);
+            Store store = product.getStore();
+            store.setUpdatedAt(java.time.LocalDateTime.now());
+            storeRepository.save(store); // Update store last updated date
 
             int retainedCount = retainedImageIds != null ? retainedImageIds.size() : 0;
             int newCount = images != null ? images.length : 0;
@@ -184,7 +190,10 @@ public class ProductController {
         if (productOpt.isPresent()) {
             // Delete analytics events associated with this product first to avoid constraint violation
             analyticsEventRepository.deleteByProductId(id);
+            Store store = productOpt.get().getStore();
             productRepository.delete(productOpt.get());
+            store.setUpdatedAt(java.time.LocalDateTime.now());
+            storeRepository.save(store); // Update store last updated date
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();

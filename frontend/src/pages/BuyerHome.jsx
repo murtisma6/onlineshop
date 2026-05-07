@@ -137,73 +137,6 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
 
             <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
 
-            {/* Location Filter */}
-            <div style={{ marginBottom: '0.5rem', padding: '0' }}>
-              <div 
-                onClick={() => setIsLocationFilterOpen(!isLocationFilterOpen)}
-                style={{ 
-                  padding: '0.7rem 1rem', 
-                  borderRadius: '0.5rem', 
-                  cursor: 'pointer',
-                  backgroundColor: isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                  color: isLocationFilterOpen || selectedLocations.length > 0 ? '#60a5fa' : '#cbd5e1',
-                  border: isLocationFilterOpen ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
-                  fontWeight: '700',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  fontSize: '0.85rem',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent'}
-              >
-                <span>📍 Locations {selectedLocations.length > 0 && `(${selectedLocations.length})`}</span>
-                <span style={{ 
-                  fontSize: '0.6rem', 
-                  transition: 'transform 0.3s ease', 
-                  transform: isLocationFilterOpen ? 'rotate(90deg)' : 'rotate(0deg)',
-                  opacity: 0.5
-                }}>▶</span>
-              </div>
-              
-              {isLocationFilterOpen && (
-                <div style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '0.5rem', 
-                  maxHeight: '200px', 
-                  overflowY: 'auto', 
-                  padding: '0.75rem 1rem 1rem 1.5rem',
-                  backgroundColor: 'rgba(0,0,0,0.1)',
-                  borderBottomLeftRadius: '0.5rem',
-                  borderBottomRightRadius: '0.5rem'
-                }} className="custom-scrollbar">
-                  {sortedLocations.length > 0 ? sortedLocations.map(loc => (
-                    <label key={loc} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.8rem', color: selectedLocations.includes(loc) ? '#60a5fa' : '#cbd5e1', transition: 'color 0.2s' }}>
-                      <input 
-                        type="checkbox" 
-                        checked={selectedLocations.includes(loc)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedLocations([...selectedLocations, loc]);
-                          } else {
-                            setSelectedLocations(selectedLocations.filter(l => l !== loc));
-                          }
-                        }}
-                        style={{ cursor: 'pointer', accentColor: '#3b82f6' }}
-                      />
-                      {loc}
-                    </label>
-                  )) : (
-                    <div style={{ fontSize: '0.75rem', color: '#475569', fontStyle: 'italic' }}>No locations found</div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
-
             {Object.keys(categoryMap).sort().map(cat => (
               <div key={cat}>
                 <div 
@@ -284,6 +217,73 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                 )}
               </div>
             ))}
+
+            <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
+
+            {/* Location Filter */}
+            <div style={{ marginBottom: '0.5rem', padding: '0' }}>
+              <div 
+                onClick={() => setIsLocationFilterOpen(!isLocationFilterOpen)}
+                style={{ 
+                  padding: '0.7rem 1rem', 
+                  borderRadius: '0.5rem', 
+                  cursor: 'pointer',
+                  backgroundColor: isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                  color: isLocationFilterOpen || selectedLocations.length > 0 ? '#60a5fa' : '#cbd5e1',
+                  border: isLocationFilterOpen ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                  fontWeight: '700',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '0.85rem',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent'}
+              >
+                <span>📍 Locations {selectedLocations.length > 0 && `(${selectedLocations.length})`}</span>
+                <span style={{ 
+                  fontSize: '0.6rem', 
+                  transition: 'transform 0.3s ease', 
+                  transform: isLocationFilterOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+                  opacity: 0.5
+                }}>▶</span>
+              </div>
+              
+              {isLocationFilterOpen && (
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '0.5rem', 
+                  maxHeight: '200px', 
+                  overflowY: 'auto', 
+                  padding: '0.75rem 1rem 1rem 1.5rem',
+                  backgroundColor: 'rgba(0,0,0,0.1)',
+                  borderBottomLeftRadius: '0.5rem',
+                  borderBottomRightRadius: '0.5rem'
+                }} className="custom-scrollbar">
+                  {sortedLocations.length > 0 ? sortedLocations.map(loc => (
+                    <label key={loc} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.8rem', color: selectedLocations.includes(loc) ? '#60a5fa' : '#cbd5e1', transition: 'color 0.2s' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={selectedLocations.includes(loc)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedLocations([...selectedLocations, loc]);
+                          } else {
+                            setSelectedLocations(selectedLocations.filter(l => l !== loc));
+                          }
+                        }}
+                        style={{ cursor: 'pointer', accentColor: '#3b82f6' }}
+                      />
+                      {loc}
+                    </label>
+                  )) : (
+                    <div style={{ fontSize: '0.75rem', color: '#475569', fontStyle: 'italic' }}>No locations found</div>
+                  )}
+                </div>
+              )}
+            </div>
             </div>
           </div>
         </div>

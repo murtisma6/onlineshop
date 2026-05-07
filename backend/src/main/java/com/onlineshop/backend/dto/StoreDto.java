@@ -14,4 +14,5 @@ public class StoreDto {
     private String ribbonColor;
     private String headerTagline;
     private String logoUrl;
+    private java.time.LocalDateTime updatedAt;
 }
