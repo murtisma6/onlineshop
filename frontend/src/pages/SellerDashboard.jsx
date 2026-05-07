@@ -103,6 +103,10 @@ const SellerDashboard = ({ user }) => {
       formData.append('ribbonColor', editRibbonColor);
       formData.append('headerTagline', editTagline);
       if (storeLogo) {
+        if (storeLogo.size > 300 * 1024) {
+          setUpdateStoreStatus('Logo file size exceeds 300KB limit');
+          return;
+        }
         formData.append('logo', storeLogo);
       }
 
@@ -193,6 +197,16 @@ const SellerDashboard = ({ user }) => {
     if (totalImages > 5) {
       setStatus('Maximum 5 images allowed in total');
       return;
+    }
+
+    // Check file sizes
+    if (images && images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        if (images[i].size > 300 * 1024) {
+          setStatus(`Image "${images[i].name}" exceeds 300KB limit`);
+          return;
+        }
+      }
     }
 
     const formData = new FormData();

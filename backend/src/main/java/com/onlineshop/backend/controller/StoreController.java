@@ -15,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,8 +28,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/stores")
-@CrossOrigin(origins = {"http://localhost", "http://192.168.0.105"})
+@CrossOrigin(origins = {"http://localhost", "${app.frontend-url}"})
 public class StoreController {
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @Autowired
     private StoreRepository storeRepository;
@@ -154,7 +158,7 @@ public class StoreController {
         dto.setHeaderTagline(s.getHeaderTagline());
         
         if (s.getLogoPath() != null) {
-            dto.setLogoUrl("http://192.168.0.105:8080/api/stores/" + s.getId() + "/logo");
+            dto.setLogoUrl(baseUrl + "/api/stores/" + s.getId() + "/logo");
         }
 
         Long views = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.PRODUCT_VIEW);

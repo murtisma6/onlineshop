@@ -13,7 +13,7 @@ const Storefront = () => {
   const [error, setError] = useState(null);
   
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -45,12 +45,12 @@ const Storefront = () => {
     let filtered = products;
     if (selectedCategory) {
       filtered = filtered.filter(p => p.category === selectedCategory);
-      if (selectedSubcategory) {
-        filtered = filtered.filter(p => p.subcategory === selectedSubcategory);
+      if (selectedSubcategories.length > 0) {
+        filtered = filtered.filter(p => selectedSubcategories.includes(p.subcategory));
       }
     }
     setFilteredProducts(filtered);
-  }, [selectedCategory, selectedSubcategory, products]);
+  }, [selectedCategory, selectedSubcategories, products]);
 
   // Extract Categories and Subcategories
   const categoryMap = {};
@@ -163,49 +163,58 @@ const Storefront = () => {
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               <div 
-                onClick={() => { setSelectedCategory(null); setSelectedSubcategory(null); }}
+                onClick={() => { setSelectedCategory(null); setSelectedSubcategories([]); }}
                 style={{ 
                   padding: '0.7rem 1rem', 
                   borderRadius: '0.5rem', 
                   cursor: 'pointer',
-                  backgroundColor: !selectedCategory ? '#f1f5f9' : 'transparent',
-                  color: !selectedCategory ? '#0f172a' : '#475569',
-                  border: !selectedCategory ? '1px solid #e2e8f0' : '1px solid transparent',
+                  backgroundColor: !selectedCategory ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                  color: !selectedCategory ? '#60a5fa' : '#cbd5e1',
+                  border: !selectedCategory ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
                   fontWeight: !selectedCategory ? '700' : '500',
-                  transition: 'all 0.2s ease',
-                  fontSize: '0.9rem'
+                  transition: 'all 0.3s ease',
+                  fontSize: '0.85rem'
                 }}
-                onMouseOver={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = '#f8fafc', e.currentTarget.style.color = '#1e293b')}
-                onMouseOut={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#475569')}
+                onMouseOver={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)', e.currentTarget.style.color = '#ffffff')}
+                onMouseOut={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#cbd5e1')}
               >
-                All Products
+                All Items
               </div>
 
-              <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '0.5rem 0' }}></div>
+              <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
 
               {Object.keys(categoryMap).sort().map(cat => (
                 <div key={cat}>
                   <div 
-                    onClick={() => { setSelectedCategory(cat); setSelectedSubcategory(null); }}
+                    onClick={() => { 
+                      if (selectedCategory === cat) {
+                        setSelectedCategory(null);
+                        setSelectedSubcategories([]);
+                      } else {
+                        setSelectedCategory(cat); 
+                        setSelectedSubcategories([]); 
+                      }
+                    }}
                     style={{ 
                       padding: '0.7rem 1rem', 
                       borderRadius: '0.5rem', 
                       cursor: 'pointer',
-                      backgroundColor: selectedCategory === cat && !selectedSubcategory ? '#f1f5f9' : 'transparent',
-                      color: selectedCategory === cat ? '#0f172a' : '#475569',
-                      border: selectedCategory === cat && !selectedSubcategory ? '1px solid #e2e8f0' : '1px solid transparent',
+                      backgroundColor: selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                      color: selectedCategory === cat ? '#60a5fa' : '#94a3b8',
+                      border: selectedCategory === cat ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
                       fontWeight: selectedCategory === cat ? '700' : '500',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      fontSize: '0.9rem',
-                      transition: 'all 0.2s ease'
+                      fontSize: '0.85rem',
+                      transition: 'all 0.3s ease',
+                      marginBottom: '0.2rem'
                     }}
-                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat && !selectedSubcategory ? '#e2e8f0' : '#f8fafc', e.currentTarget.style.color = selectedCategory === cat ? '#0f172a' : '#1e293b')}
-                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat && !selectedSubcategory ? '#f1f5f9' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#0f172a' : '#475569')}
+                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#ffffff')}
+                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#94a3b8')}
                   >
                     {cat}
-                    <span style={{ fontSize: '0.6rem', color: '#94a3b8', transform: selectedCategory === cat ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
+                    <span style={{ fontSize: '0.6rem', opacity: 0.5, transform: selectedCategory === cat ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
                       ▶
                     </span>
                   </div>
@@ -216,29 +225,39 @@ const Storefront = () => {
                       marginTop: '0.3rem', 
                       display: 'flex', 
                       flexDirection: 'column', 
-                      gap: '0.2rem', 
-                      borderLeft: '2px solid #e2e8f0', 
-                      paddingLeft: '0.8rem'
+                      gap: '0.4rem',
+                      padding: '0.5rem 0.5rem 1rem 1rem',
+                      borderLeft: '1px solid rgba(59, 130, 246, 0.2)',
+                      marginBottom: '0.5rem'
                     }}>
-                      {[...categoryMap[cat]].sort().map(sub => (
-                        <div 
-                          key={sub}
-                          onClick={() => setSelectedSubcategory(sub)}
+                      {Array.from(categoryMap[cat]).sort().map(subcat => (
+                        <label 
+                          key={subcat}
                           style={{ 
-                            padding: '0.5rem 0.7rem', 
-                            borderRadius: '0.4rem', 
-                            cursor: 'pointer',
-                            fontSize: '0.85rem',
-                            backgroundColor: selectedSubcategory === sub ? '#e0e7ff' : 'transparent',
-                            color: selectedSubcategory === sub ? '#4f46e5' : '#64748b',
-                            fontWeight: selectedSubcategory === sub ? '700' : '500',
-                            transition: 'all 0.2s ease'
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '0.6rem', 
+                            cursor: 'pointer', 
+                            fontSize: '0.8rem', 
+                            color: selectedSubcategories.includes(subcat) ? '#60a5fa' : '#cbd5e1',
+                            transition: 'color 0.2s',
+                            padding: '0.2rem 0'
                           }}
-                          onMouseOver={(e) => selectedSubcategory === sub ? null : (e.currentTarget.style.color = '#1e293b', e.currentTarget.style.backgroundColor = '#f8fafc')}
-                          onMouseOut={(e) => selectedSubcategory === sub ? null : (e.currentTarget.style.color = '#64748b', e.currentTarget.style.backgroundColor = 'transparent')}
                         >
-                          {sub}
-                        </div>
+                          <input 
+                            type="checkbox" 
+                            checked={selectedSubcategories.includes(subcat)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedSubcategories([...selectedSubcategories, subcat]);
+                              } else {
+                                setSelectedSubcategories(selectedSubcategories.filter(s => s !== subcat));
+                              }
+                            }}
+                            style={{ cursor: 'pointer', accentColor: '#3b82f6' }}
+                          />
+                          {subcat}
+                        </label>
                       ))}
                     </div>
                   )}
@@ -274,9 +293,9 @@ const Storefront = () => {
           </div>
 
           <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #e2e8f0', paddingBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.5rem', color: '#1e293b' }}>
-              {selectedCategory ? `${selectedCategory} ${selectedSubcategory ? `> ${selectedSubcategory}` : ''}` : 'Store Catalog'}
-            </h2>
+              <h2 style={{ fontSize: '1.5rem' }}>
+                {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length} subcategories)` : ''}` : 'Our Collection'}
+              </h2>
             <span style={{ fontSize: '1rem', color: '#64748b', backgroundColor: '#e2e8f0', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontWeight: 'bold' }}>
               {filteredProducts.length} Items
             </span>

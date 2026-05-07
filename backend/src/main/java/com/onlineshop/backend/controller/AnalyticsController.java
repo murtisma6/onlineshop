@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/analytics")
-@CrossOrigin(origins = {"http://localhost", "http://192.168.0.105"})
+@CrossOrigin(origins = {"http://localhost", "${app.frontend-url}"})
 public class AnalyticsController {
 
     @Autowired

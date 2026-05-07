@@ -8,8 +8,10 @@ const BuyerHome = ({ user }) => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+  const [selectedLocations, setSelectedLocations] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLocationFilterOpen, setIsLocationFilterOpen] = useState(false);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -40,21 +42,29 @@ const BuyerHome = ({ user }) => {
     let filtered = products;
     if (selectedCategory) {
       filtered = filtered.filter(p => p.category === selectedCategory);
-      if (selectedSubcategory) {
-        filtered = filtered.filter(p => p.subcategory === selectedSubcategory);
+      if (selectedSubcategories.length > 0) {
+        filtered = filtered.filter(p => selectedSubcategories.includes(p.subcategory));
       }
     }
+    if (selectedLocations.length > 0) {
+      filtered = filtered.filter(p => selectedLocations.includes(p.sellerCity));
+    }
     setFilteredProducts(filtered);
-  }, [selectedCategory, selectedSubcategory, products]);
+  }, [selectedCategory, selectedSubcategories, selectedLocations, products]);
 
-  // Extract Categories and Subcategories
+  // Extract Categories, Subcategories and Locations
   const categoryMap = {};
+  const locations = new Set();
   products.forEach(p => {
     if (p.category) {
       if (!categoryMap[p.category]) categoryMap[p.category] = new Set();
       if (p.subcategory) categoryMap[p.category].add(p.subcategory);
     }
+    if (p.sellerCity) {
+      locations.add(p.sellerCity);
+    }
   });
+  const sortedLocations = Array.from(locations).sort();
 
   const handleWhatsAppClick = (e, product) => {
     e.stopPropagation();
@@ -107,22 +117,89 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             <div 
-              onClick={() => { setSelectedCategory(null); setSelectedSubcategory(null); }}
+              onClick={() => { setSelectedCategory(null); setSelectedSubcategories([]); setSelectedLocations([]); }}
               style={{ 
                 padding: '0.7rem 1rem', 
                 borderRadius: '0.5rem', 
                 cursor: 'pointer',
-                backgroundColor: !selectedCategory ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                color: !selectedCategory ? '#60a5fa' : '#cbd5e1',
-                border: !selectedCategory ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
-                fontWeight: !selectedCategory ? '700' : '500',
+                backgroundColor: !selectedCategory && selectedLocations.length === 0 ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                color: !selectedCategory && selectedLocations.length === 0 ? '#60a5fa' : '#cbd5e1',
+                border: !selectedCategory && selectedLocations.length === 0 ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                fontWeight: !selectedCategory && selectedLocations.length === 0 ? '700' : '500',
                 transition: 'all 0.3s ease',
                 fontSize: '0.85rem'
               }}
-              onMouseOver={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)', e.currentTarget.style.color = '#ffffff')}
-              onMouseOut={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#cbd5e1')}
+              onMouseOver={(e) => (!selectedCategory && selectedLocations.length === 0) ? null : (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)', e.currentTarget.style.color = '#ffffff')}
+              onMouseOut={(e) => (!selectedCategory && selectedLocations.length === 0) ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#cbd5e1')}
             >
               All Collections
+            </div>
+
+            <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
+
+            {/* Location Filter */}
+            <div style={{ marginBottom: '0.5rem', padding: '0' }}>
+              <div 
+                onClick={() => setIsLocationFilterOpen(!isLocationFilterOpen)}
+                style={{ 
+                  padding: '0.7rem 1rem', 
+                  borderRadius: '0.5rem', 
+                  cursor: 'pointer',
+                  backgroundColor: isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                  color: isLocationFilterOpen || selectedLocations.length > 0 ? '#60a5fa' : '#cbd5e1',
+                  border: isLocationFilterOpen ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                  fontWeight: '700',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '0.85rem',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent'}
+              >
+                <span>📍 Locations {selectedLocations.length > 0 && `(${selectedLocations.length})`}</span>
+                <span style={{ 
+                  fontSize: '0.6rem', 
+                  transition: 'transform 0.3s ease', 
+                  transform: isLocationFilterOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+                  opacity: 0.5
+                }}>▶</span>
+              </div>
+              
+              {isLocationFilterOpen && (
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '0.5rem', 
+                  maxHeight: '200px', 
+                  overflowY: 'auto', 
+                  padding: '0.75rem 1rem 1rem 1.5rem',
+                  backgroundColor: 'rgba(0,0,0,0.1)',
+                  borderBottomLeftRadius: '0.5rem',
+                  borderBottomRightRadius: '0.5rem'
+                }} className="custom-scrollbar">
+                  {sortedLocations.length > 0 ? sortedLocations.map(loc => (
+                    <label key={loc} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.8rem', color: selectedLocations.includes(loc) ? '#60a5fa' : '#cbd5e1', transition: 'color 0.2s' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={selectedLocations.includes(loc)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedLocations([...selectedLocations, loc]);
+                          } else {
+                            setSelectedLocations(selectedLocations.filter(l => l !== loc));
+                          }
+                        }}
+                        style={{ cursor: 'pointer', accentColor: '#3b82f6' }}
+                      />
+                      {loc}
+                    </label>
+                  )) : (
+                    <div style={{ fontSize: '0.75rem', color: '#475569', fontStyle: 'italic' }}>No locations found</div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
@@ -130,23 +207,32 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
             {Object.keys(categoryMap).sort().map(cat => (
               <div key={cat}>
                 <div 
-                  onClick={() => { setSelectedCategory(cat); setSelectedSubcategory(null); }}
+                  onClick={() => { 
+                    if (selectedCategory === cat) {
+                      setSelectedCategory(null);
+                      setSelectedSubcategories([]);
+                    } else {
+                      setSelectedCategory(cat); 
+                      setSelectedSubcategories([]); 
+                    }
+                  }}
                   style={{ 
                     padding: '0.7rem 1rem', 
                     borderRadius: '0.5rem', 
                     cursor: 'pointer',
-                    backgroundColor: selectedCategory === cat && !selectedSubcategory ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                    backgroundColor: selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
                     color: selectedCategory === cat ? '#60a5fa' : '#94a3b8',
-                    border: selectedCategory === cat && !selectedSubcategory ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                    border: selectedCategory === cat ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
                     fontWeight: selectedCategory === cat ? '700' : '500',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     fontSize: '0.85rem',
-                    transition: 'all 0.3s ease'
+                    transition: 'all 0.3s ease',
+                    marginBottom: '0.2rem'
                   }}
-                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat && !selectedSubcategory ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#ffffff')}
-                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat && !selectedSubcategory ? 'rgba(59, 130, 246, 0.1)' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#94a3b8')}
+                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#ffffff')}
+                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#94a3b8')}
                 >
                   {cat}
                   <span style={{ fontSize: '0.6rem', opacity: 0.5, transform: selectedCategory === cat ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
@@ -160,29 +246,39 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                     marginTop: '0.3rem', 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    gap: '0.2rem', 
-                    borderLeft: '1px solid rgba(59, 130, 246, 0.3)', 
-                    paddingLeft: '0.8rem'
+                    gap: '0.4rem',
+                    padding: '0.5rem 0.5rem 1rem 1rem',
+                    borderLeft: '1px solid rgba(59, 130, 246, 0.2)',
+                    marginBottom: '0.5rem'
                   }}>
-                    {[...categoryMap[cat]].sort().map(sub => (
-                      <div 
-                        key={sub}
-                        onClick={() => setSelectedSubcategory(sub)}
+                    {Array.from(categoryMap[cat]).sort().map(subcat => (
+                      <label 
+                        key={subcat}
                         style={{ 
-                          padding: '0.5rem 0.7rem', 
-                          borderRadius: '0.4rem', 
-                          cursor: 'pointer',
-                          fontSize: '0.75rem',
-                          backgroundColor: selectedSubcategory === sub ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-                          color: selectedSubcategory === sub ? '#60a5fa' : '#64748b',
-                          fontWeight: selectedSubcategory === sub ? '600' : '500',
-                          transition: 'all 0.2s ease'
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '0.6rem', 
+                          cursor: 'pointer', 
+                          fontSize: '0.8rem', 
+                          color: selectedSubcategories.includes(subcat) ? '#60a5fa' : '#cbd5e1',
+                          transition: 'color 0.2s',
+                          padding: '0.2rem 0'
                         }}
-                        onMouseOver={(e) => selectedSubcategory === sub ? null : e.currentTarget.style.color = '#cbd5e1'}
-                        onMouseOut={(e) => selectedSubcategory === sub ? null : e.currentTarget.style.color = '#64748b'}
                       >
-                        {sub}
-                      </div>
+                        <input 
+                          type="checkbox" 
+                          checked={selectedSubcategories.includes(subcat)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedSubcategories([...selectedSubcategories, subcat]);
+                            } else {
+                              setSelectedSubcategories(selectedSubcategories.filter(s => s !== subcat));
+                            }
+                          }}
+                          style={{ cursor: 'pointer', accentColor: '#3b82f6' }}
+                        />
+                        {subcat}
+                      </label>
                     ))}
                   </div>
                 )}
@@ -226,7 +322,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
           <div>
             <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ fontSize: '1.5rem' }}>
-                {selectedCategory ? `${selectedCategory} ${selectedSubcategory ? `> ${selectedSubcategory}` : ''}` : 'Featured Products'}
+                {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length} subcategories)` : ''}` : 'Featured Products'}
               </h2>
               <span style={{ fontSize: '0.9rem', color: '#64748b' }}>{filteredProducts.length} items found</span>
             </div>
@@ -353,8 +449,8 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
             </div>
             {filteredProducts.length === 0 && (
               <div style={{ textAlign: 'center', marginTop: '4rem', color: '#64748b' }}>
-                <p style={{ fontSize: '1.2rem' }}>No products found in this category.</p>
-                <button onClick={() => { setSelectedCategory(null); setSelectedSubcategory(null); }} className="btn" style={{ marginTop: '1rem', color: '#4f46e5' }}>Clear Filters</button>
+                <p style={{ fontSize: '1.2rem' }}>No products found matching your filters.</p>
+                <button onClick={() => { setSelectedCategory(null); setSelectedSubcategories([]); setSelectedLocations([]); }} className="btn" style={{ marginTop: '1rem', color: '#4f46e5' }}>Clear All Filters</button>
               </div>
             )}
           </div>

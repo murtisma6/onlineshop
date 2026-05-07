@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,8 +26,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = {"http://localhost", "http://192.168.0.105"})
+@CrossOrigin(origins = {"http://localhost", "${app.frontend-url}"})
 public class ProductController {
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @Autowired
     private ProductRepository productRepository;
@@ -213,7 +217,7 @@ public class ProductController {
         dto.setSellerCity(product.getStore().getSeller().getCity());
         
         List<String> urls = product.getImages().stream()
-                .map(img -> "http://192.168.0.105:8080/api/products/" + product.getId() + "/images/" + img.getId())
+                .map(img -> baseUrl + "/api/products/" + product.getId() + "/images/" + img.getId())
                 .collect(Collectors.toList());
         dto.setImageUrls(urls);
 
@@ -223,7 +227,7 @@ public class ProductController {
         dto.setClicks(clicks);
 
         if (product.getStore().getLogoPath() != null) {
-            dto.setStoreLogoUrl("http://192.168.0.105:8080/api/stores/" + product.getStore().getId() + "/logo");
+            dto.setStoreLogoUrl(baseUrl + "/api/stores/" + product.getStore().getId() + "/logo");
         }
 
         return dto;
