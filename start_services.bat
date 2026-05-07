@@ -31,8 +31,8 @@ start "Online Shop - Frontend" /D "%PROJECT_ROOT%frontend" cmd /k "npm run dev"
 echo.
 echo ========================================
 echo Services are starting in separate windows.
-echo Frontend: http://localhost:80
-echo Backend:  http://localhost:8080
+echo Frontend: http://localhost:80  (Network: http://192.168.0.105:80)
+echo Backend:  http://localhost:8080 (Network: http://192.168.0.105:8080)
 echo ========================================
 echo.
 pause

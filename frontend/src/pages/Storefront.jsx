@@ -86,7 +86,7 @@ const Storefront = () => {
       {/* Storefront Header - Themed with Custom Color */}
       <div style={{ 
         background: `linear-gradient(135deg, ${store.ribbonColor || '#4f46e5'} 0%, ${store.ribbonColor || '#3b82f6'} 80%)`, 
-        padding: '4rem 0', 
+        padding: '2rem 0', 
         color: '#ffffff', 
         textAlign: 'center', 
         position: 'relative',
@@ -98,8 +98,8 @@ const Storefront = () => {
         
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', position: 'relative', zIndex: 1 }}>
           <div style={{ 
-            width: '90px', 
-            height: '90px', 
+            width: '70px', 
+            height: '70px', 
             borderRadius: '50%', 
             backgroundColor: 'rgba(255,255,255,0.2)', 
             backdropFilter: 'blur(8px)',
@@ -107,8 +107,8 @@ const Storefront = () => {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            margin: '0 auto 1.5rem auto', 
-            fontSize: '2.5rem', 
+            margin: '0 auto 0.75rem auto', 
+            fontSize: '1.8rem', 
             fontWeight: 'bold', 
             border: '2px solid rgba(255,255,255,0.4)',
             boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
@@ -121,8 +121,8 @@ const Storefront = () => {
             )}
           </div>
 
-          <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '0.5rem', letterSpacing: '1px', textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>{store.name}</h1>
-          <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.9)', maxWidth: '600px', margin: '0 auto', fontWeight: '500' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '0.25rem', letterSpacing: '0.5px', textShadow: '0 2px 4px rgba(0,0,0,0.15)' }}>{store.name}</h1>
+          <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.9)', maxWidth: '600px', margin: '0 auto', fontWeight: '500' }}>
             {store.headerTagline || 'Welcome to our store! Browse our collection below.'}
           </p>
         </div>
