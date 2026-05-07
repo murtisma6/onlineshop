@@ -91,7 +91,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
       {/* Left Sidebar Menu */}
       <aside style={{ 
         width: isSidebarOpen ? '200px' : '0px', 
-        background: 'linear-gradient(180deg, #0f172a 0%, #111827 100%)', 
+        background: 'linear-gradient(180deg, #1E3147 0%, #13202e 100%)', 
         color: '#ffffff',
         flexShrink: 0,
         borderRight: isSidebarOpen ? '1px solid rgba(255,255,255,0.05)' : 'none',

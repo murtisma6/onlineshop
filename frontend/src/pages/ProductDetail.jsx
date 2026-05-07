@@ -59,7 +59,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
 
   return (
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
-      <div style={{ backgroundColor: '#0f172a', padding: '1rem 0' }}>
+      <div style={{ backgroundColor: '#1E3147', padding: '1rem 0' }}>
         <div className="container">
           <button 
             onClick={() => fromStore ? navigate(`/store/${fromStore}`) : navigate('/')} 
@@ -134,7 +134,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
               <span style={{ fontSize: '0.85rem', backgroundColor: '#eef2ff', padding: '0.25rem 0.75rem', borderRadius: '1rem', color: '#4f46e5', fontWeight: 600 }}>{product.subcategory || 'Uncategorized'}</span>
             </div>
             
-            <h1 style={{ fontSize: '2.5rem', color: '#0f172a', marginBottom: '0.5rem', lineHeight: 1.2 }}>{product.name}</h1>
+            <h1 style={{ fontSize: '2.5rem', color: '#1E3147', marginBottom: '0.5rem', lineHeight: 1.2 }}>{product.name}</h1>
             
             <div style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {product.storeLogoUrl ? (

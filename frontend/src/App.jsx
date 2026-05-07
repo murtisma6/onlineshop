@@ -81,7 +81,7 @@ function App() {
             />
           </Routes>
         </div>
-        <footer style={{ backgroundColor: '#0f172a', color: '#94a3b8', padding: '0.75rem', textAlign: 'center', fontSize: '0.875rem', borderTop: '1px solid #1e293b' }}>
+        <footer style={{ backgroundColor: '#1E3147', color: '#94a3b8', padding: '0.75rem', textAlign: 'center', fontSize: '0.875rem', borderTop: '1px solid #1e293b' }}>
           &copy; copyright 2026 MCube Hive IT Solutions
         </footer>
       </div>

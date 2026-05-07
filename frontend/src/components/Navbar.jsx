@@ -9,7 +9,7 @@ const Navbar = ({ user, onLogout }) => {
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: '1rem',
-      backgroundColor: '#0f172a', /* Professional Navy Blue */
+      backgroundColor: '#1E3147', /* Brand Navy Blue */
       color: '#ffffff',
       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
       position: 'sticky',
@@ -25,7 +25,7 @@ const Navbar = ({ user, onLogout }) => {
           <path d="M20 5L5 18V35H14V25H26V35H35V18L20 5Z" fill="#3b82f6" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M20 5L35 18M20 5L5 18" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        <span className="nav-title" style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>Buyer's Home</span>
+        <span className="nav-title" style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>{user ? "Buyers Digital Store" : "Digital Store"}</span>
       </div>
       <div>
         {user ? (
@@ -40,7 +40,7 @@ const Navbar = ({ user, onLogout }) => {
             <button onClick={() => { onLogout(); navigate('/'); }} className="btn btn-nav" style={{ backgroundColor: 'transparent', color: '#cbd5e1', border: '1px solid #475569' }}>Logout</button>
           </div>
         ) : (
-          <button onClick={() => navigate('/login')} className="btn btn-nav" style={{ backgroundColor: '#ffffff', color: '#0f172a', fontWeight: 'bold' }}>Login</button>
+          <button onClick={() => navigate('/login')} className="btn btn-nav" style={{ backgroundColor: '#ffffff', color: '#1E3147', fontWeight: 'bold' }}>Login</button>
         )}
       </div>
     </nav>

@@ -124,7 +124,7 @@ const AdminDashboard = ({ user }) => {
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)', padding: '2rem' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <h1 className="dashboard-title" style={{ fontSize: '2.5rem', color: '#0f172a', margin: 0 }}>Admin Dashboard</h1>
+          <h1 className="dashboard-title" style={{ fontSize: '2.5rem', color: '#1E3147', margin: 0 }}>Admin Dashboard</h1>
           <button 
             onClick={refreshData} 
             className="btn btn-secondary"
@@ -176,7 +176,7 @@ const AdminDashboard = ({ user }) => {
               <tbody>
                 {dashboardData.stores.map(store => (
                   <tr key={store.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '1rem 0', fontWeight: '600', color: '#0f172a' }}>{store.name}</td>
+                    <td style={{ padding: '1rem 0', fontWeight: '600', color: '#1E3147' }}>{store.name}</td>
                     <td style={{ color: '#475569' }}>{store.productCount}</td>
                     <td style={{ color: '#475569' }}>👁️ {store.totalViews || 0}</td>
                     <td style={{ color: '#475569' }}>👆 {store.totalClicks || 0}</td>
@@ -210,7 +210,7 @@ const AdminDashboard = ({ user }) => {
                     <td style={{ fontWeight: '600', color: log.eventType === 'WHATSAPP_CLICK' ? '#10b981' : '#3b82f6' }}>
                       {log.eventType === 'WHATSAPP_CLICK' ? '👆 CLICK' : '👁️ VIEW'}
                     </td>
-                    <td style={{ color: '#0f172a' }}><strong>{log.storeName}</strong><br/><span style={{ color: '#64748b', fontSize: '0.8rem' }}>{log.productName}</span></td>
+                    <td style={{ color: '#1E3147' }}><strong>{log.storeName}</strong><br/><span style={{ color: '#64748b', fontSize: '0.8rem' }}>{log.productName}</span></td>
                     <td style={{ color: '#475569' }}>{log.username}</td>
                   </tr>
                 ))}
@@ -225,7 +225,7 @@ const AdminDashboard = ({ user }) => {
 
         {/* Bulk Operations */}
         <div style={{ borderTop: '2px solid #e2e8f0', paddingTop: '3rem' }}>
-          <h2 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '1.5rem' }}>Bulk Operations</h2>
+          <h2 style={{ fontSize: '1.8rem', color: '#1E3147', marginBottom: '1.5rem' }}>Bulk Operations</h2>
           
           {bulkStatus.message && (
             <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: '0.5rem', backgroundColor: bulkStatus.type === 'error' ? '#fee2e2' : '#dcfce7', color: bulkStatus.type === 'error' ? '#b91c1c' : '#16a34a', fontWeight: '600' }}>

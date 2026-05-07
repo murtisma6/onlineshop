@@ -48,7 +48,7 @@ const Login = ({ setUser }) => {
           <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.75rem' }}>Login</button>
         </form>
         <p style={{ marginTop: '1rem', fontSize: '0.875rem' }}>
-          Don't have an account? <a href="/register" style={{ color: 'var(--primary-color)' }}>Register here</a>
+          Don't have an account? <a href="/register" style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>Register here</a>
         </p>
       </div>
     </div>

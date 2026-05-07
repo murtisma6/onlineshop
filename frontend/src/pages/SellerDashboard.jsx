@@ -282,7 +282,7 @@ const SellerDashboard = ({ user }) => {
   if (!selectedStore) {
     return (
       <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
-        <div style={{ backgroundColor: '#0f172a', padding: '1.5rem 0', marginBottom: '1rem' }}>
+        <div style={{ backgroundColor: '#1E3147', padding: '1.5rem 0', marginBottom: '1rem' }}>
           <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', textAlign: 'left' }}>
             <h1 className="dashboard-title" style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>My Stores</h1>
             <p className="dashboard-subtitle" style={{ color: '#cbd5e1' }}>Select a store to manage inventory or create a new one.</p>
@@ -408,7 +408,7 @@ const SellerDashboard = ({ user }) => {
 
   return (
     <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
-      <div style={{ backgroundColor: '#0f172a', padding: '1.5rem 0', marginBottom: '1rem' }}>
+      <div style={{ backgroundColor: '#1E3147', padding: '1.5rem 0', marginBottom: '1rem' }}>
         <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 className="dashboard-title" style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>{selectedStore.name}</h1>
@@ -775,7 +775,7 @@ const SellerDashboard = ({ user }) => {
                     <div style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <h3 style={{ fontSize: '1.1rem', color: '#0f172a', margin: '0 0 0.25rem 0' }}>{product.name}</h3>
+                          <h3 style={{ fontSize: '1.1rem', color: '#1E3147', margin: '0 0 0.25rem 0' }}>{product.name}</h3>
                           <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: '#64748b' }}>
                             <span>{product.category || 'Uncategorized'}</span>
                             <span>&bull;</span>
