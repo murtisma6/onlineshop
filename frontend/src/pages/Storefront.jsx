@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchStoreByUrl, fetchStoreProducts } from '../api';
+import { fetchStoreByUrl, fetchStoreProducts, fetchSellerStores } from '../api';
 
 const Storefront = () => {
   const { uniqueUrl } = useParams();
@@ -15,6 +15,7 @@ const Storefront = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [siblingStores, setSiblingStores] = useState([]);
 
   useEffect(() => {
     loadStoreAndProducts();
@@ -32,6 +33,13 @@ const Storefront = () => {
       const productsRes = await fetchStoreProducts(storeData.id);
       setProducts(productsRes.data);
       setFilteredProducts(productsRes.data);
+
+      // 3. Fetch sibling stores from the same seller
+      if (storeData.sellerId) {
+        const sellerStoresRes = await fetchSellerStores(storeData.sellerId);
+        const others = sellerStoresRes.data.filter(s => s.id !== storeData.id);
+        setSiblingStores(others);
+      }
     } catch (err) {
       console.error('Failed to load store front', err);
       setError('Store not found or unavailable.');
@@ -380,6 +388,68 @@ const Storefront = () => {
         )}
       </main>
       </div>
+
+      {/* More Stores from this Seller */}
+      {siblingStores.length > 0 && (
+        <div style={{ backgroundColor: '#f1f5f9', borderTop: '1px solid #e2e8f0', padding: '2.5rem 1.5rem' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#1E3147', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3147" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              More stores from this seller
+            </h2>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              {siblingStores.map(s => (
+                <div
+                  key={s.id}
+                  onClick={() => navigate(`/store/${s.uniqueUrl}`)}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '0.875rem',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+                    border: '1px solid #e2e8f0',
+                    padding: '1rem 1.25rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.875rem',
+                    minWidth: '200px',
+                    flex: '0 0 auto',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)'; }}
+                >
+                  {/* Store logo / initial */}
+                  <div style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${s.ribbonColor || '#4f46e5'}, ${s.ribbonColor || '#3b82f6'})`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    overflow: 'hidden',
+                    border: '2px solid rgba(255,255,255,0.8)',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  }}>
+                    {s.logoUrl
+                      ? <img src={s.logoUrl} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span style={{ color: '#fff', fontWeight: '700', fontSize: '1.1rem' }}>{s.name.charAt(0).toUpperCase()}</span>
+                    }
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1E3147' }}>{s.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.1rem' }}>{s.productCount ?? 0} products</div>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 'auto', flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
