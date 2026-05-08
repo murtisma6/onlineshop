@@ -88,6 +88,9 @@ public class StoreController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "ribbonColor", required = false) String ribbonColor,
             @RequestParam(value = "headerTagline", required = false) String headerTagline,
+            @RequestParam(value = "instagramUrl", required = false) String instagramUrl,
+            @RequestParam(value = "facebookUrl", required = false) String facebookUrl,
+            @RequestParam(value = "youtubeUrl", required = false) String youtubeUrl,
             @RequestParam(value = "logo", required = false) MultipartFile logo) {
         
         Optional<Store> storeOpt = storeRepository.findById(id);
@@ -104,6 +107,15 @@ public class StoreController {
         }
         if (headerTagline != null) {
             store.setHeaderTagline(headerTagline);
+        }
+        if (instagramUrl != null) {
+            store.setInstagramUrl(instagramUrl);
+        }
+        if (facebookUrl != null) {
+            store.setFacebookUrl(facebookUrl);
+        }
+        if (youtubeUrl != null) {
+            store.setYoutubeUrl(youtubeUrl);
         }
 
         if (logo != null && !logo.isEmpty()) {
@@ -161,6 +173,10 @@ public class StoreController {
         if (s.getLogoPath() != null) {
             dto.setLogoUrl(baseUrl + "/api/stores/" + s.getId() + "/logo");
         }
+
+        dto.setInstagramUrl(s.getInstagramUrl());
+        dto.setFacebookUrl(s.getFacebookUrl());
+        dto.setYoutubeUrl(s.getYoutubeUrl());
 
         Long views = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.PRODUCT_VIEW);
         Long clicks = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.WHATSAPP_CLICK);

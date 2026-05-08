@@ -34,6 +34,15 @@ public class Store {
     private String logoPath;
 
     @Column
+    private String instagramUrl;
+
+    @Column
+    private String facebookUrl;
+
+    @Column
+    private String youtubeUrl;
+
+    @Column
     @org.hibernate.annotations.UpdateTimestamp
     private java.time.LocalDateTime updatedAt;
 

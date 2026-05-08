@@ -14,5 +14,8 @@ public class StoreDto {
     private String ribbonColor;
     private String headerTagline;
     private String logoUrl;
+    private String instagramUrl;
+    private String facebookUrl;
+    private String youtubeUrl;
     private java.time.LocalDateTime updatedAt;
 }
