@@ -33,6 +33,8 @@ export const updateStore = (id, formData) => api.put(`/stores/${id}`, formData, 
   headers: { 'Content-Type': 'multipart/form-data' }
 });
 export const deleteStoreLogo = (id) => api.delete(`/stores/${id}/logo`);
+export const deleteLeftBanner = (id) => api.delete(`/stores/${id}/left-banner`);
+export const deleteRightBanner = (id) => api.delete(`/stores/${id}/right-banner`);
 export const deleteStore = (id) => api.delete(`/stores/${id}`);
 
 export const trackEvent = (data) => api.post('/analytics', data);

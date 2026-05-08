@@ -17,5 +17,7 @@ public class StoreDto {
     private String instagramUrl;
     private String facebookUrl;
     private String youtubeUrl;
+    private String leftBannerUrl;
+    private String rightBannerUrl;
     private java.time.LocalDateTime updatedAt;
 }

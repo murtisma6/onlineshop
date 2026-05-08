@@ -91,7 +91,9 @@ public class StoreController {
             @RequestParam(value = "instagramUrl", required = false) String instagramUrl,
             @RequestParam(value = "facebookUrl", required = false) String facebookUrl,
             @RequestParam(value = "youtubeUrl", required = false) String youtubeUrl,
-            @RequestParam(value = "logo", required = false) MultipartFile logo) {
+            @RequestParam(value = "logo", required = false) MultipartFile logo,
+            @RequestParam(value = "leftBanner", required = false) MultipartFile leftBanner,
+            @RequestParam(value = "rightBanner", required = false) MultipartFile rightBanner) {
         
         Optional<Store> storeOpt = storeRepository.findById(id);
         if (!storeOpt.isPresent()) {
@@ -136,6 +138,42 @@ public class StoreController {
             }
         }
 
+        if (leftBanner != null && !leftBanner.isEmpty()) {
+            try {
+                String uploadDir = "uploads/stores/" + id + "/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String fileName = "left_banner_" + System.currentTimeMillis() + "_" + leftBanner.getOriginalFilename();
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(leftBanner.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                
+                store.setLeftBannerPath(uploadDir + fileName);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload left banner");
+            }
+        }
+
+        if (rightBanner != null && !rightBanner.isEmpty()) {
+            try {
+                String uploadDir = "uploads/stores/" + id + "/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String fileName = "right_banner_" + System.currentTimeMillis() + "_" + rightBanner.getOriginalFilename();
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(rightBanner.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                
+                store.setRightBannerPath(uploadDir + fileName);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload right banner");
+            }
+        }
+
         store.setUpdatedAt(java.time.LocalDateTime.now());
         storeRepository.save(store);
         return ResponseEntity.ok(mapToDto(store));
@@ -143,18 +181,39 @@ public class StoreController {
 
     @GetMapping("/{id}/logo")
     public ResponseEntity<Resource> getStoreLogo(@PathVariable Long id) {
+        return getStoreImage(id, "logo");
+    }
+
+    @GetMapping("/{id}/left-banner")
+    public ResponseEntity<Resource> getLeftBanner(@PathVariable Long id) {
+        return getStoreImage(id, "left-banner");
+    }
+
+    @GetMapping("/{id}/right-banner")
+    public ResponseEntity<Resource> getRightBanner(@PathVariable Long id) {
+        return getStoreImage(id, "right-banner");
+    }
+
+    private ResponseEntity<Resource> getStoreImage(Long id, String type) {
         Optional<Store> storeOpt = storeRepository.findById(id);
-        if (storeOpt.isPresent() && storeOpt.get().getLogoPath() != null) {
-            try {
-                Path path = Paths.get(storeOpt.get().getLogoPath());
-                Resource resource = new UrlResource(path.toUri());
-                if (resource.exists()) {
-                    return ResponseEntity.ok()
-                            .contentType(MediaType.IMAGE_JPEG)
-                            .body(resource);
+        if (storeOpt.isPresent()) {
+            String pathStr = null;
+            if ("logo".equals(type)) pathStr = storeOpt.get().getLogoPath();
+            else if ("left-banner".equals(type)) pathStr = storeOpt.get().getLeftBannerPath();
+            else if ("right-banner".equals(type)) pathStr = storeOpt.get().getRightBannerPath();
+
+            if (pathStr != null) {
+                try {
+                    Path path = Paths.get(pathStr);
+                    Resource resource = new UrlResource(path.toUri());
+                    if (resource.exists()) {
+                        return ResponseEntity.ok()
+                                .contentType(MediaType.IMAGE_JPEG)
+                                .body(resource);
+                    }
+                } catch (Exception e) {
+                    return ResponseEntity.notFound().build();
                 }
-            } catch (Exception e) {
-                return ResponseEntity.notFound().build();
             }
         }
         return ResponseEntity.notFound().build();
@@ -173,6 +232,12 @@ public class StoreController {
         if (s.getLogoPath() != null) {
             dto.setLogoUrl(baseUrl + "/api/stores/" + s.getId() + "/logo");
         }
+        if (s.getLeftBannerPath() != null) {
+            dto.setLeftBannerUrl(baseUrl + "/api/stores/" + s.getId() + "/left-banner");
+        }
+        if (s.getRightBannerPath() != null) {
+            dto.setRightBannerUrl(baseUrl + "/api/stores/" + s.getId() + "/right-banner");
+        }
 
         dto.setInstagramUrl(s.getInstagramUrl());
         dto.setFacebookUrl(s.getFacebookUrl());
@@ -190,17 +255,39 @@ public class StoreController {
 
     @DeleteMapping("/{id}/logo")
     public ResponseEntity<?> deleteStoreLogo(@PathVariable Long id) {
+        return deleteStoreImage(id, "logo");
+    }
+
+    @DeleteMapping("/{id}/left-banner")
+    public ResponseEntity<?> deleteLeftBanner(@PathVariable Long id) {
+        return deleteStoreImage(id, "left-banner");
+    }
+
+    @DeleteMapping("/{id}/right-banner")
+    public ResponseEntity<?> deleteRightBanner(@PathVariable Long id) {
+        return deleteStoreImage(id, "right-banner");
+    }
+
+    private ResponseEntity<?> deleteStoreImage(Long id, String type) {
         Optional<Store> storeOpt = storeRepository.findById(id);
         if (storeOpt.isPresent()) {
             Store store = storeOpt.get();
-            if (store.getLogoPath() != null) {
+            String pathStr = null;
+            if ("logo".equals(type)) pathStr = store.getLogoPath();
+            else if ("left-banner".equals(type)) pathStr = store.getLeftBannerPath();
+            else if ("right-banner".equals(type)) pathStr = store.getRightBannerPath();
+
+            if (pathStr != null) {
                 try {
-                    Files.deleteIfExists(Paths.get(store.getLogoPath()));
-                    store.setLogoPath(null);
+                    Files.deleteIfExists(Paths.get(pathStr));
+                    if ("logo".equals(type)) store.setLogoPath(null);
+                    else if ("left-banner".equals(type)) store.setLeftBannerPath(null);
+                    else if ("right-banner".equals(type)) store.setRightBannerPath(null);
+                    
                     storeRepository.save(store);
                     return ResponseEntity.ok(mapToDto(store));
                 } catch (IOException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete logo file");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete image file");
                 }
             }
         }

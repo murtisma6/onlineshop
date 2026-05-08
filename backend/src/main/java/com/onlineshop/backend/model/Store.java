@@ -41,6 +41,12 @@ public class Store {
 
     @Column
     private String youtubeUrl;
+    
+    @Column
+    private String leftBannerPath;
+    
+    @Column
+    private String rightBannerPath;
 
     @Column
     @org.hibernate.annotations.UpdateTimestamp

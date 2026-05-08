@@ -93,67 +93,100 @@ const Storefront = () => {
 
   return (
     <div style={{ backgroundColor: '#f8fafc', flex: 1, display: 'flex', flexDirection: 'column' }}>
-      {/* Storefront Header - Themed with Custom Color */}
       <div style={{ 
         background: `linear-gradient(135deg, ${store.ribbonColor || '#4f46e5'} 0%, ${store.ribbonColor || '#3b82f6'} 80%)`, 
-        padding: '2rem 0', 
         color: '#ffffff', 
-        textAlign: 'center', 
         position: 'relative',
         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
         overflow: 'hidden'
       }}>
-        {/* Decorative glass effect overlay */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(rgba(255,255,255,0.1), transparent)', pointerEvents: 'none' }}></div>
         
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', position: 'relative', zIndex: 1 }}>
+        <div style={{ 
+          width: '100%', 
+          display: 'grid', 
+          gridTemplateColumns: window.innerWidth < 1024 ? '1fr' : '30% 40% 30%', 
+          alignItems: 'stretch',
+          position: 'relative', 
+          zIndex: 1 
+        }}>
+          {/* Left Section: Configurable Image */}
           <div style={{ 
-            width: '70px', 
-            height: '70px', 
-            borderRadius: '50%', 
-            backgroundColor: 'rgba(255,255,255,0.2)', 
-            backdropFilter: 'blur(8px)',
-            color: '#ffffff', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            margin: '0 auto 0.75rem auto', 
-            fontSize: '1.8rem', 
-            fontWeight: 'bold', 
-            border: '2px solid rgba(255,255,255,0.4)',
-            boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+            display: window.innerWidth < 1024 && !store.leftBannerUrl ? 'none' : 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '180px',
             overflow: 'hidden'
           }}>
-            {store.logoUrl ? (
-              <img src={store.logoUrl} alt={store.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              store.name.charAt(0).toUpperCase()
+            {store.leftBannerUrl && (
+              <img src={store.leftBannerUrl} alt="Info" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             )}
           </div>
 
-          <h1 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '0.25rem', letterSpacing: '0.5px', textShadow: '0 2px 4px rgba(0,0,0,0.15)' }}>{store.name}</h1>
-          <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.9)', maxWidth: '600px', margin: '0 auto 1.5rem auto', fontWeight: '500' }}>
-            {store.headerTagline || 'Welcome to our store! Browse our collection below.'}
-          </p>
+          {/* Middle Section: Store Name, Logo, Socials */}
+          <div style={{ 
+            padding: '1.5rem', 
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              borderRadius: '50%', 
+              backgroundColor: 'rgba(255,255,255,0.2)', 
+              backdropFilter: 'blur(8px)',
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              margin: '0 auto 1rem auto', 
+              border: '2px solid rgba(255,255,255,0.4)',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+              overflow: 'hidden'
+            }}>
+              {store.logoUrl ? (
+                <img src={store.logoUrl} alt={store.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: '2rem', fontWeight: 'bold' }}>{store.name.charAt(0).toUpperCase()}</span>
+              )}
+            </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            {store.instagramUrl && (
-              <a href={store.instagramUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'rgba(255,255,255,0.15)', padding: '0.4rem 0.9rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: '600', transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }} onMouseOver={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                Instagram
-              </a>
-            )}
-            {store.facebookUrl && (
-              <a href={store.facebookUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'rgba(255,255,255,0.15)', padding: '0.4rem 0.9rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: '600', transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }} onMouseOver={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                Facebook
-              </a>
-            )}
-            {store.youtubeUrl && (
-              <a href={store.youtubeUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'rgba(255,255,255,0.15)', padding: '0.4rem 0.9rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: '600', transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }} onMouseOver={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 2-2 69.1 69.1 0 0 1 15 0 2 2 0 0 1 2 2 24.12 24.12 0 0 1 0 10 2 2 0 0 1-2 2 69.1 69.1 0 0 1-15 0 2 2 0 0 1-2-2Z"/><path d="m10 15 5-3-5-3z"/></svg>
-                YouTube
-              </a>
+            <h1 style={{ fontSize: '2.2rem', fontWeight: '800', marginBottom: '0.25rem', letterSpacing: '0.5px', textShadow: '0 2px 4px rgba(0,0,0,0.15)' }}>{store.name}</h1>
+            <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.9)', maxWidth: '400px', margin: '0 auto 1.5rem auto', fontWeight: '500', lineHeight: '1.4' }}>
+              {store.headerTagline || 'Welcome to our store! Browse our collection below.'}
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {store.instagramUrl && (
+                <a href={store.instagramUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '50%', transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }} onMouseOver={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.3)'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }} title="Instagram">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                </a>
+              )}
+              {store.facebookUrl && (
+                <a href={store.facebookUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '50%', transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }} onMouseOver={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.3)'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }} title="Facebook">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </a>
+              )}
+              {store.youtubeUrl && (
+                <a href={store.youtubeUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '50%', transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }} onMouseOver={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.3)'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }} title="YouTube">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 2-2 69.1 69.1 0 0 1 15 0 2 2 0 0 1 2 2 24.12 24.12 0 0 1 0 10 2 2 0 0 1-2 2 69.1 69.1 0 0 1-15 0 2 2 0 0 1-2-2Z"/><path d="m10 15 5-3-5-3z"/></svg>
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Right Section: Configurable Image */}
+          <div style={{ 
+            display: window.innerWidth < 1024 && !store.rightBannerUrl ? 'none' : 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '180px',
+            overflow: 'hidden'
+          }}>
+            {store.rightBannerUrl && (
+              <img src={store.rightBannerUrl} alt="Events" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             )}
           </div>
         </div>

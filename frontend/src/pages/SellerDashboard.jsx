@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { uploadProduct, fetchStoreProducts, deleteProduct, fetchSellerStores, createStore, updateProduct, deleteStore, updateStore, deleteStoreLogo } from '../api';
+import { uploadProduct, fetchStoreProducts, deleteProduct, fetchSellerStores, createStore, updateProduct, deleteStore, updateStore, deleteStoreLogo, deleteLeftBanner, deleteRightBanner } from '../api';
 
 const SellerDashboard = ({ user }) => {
   // Store Selection State
@@ -34,6 +34,10 @@ const SellerDashboard = ({ user }) => {
   const [editInstagram, setEditInstagram] = useState('');
   const [editFacebook, setEditFacebook] = useState('');
   const [editYoutube, setEditYoutube] = useState('');
+  const [leftBanner, setLeftBanner] = useState(null);
+  const [rightBanner, setRightBanner] = useState(null);
+  const [leftBannerPreview, setLeftBannerPreview] = useState(null);
+  const [rightBannerPreview, setRightBannerPreview] = useState(null);
 
 
   // Category State
@@ -98,6 +102,10 @@ const SellerDashboard = ({ user }) => {
     setEditFacebook(store.facebookUrl || '');
     setEditYoutube(store.youtubeUrl || '');
     setStoreLogo(null);
+    setLeftBanner(null);
+    setRightBanner(null);
+    setLeftBannerPreview(null);
+    setRightBannerPreview(null);
     setIsSettingsOpen(false); // Reset settings view
     loadMyProducts(store.id);
   };
@@ -119,6 +127,20 @@ const SellerDashboard = ({ user }) => {
           return;
         }
         formData.append('logo', storeLogo);
+      }
+      if (leftBanner) {
+        if (leftBanner.size > 300 * 1024) {
+          setUpdateStoreStatus('Left banner size exceeds 300KB limit');
+          return;
+        }
+        formData.append('leftBanner', leftBanner);
+      }
+      if (rightBanner) {
+        if (rightBanner.size > 300 * 1024) {
+          setUpdateStoreStatus('Right banner size exceeds 300KB limit');
+          return;
+        }
+        formData.append('rightBanner', rightBanner);
       }
 
       const res = await updateStore(selectedStore.id, formData);
@@ -147,6 +169,38 @@ const SellerDashboard = ({ user }) => {
       } catch (err) {
         console.error('Delete Logo Error:', err);
         setUpdateStoreStatus('Failed to delete logo.');
+      }
+    }
+  };
+
+  const handleDeleteLeftBanner = async () => {
+    if (window.confirm('Are you sure you want to delete the left side banner?')) {
+      try {
+        setUpdateStoreStatus('Deleting left banner...');
+        const res = await deleteLeftBanner(selectedStore.id);
+        setSelectedStore(res.data);
+        setUpdateStoreStatus('Left banner deleted successfully!');
+        loadStores();
+        setTimeout(() => setUpdateStoreStatus(''), 2000);
+      } catch (err) {
+        console.error('Delete Left Banner Error:', err);
+        setUpdateStoreStatus('Failed to delete left banner.');
+      }
+    }
+  };
+
+  const handleDeleteRightBanner = async () => {
+    if (window.confirm('Are you sure you want to delete the right side banner?')) {
+      try {
+        setUpdateStoreStatus('Deleting right banner...');
+        const res = await deleteRightBanner(selectedStore.id);
+        setSelectedStore(res.data);
+        setUpdateStoreStatus('Right banner deleted successfully!');
+        loadStores();
+        setTimeout(() => setUpdateStoreStatus(''), 2000);
+      } catch (err) {
+        console.error('Delete Right Banner Error:', err);
+        setUpdateStoreStatus('Failed to delete right banner.');
       }
     }
   };
@@ -623,6 +677,115 @@ const SellerDashboard = ({ user }) => {
                 </div>
               </div>
               
+              <div>
+                <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Configurable Side Banners (Left & Right)</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                  {/* Left Banner */}
+                  <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                    <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 600, fontSize: '0.85rem' }}>Left Side Banner</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+                      {(selectedStore.leftBannerUrl || leftBannerPreview) ? (
+                        <div style={{ position: 'relative', width: '100%' }}>
+                          <img 
+                            src={leftBannerPreview || selectedStore.leftBannerUrl} 
+                            alt="Left Banner" 
+                            style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '0.5rem', border: '1px solid #cbd5e1' }} 
+                          />
+                          {selectedStore.leftBannerUrl && !leftBannerPreview && (
+                            <button 
+                              type="button"
+                              onClick={handleDeleteLeftBanner}
+                              style={{ position: 'absolute', top: '-5px', right: '-5px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: 10 }}
+                              title="Delete Left Banner"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div style={{ width: '100%', height: '100px', borderRadius: '0.5rem', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '1.5rem', border: '2px dashed #cbd5e1' }}>
+                          ⬅️
+                        </div>
+                      )}
+                      <div style={{ width: '100%' }}>
+                        <input 
+                          type="file" 
+                          id="left-banner-upload"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setLeftBanner(file);
+                              setLeftBannerPreview(URL.createObjectURL(file));
+                            }
+                          }}
+                          style={{ display: 'none' }}
+                        />
+                        <label 
+                          htmlFor="left-banner-upload" 
+                          className="btn" 
+                          style={{ display: 'block', textAlign: 'center', backgroundColor: '#ffffff', color: '#1e293b', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', fontSize: '0.85rem', cursor: 'pointer', borderRadius: '0.4rem', fontWeight: 600 }}
+                        >
+                          {selectedStore.leftBannerUrl ? 'Change Left Banner' : 'Upload Left Banner'}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Banner */}
+                  <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                    <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 600, fontSize: '0.85rem' }}>Right Side Banner</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+                      {(selectedStore.rightBannerUrl || rightBannerPreview) ? (
+                        <div style={{ position: 'relative', width: '100%' }}>
+                          <img 
+                            src={rightBannerPreview || selectedStore.rightBannerUrl} 
+                            alt="Right Banner" 
+                            style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '0.5rem', border: '1px solid #cbd5e1' }} 
+                          />
+                          {selectedStore.rightBannerUrl && !rightBannerPreview && (
+                            <button 
+                              type="button"
+                              onClick={handleDeleteRightBanner}
+                              style={{ position: 'absolute', top: '-5px', right: '-5px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: 10 }}
+                              title="Delete Right Banner"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div style={{ width: '100%', height: '100px', borderRadius: '0.5rem', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '1.5rem', border: '2px dashed #cbd5e1' }}>
+                          ➡️
+                        </div>
+                      )}
+                      <div style={{ width: '100%' }}>
+                        <input 
+                          type="file" 
+                          id="right-banner-upload"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setRightBanner(file);
+                              setRightBannerPreview(URL.createObjectURL(file));
+                            }
+                          }}
+                          style={{ display: 'none' }}
+                        />
+                        <label 
+                          htmlFor="right-banner-upload" 
+                          className="btn" 
+                          style={{ display: 'block', textAlign: 'center', backgroundColor: '#ffffff', color: '#1e293b', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', fontSize: '0.85rem', cursor: 'pointer', borderRadius: '0.4rem', fontWeight: 600 }}
+                        >
+                          {selectedStore.rightBannerUrl ? 'Change Right Banner' : 'Upload Right Banner'}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1, minWidth: '200px', height: '42px', fontWeight: 'bold' }}>
                   Update Store Settings
