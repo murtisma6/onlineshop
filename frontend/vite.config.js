@@ -6,6 +6,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 80,
-    host: '192.168.0.105'
+    host: '192.168.0.105',
+    allowedHosts: [
+      "deaths-feeding-trinity-reporter.trycloudflare.com"
+    ]
   }
 })
