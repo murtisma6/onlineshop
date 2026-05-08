@@ -7,7 +7,7 @@ const DigiStorePricing = () => {
     {
       name: 'Starter',
       price: 'Free',
-      period: 'forever',
+      period: 'for 3 Months',
       color: '#64748b',
       highlight: false,
       description: 'Perfect for individuals testing the waters.',
@@ -23,7 +23,7 @@ const DigiStorePricing = () => {
     },
     {
       name: 'Business',
-      price: '₹499',
+      price: '₹249',
       period: 'per month',
       color: '#1E3147',
       highlight: true,
@@ -41,7 +41,7 @@ const DigiStorePricing = () => {
     },
     {
       name: 'Enterprise',
-      price: '₹1,499',
+      price: '₹849',
       period: 'per month',
       color: '#7c3aed',
       highlight: false,

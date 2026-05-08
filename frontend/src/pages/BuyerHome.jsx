@@ -94,11 +94,11 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
       {/* Left Sidebar Menu */}
       <aside style={{ 
         width: isSidebarOpen ? '200px' : '0px', 
-        background: 'linear-gradient(180deg, #1E3147 0%, #13202e 100%)', 
-        color: '#ffffff',
+        backgroundColor: '#ffffff', 
+        color: '#1e293b',
         flexShrink: 0,
-        borderRight: isSidebarOpen ? '1px solid rgba(255,255,255,0.05)' : 'none',
-        boxShadow: isSidebarOpen ? '4px 0 10px rgba(0,0,0,0.1)' : 'none',
+        borderRight: isSidebarOpen ? '1px solid #e2e8f0' : 'none',
+        boxShadow: isSidebarOpen ? '4px 0 10px rgba(0,0,0,0.02)' : 'none',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         overflow: 'hidden'
       }}>
@@ -112,7 +112,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
             display: 'flex', 
             alignItems: 'center', 
             gap: '0.5rem', 
-            color: '#94a3b8',
+            color: '#64748b',
             fontWeight: '700'
           }}>
             <span style={{ fontSize: '1.2rem' }}>🛒</span> Explore
@@ -125,20 +125,20 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                 padding: '0.7rem 1rem', 
                 borderRadius: '0.5rem', 
                 cursor: 'pointer',
-                backgroundColor: !selectedCategory && selectedLocations.length === 0 ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                color: !selectedCategory && selectedLocations.length === 0 ? '#60a5fa' : '#cbd5e1',
-                border: !selectedCategory && selectedLocations.length === 0 ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                backgroundColor: !selectedCategory && selectedLocations.length === 0 ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+                color: !selectedCategory && selectedLocations.length === 0 ? '#2563eb' : '#475569',
+                border: !selectedCategory && selectedLocations.length === 0 ? '1px solid rgba(59, 130, 246, 0.1)' : '1px solid transparent',
                 fontWeight: !selectedCategory && selectedLocations.length === 0 ? '700' : '500',
                 transition: 'all 0.3s ease',
                 fontSize: '0.85rem'
               }}
-              onMouseOver={(e) => (!selectedCategory && selectedLocations.length === 0) ? null : (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)', e.currentTarget.style.color = '#ffffff')}
-              onMouseOut={(e) => (!selectedCategory && selectedLocations.length === 0) ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#cbd5e1')}
+              onMouseOver={(e) => (!selectedCategory && selectedLocations.length === 0) ? null : (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.04)', e.currentTarget.style.color = '#1e293b')}
+              onMouseOut={(e) => (!selectedCategory && selectedLocations.length === 0) ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#475569')}
             >
               All Collections
             </div>
 
-            <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
+            <div style={{ height: '1px', backgroundColor: '#f1f5f9', margin: '0.3rem 0' }}></div>
 
             {Object.keys(categoryMap).sort().map(cat => (
               <div key={cat}>
@@ -156,9 +156,9 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                     padding: '0.7rem 1rem', 
                     borderRadius: '0.5rem', 
                     cursor: 'pointer',
-                    backgroundColor: selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                    color: selectedCategory === cat ? '#60a5fa' : '#94a3b8',
-                    border: selectedCategory === cat ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                    backgroundColor: selectedCategory === cat ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+                    color: selectedCategory === cat ? '#2563eb' : '#475569',
+                    border: selectedCategory === cat ? '1px solid rgba(59, 130, 246, 0.1)' : '1px solid transparent',
                     fontWeight: selectedCategory === cat ? '700' : '500',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -167,8 +167,8 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                     transition: 'all 0.3s ease',
                     marginBottom: '0.2rem'
                   }}
-                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#ffffff')}
-                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#94a3b8')}
+                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.12)' : 'rgba(0,0,0,0.04)', e.currentTarget.style.color = selectedCategory === cat ? '#2563eb' : '#1e293b')}
+                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.08)' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#2563eb' : '#475569')}
                 >
                   {cat}
                   <span style={{ fontSize: '0.6rem', opacity: 0.5, transform: selectedCategory === cat ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
@@ -184,7 +184,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                     flexDirection: 'column', 
                     gap: '0.05rem',
                     padding: '0.2rem 0.25rem 0.4rem 0.75rem',
-                    borderLeft: '1px solid rgba(59, 130, 246, 0.2)',
+                    borderLeft: '1px solid #e2e8f0',
                     marginBottom: '0.2rem'
                   }}>
                     {Array.from(categoryMap[cat]).sort().map(subcat => (
@@ -196,7 +196,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                           gap: '0.5rem', 
                           cursor: 'pointer', 
                           fontSize: '0.78rem', 
-                          color: selectedSubcategories.includes(subcat) ? '#60a5fa' : '#cbd5e1',
+                          color: selectedSubcategories.includes(subcat) ? '#2563eb' : '#64748b',
                           transition: 'color 0.2s',
                           padding: '0.1rem 0'
                         }}
@@ -221,7 +221,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
               </div>
             ))}
 
-            <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
+            <div style={{ height: '1px', backgroundColor: '#f1f5f9', margin: '0.3rem 0' }}></div>
 
             {/* Location Filter */}
             <div style={{ marginBottom: '0.5rem', padding: '0' }}>
@@ -231,9 +231,9 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                   padding: '0.7rem 1rem', 
                   borderRadius: '0.5rem', 
                   cursor: 'pointer',
-                  backgroundColor: isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                  color: isLocationFilterOpen || selectedLocations.length > 0 ? '#60a5fa' : '#cbd5e1',
-                  border: isLocationFilterOpen ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                  backgroundColor: isLocationFilterOpen ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+                  color: isLocationFilterOpen || selectedLocations.length > 0 ? '#2563eb' : '#475569',
+                  border: isLocationFilterOpen ? '1px solid rgba(59, 130, 246, 0.1)' : '1px solid transparent',
                   fontWeight: '700',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -241,8 +241,8 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                   fontSize: '0.85rem',
                   transition: 'all 0.3s ease'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.1)' : 'transparent'}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.12)' : 'rgba(0,0,0,0.04)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = isLocationFilterOpen ? 'rgba(59, 130, 246, 0.08)' : 'transparent'}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -263,12 +263,14 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                   maxHeight: '200px', 
                   overflowY: 'auto', 
                   padding: '0.75rem 1rem 1rem 1.5rem',
-                  backgroundColor: 'rgba(0,0,0,0.1)',
+                  backgroundColor: '#f8fafc',
                   borderBottomLeftRadius: '0.5rem',
-                  borderBottomRightRadius: '0.5rem'
+                  borderBottomRightRadius: '0.5rem',
+                  border: '1px solid #f1f5f9',
+                  borderTop: 'none'
                 }} className="custom-scrollbar">
                   {sortedLocations.length > 0 ? sortedLocations.map(loc => (
-                    <label key={loc} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.8rem', color: selectedLocations.includes(loc) ? '#60a5fa' : '#cbd5e1', transition: 'color 0.2s' }}>
+                    <label key={loc} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.8rem', color: selectedLocations.includes(loc) ? '#2563eb' : '#64748b', transition: 'color 0.2s' }}>
                       <input 
                         type="checkbox" 
                         checked={selectedLocations.includes(loc)}

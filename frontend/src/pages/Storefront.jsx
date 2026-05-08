@@ -178,20 +178,20 @@ const Storefront = () => {
                   padding: '0.7rem 1rem', 
                   borderRadius: '0.5rem', 
                   cursor: 'pointer',
-                  backgroundColor: !selectedCategory ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                  color: !selectedCategory ? '#60a5fa' : '#cbd5e1',
-                  border: !selectedCategory ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                  backgroundColor: !selectedCategory ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+                  color: !selectedCategory ? '#2563eb' : '#475569',
+                  border: !selectedCategory ? '1px solid rgba(59, 130, 246, 0.1)' : '1px solid transparent',
                   fontWeight: !selectedCategory ? '700' : '500',
                   transition: 'all 0.3s ease',
                   fontSize: '0.85rem'
                 }}
-                onMouseOver={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)', e.currentTarget.style.color = '#ffffff')}
-                onMouseOut={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#cbd5e1')}
+                onMouseOver={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.04)', e.currentTarget.style.color = '#1e293b')}
+                onMouseOut={(e) => !selectedCategory ? null : (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#475569')}
               >
                 All Items
               </div>
 
-              <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.3rem 0' }}></div>
+              <div style={{ height: '1px', backgroundColor: '#f1f5f9', margin: '0.3rem 0' }}></div>
 
               {Object.keys(categoryMap).sort().map(cat => (
                 <div key={cat}>
@@ -209,9 +209,9 @@ const Storefront = () => {
                       padding: '0.7rem 1rem', 
                       borderRadius: '0.5rem', 
                       cursor: 'pointer',
-                      backgroundColor: selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                      color: selectedCategory === cat ? '#60a5fa' : '#94a3b8',
-                      border: selectedCategory === cat ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent',
+                      backgroundColor: selectedCategory === cat ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+                      color: selectedCategory === cat ? '#2563eb' : '#475569',
+                      border: selectedCategory === cat ? '1px solid rgba(59, 130, 246, 0.1)' : '1px solid transparent',
                       fontWeight: selectedCategory === cat ? '700' : '500',
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -220,8 +220,8 @@ const Storefront = () => {
                       transition: 'all 0.3s ease',
                       marginBottom: '0.2rem'
                     }}
-                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.03)', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#ffffff')}
-                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.1)' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#60a5fa' : '#94a3b8')}
+                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.12)' : 'rgba(0,0,0,0.04)', e.currentTarget.style.color = selectedCategory === cat ? '#2563eb' : '#1e293b')}
+                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = selectedCategory === cat ? 'rgba(59, 130, 246, 0.08)' : 'transparent', e.currentTarget.style.color = selectedCategory === cat ? '#2563eb' : '#475569')}
                   >
                     {cat}
                     <span style={{ fontSize: '0.6rem', opacity: 0.5, transform: selectedCategory === cat ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
@@ -237,7 +237,7 @@ const Storefront = () => {
                       flexDirection: 'column', 
                       gap: '0.4rem',
                       padding: '0.5rem 0.5rem 1rem 1rem',
-                      borderLeft: '1px solid rgba(59, 130, 246, 0.2)',
+                      borderLeft: '1px solid #e2e8f0',
                       marginBottom: '0.5rem'
                     }}>
                       {Array.from(categoryMap[cat]).sort().map(subcat => (
@@ -249,7 +249,7 @@ const Storefront = () => {
                             gap: '0.6rem', 
                             cursor: 'pointer', 
                             fontSize: '0.8rem', 
-                            color: selectedSubcategories.includes(subcat) ? '#60a5fa' : '#cbd5e1',
+                            color: selectedSubcategories.includes(subcat) ? '#2563eb' : '#64748b',
                             transition: 'color 0.2s',
                             padding: '0.2rem 0'
                           }}

@@ -791,6 +791,16 @@ const SellerDashboard = ({ user }) => {
                             <span title="Total Views">👁️ {product.views || 0}</span>
                             <span title="WhatsApp Clicks">👆 {product.clicks || 0}</span>
                           </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.4rem' }}>
+                            <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.8rem' }}>
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
+                              ))}
+                            </div>
+                            <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
+                              ({product.reviewCount || 0} reviews)
+                            </span>
+                          </div>
                         </div>
                         <p style={{ color: '#4f46e5', fontWeight: 'bold', fontSize: '1.2rem', margin: 0 }}>₹{product.price}</p>
                       </div>
