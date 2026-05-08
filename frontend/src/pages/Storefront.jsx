@@ -277,37 +277,103 @@ const Storefront = () => {
       </aside>
 
         {/* Main Content: Products */}
-        <main style={{ flex: 1, padding: '1.5rem', width: '100%', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minWidth: 0 }}>
+        <main className="storefront-main" style={{ flex: 1, padding: '1.5rem', width: '100%', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minWidth: 0 }}>
           
-          <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-              className="btn"
-              style={{ 
-                backgroundColor: '#ffffff', 
-                color: '#475569', 
-                border: '1px solid #cbd5e1', 
-                padding: '0.4rem 0.8rem', 
-                fontSize: '0.85rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                borderRadius: '0.5rem',
-                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-              }}
-            >
-              {isSidebarOpen ? '◀ Hide Menu' : '▶ Show Menu'}
-            </button>
+          {/* Responsive styles via <style> tag */}
+          <style>{`
+            @media (max-width: 640px) {
+              .storefront-main { padding: 1rem !important; }
+              .storefront-toolbar { padding-bottom: 0.5rem !important; }
+              .storefront-row1 { flex-direction: column !important; align-items: flex-start !important; gap: 0.75rem !important; }
+              .storefront-row1-left { width: 100% !important; }
+              .storefront-row1-right { align-self: flex-end !important; }
+              .storefront-chips-container { overflow-x: auto !important; padding-bottom: 0.25rem !important; width: 100% !important; }
+              .storefront-chips-container::-webkit-scrollbar { height: 3px; }
+              .storefront-chips-container::-webkit-scrollbar-thumb { background: #cbd5e1; borderRadius: 3px; }
+            }
+          `}</style>
+          
+          {/* Toolbar: Show/Hide + Title + Items count */}
+          <div className="storefront-toolbar" style={{ marginBottom: '1rem', borderBottom: '2px solid #e2e8f0', paddingBottom: '0.75rem' }}>
+            {/* Row 1: Toggle + More stores chips + Items badge */}
+            <div className="storefront-row1" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              {/* Left: toggle + more stores */}
+              <div className="storefront-row1-left" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flex: 1, minWidth: 0 }}>
+                <button
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                  className="btn"
+                  style={{
+                    backgroundColor: '#ffffff',
+                    color: '#475569',
+                    border: '1px solid #cbd5e1',
+                    padding: '0.4rem 0.6rem',
+                    fontSize: '0.82rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+                    flexShrink: 0,
+                  }}
+                >
+                  {isSidebarOpen ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  )}
+                </button>
+                <div style={{ width: '1px', height: '18px', backgroundColor: '#e2e8f0', flexShrink: 0 }}></div>
+                {siblingStores.length > 0 && (
+                  <>
+                    <span style={{ fontSize: '0.78rem', fontWeight: '600', color: '#64748b', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                      More Store from Seller:
+                    </span>
+                    <div className="storefront-chips-container" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'nowrap' }}>
+                      {siblingStores.map(s => (
+                      <div
+                        key={s.id}
+                        onClick={() => navigate(`/store/${s.uniqueUrl}`)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          backgroundColor: '#f8fafc',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '2rem',
+                          padding: '0.3rem 0.75rem 0.3rem 0.35rem',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          color: '#1E3147',
+                          transition: 'all 0.2s',
+                        }}
+                        onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#1E3147'; e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.borderColor = '#1E3147'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; e.currentTarget.style.color = '#1E3147'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                      >
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: `linear-gradient(135deg, ${s.ribbonColor || '#4f46e5'}, ${s.ribbonColor || '#3b82f6'})`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', fontSize: '0.65rem', fontWeight: '700', color: '#fff' }}>
+                          {s.logoUrl ? <img src={s.logoUrl} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : s.name.charAt(0).toUpperCase()}
+                        </div>
+                        {s.name}
+                      </div>
+                    ))}
+                  </div>
+                  </>
+                )}
+              </div>
+              {/* Right: items badge */}
+              <span className="storefront-row1-right" style={{ fontSize: '0.9rem', color: '#64748b', backgroundColor: '#e2e8f0', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontWeight: '700', flexShrink: 0 }}>
+                {filteredProducts.length} Items
+              </span>
+            </div>
+
+            {/* Row 2: Our Collection heading */}
+            <h2 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#1E3147', margin: 0 }}>
+              {selectedCategory
+                ? `${selectedCategory}${selectedSubcategories.length > 0 ? ` (${selectedSubcategories.length} sub)` : ''}`
+                : 'Our Collection'}
+            </h2>
           </div>
 
-          <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #e2e8f0', paddingBottom: '1rem' }}>
-              <h2 style={{ fontSize: '1.5rem' }}>
-                {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length} subcategories)` : ''}` : 'Our Collection'}
-              </h2>
-            <span style={{ fontSize: '1rem', color: '#64748b', backgroundColor: '#e2e8f0', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontWeight: 'bold' }}>
-              {filteredProducts.length} Items
-            </span>
-          </div>
 
         {filteredProducts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 2rem', backgroundColor: '#ffffff', borderRadius: '1rem', border: '1px dashed #cbd5e1' }}>
@@ -388,67 +454,6 @@ const Storefront = () => {
         )}
       </main>
       </div>
-
-      {/* More Stores from this Seller */}
-      {siblingStores.length > 0 && (
-        <div style={{ backgroundColor: '#f1f5f9', borderTop: '1px solid #e2e8f0', padding: '2.5rem 1.5rem' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: '700', color: '#1E3147', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3147" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              More stores from this seller
-            </h2>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              {siblingStores.map(s => (
-                <div
-                  key={s.id}
-                  onClick={() => navigate(`/store/${s.uniqueUrl}`)}
-                  style={{
-                    backgroundColor: '#ffffff',
-                    borderRadius: '0.875rem',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                    border: '1px solid #e2e8f0',
-                    padding: '1rem 1.25rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.875rem',
-                    minWidth: '200px',
-                    flex: '0 0 auto',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                  }}
-                  onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)'; }}
-                  onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)'; }}
-                >
-                  {/* Store logo / initial */}
-                  <div style={{
-                    width: '44px',
-                    height: '44px',
-                    borderRadius: '50%',
-                    background: `linear-gradient(135deg, ${s.ribbonColor || '#4f46e5'}, ${s.ribbonColor || '#3b82f6'})`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    overflow: 'hidden',
-                    border: '2px solid rgba(255,255,255,0.8)',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  }}>
-                    {s.logoUrl
-                      ? <img src={s.logoUrl} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <span style={{ color: '#fff', fontWeight: '700', fontSize: '1.1rem' }}>{s.name.charAt(0).toUpperCase()}</span>
-                    }
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: '700', fontSize: '0.9rem', color: '#1E3147' }}>{s.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.1rem' }}>{s.productCount ?? 0} products</div>
-                  </div>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 'auto', flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
