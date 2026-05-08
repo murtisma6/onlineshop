@@ -89,7 +89,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: 'calc(100vh - 70px)' }}>
+    <div style={{ display: 'flex', flex: 1, backgroundColor: '#f8fafc' }}>
       
       {/* Left Sidebar Menu */}
       <aside style={{ 
@@ -399,38 +399,49 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                     <div 
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (product.storeUniqueUrl) {
-                          navigate(`/store/${product.storeUniqueUrl}`);
-                        }
+                        if (product.storeUniqueUrl) navigate(`/store/${product.storeUniqueUrl}`);
                       }}
-                      style={{ 
-                        color: product.storeUniqueUrl ? '#3b82f6' : '#64748b', 
-                        fontSize: '0.85rem', 
-                        marginBottom: '0.75rem', 
-                        display: 'inline-flex', 
-                        alignItems: 'center', 
-                        gap: '0.5rem',
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        backgroundColor: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '2rem',
+                        padding: '0.2rem 0.6rem 0.2rem 0.25rem',
                         cursor: product.storeUniqueUrl ? 'pointer' : 'default',
-                        transition: 'color 0.2s',
-                        backgroundColor: 'rgba(241, 245, 249, 0.5)',
-                        padding: '0.3rem 0.6rem',
-                        borderRadius: '0.5rem',
-                        border: '1px solid #f1f5f9'
+                        fontSize: '0.72rem',
+                        fontWeight: '700',
+                        color: '#1E3147',
+                        transition: 'all 0.2s',
+                        marginBottom: '0.5rem',
+                        width: 'fit-content'
                       }}
-                      onMouseOver={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#2563eb' : null}
-                      onMouseOut={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#3b82f6' : null}
-                      title={product.storeUniqueUrl ? "Visit Store" : ""}
+                      onMouseOver={(e) => { if(product.storeUniqueUrl) { e.currentTarget.style.backgroundColor = '#1E3147'; e.currentTarget.style.color = '#ffffff'; } }}
+                      onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; e.currentTarget.style.color = '#1E3147'; }}
                     >
-                      {product.storeLogoUrl ? (
-                        <img 
-                          src={product.storeLogoUrl} 
-                          alt={product.storeName} 
-                          style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #ffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} 
-                        />
-                      ) : (
-                        <span style={{ fontSize: '1.1rem' }}>🏪</span>
-                      )}
-                      <span style={{ textDecoration: product.storeUniqueUrl ? 'underline' : 'none', fontWeight: '700', fontSize: '0.9rem' }}>{product.storeName}</span>
+                      <div style={{ 
+                        width: '18px', 
+                        height: '18px', 
+                        borderRadius: '50%', 
+                        background: `linear-gradient(135deg, ${product.storeRibbonColor || '#4f46e5'}, ${product.storeRibbonColor || '#3b82f6'})`, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        flexShrink: 0, 
+                        overflow: 'hidden', 
+                        fontSize: '0.6rem', 
+                        fontWeight: '800', 
+                        color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.2)'
+                      }}>
+                        {product.storeLogoUrl ? (
+                          <img src={product.storeLogoUrl} alt={product.storeName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          product.storeName ? product.storeName.charAt(0).toUpperCase() : 'S'
+                        )}
+                      </div>
+                      {product.storeName}
                     </div>
 
 

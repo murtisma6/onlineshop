@@ -88,7 +88,7 @@ const DigiStorePricing = () => {
   ];
 
   return (
-    <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
+    <div style={{ backgroundColor: '#f8fafc', flex: 1, display: 'flex', flexDirection: 'column' }}>
 
       {/* Responsive styles via <style> tag */}
       <style>{`

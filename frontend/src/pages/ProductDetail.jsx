@@ -161,33 +161,54 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
               </button>
             </div>
             
-            <div style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              {product.storeLogoUrl ? (
-                <img 
-                  src={product.storeLogoUrl} 
-                  alt={product.storeName} 
-                  style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }} 
-                />
-              ) : (
-                <span style={{ fontSize: '1.75rem' }}>🏪</span>
-              )}
-              <span style={{ fontWeight: '500' }}>Sold by {' '}</span>
-              <strong 
-                onClick={() => {
+            <div style={{ color: '#64748b', fontSize: '1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <span style={{ fontWeight: '600' }}>Sold by</span>
+              <div 
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (product.storeUniqueUrl) navigate(`/store/${product.storeUniqueUrl}`);
                 }}
-                style={{ 
-                  color: product.storeUniqueUrl ? '#3b82f6' : '#1e293b', 
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  backgroundColor: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '2rem',
+                  padding: '0.3rem 0.8rem 0.3rem 0.35rem',
                   cursor: product.storeUniqueUrl ? 'pointer' : 'default',
-                  textDecoration: product.storeUniqueUrl ? 'underline' : 'none',
-                  transition: 'color 0.2s'
+                  fontSize: '0.85rem',
+                  fontWeight: '700',
+                  color: '#1E3147',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)'
                 }}
-                onMouseOver={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#2563eb' : null}
-                onMouseOut={(e) => product.storeUniqueUrl ? e.currentTarget.style.color = '#3b82f6' : null}
-                title={product.storeUniqueUrl ? "Visit Store" : ""}
+                onMouseOver={(e) => { if(product.storeUniqueUrl) { e.currentTarget.style.backgroundColor = '#1E3147'; e.currentTarget.style.color = '#ffffff'; } }}
+                onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; e.currentTarget.style.color = '#1E3147'; }}
               >
+                <div style={{ 
+                  width: '24px', 
+                  height: '24px', 
+                  borderRadius: '50%', 
+                  background: `linear-gradient(135deg, ${product.storeRibbonColor || '#4f46e5'}, ${product.storeRibbonColor || '#3b82f6'})`, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  flexShrink: 0, 
+                  overflow: 'hidden', 
+                  fontSize: '0.75rem', 
+                  fontWeight: '800', 
+                  color: '#fff',
+                  border: '1px solid rgba(255,255,255,0.3)'
+                }}>
+                  {product.storeLogoUrl ? (
+                    <img src={product.storeLogoUrl} alt={product.storeName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    product.storeName ? product.storeName.charAt(0).toUpperCase() : 'S'
+                  )}
+                </div>
                 {product.storeName}
-              </strong>
+              </div>
               {product.sellerCity && (
                 <span style={{ fontSize: '0.9rem', backgroundColor: '#f1f5f9', padding: '0.2rem 0.6rem', borderRadius: '1rem', color: '#64748b', marginLeft: '0.5rem' }}>
                   📍 {product.sellerCity}

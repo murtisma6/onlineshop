@@ -32,9 +32,8 @@ function App() {
 
   return (
     <Router>
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Navbar user={user} onLogout={handleLogout} />
-        <div style={{ flex: 1 }}>
+      <Navbar user={user} onLogout={handleLogout} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Routes>
             <Route path="/login" element={<Login setUser={handleSetUser} />} />
             <Route path="/register" element={<Register setUser={handleSetUser} />} />
@@ -87,8 +86,7 @@ function App() {
         </div>
         <footer style={{ backgroundColor: '#1E3147', color: '#94a3b8', padding: '0.75rem', textAlign: 'center', fontSize: '0.875rem', borderTop: '1px solid #1e293b' }}>
           &copy; copyright 2026 MCube Hive IT Solutions
-        </footer>
-      </div>
+      </footer>
     </Router>
   );
 }

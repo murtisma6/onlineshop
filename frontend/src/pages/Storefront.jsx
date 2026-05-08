@@ -73,7 +73,7 @@ const Storefront = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: 'calc(100vh - 70px)', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
         <p style={{ color: '#64748b', fontSize: '1.2rem' }}>Loading storefront...</p>
       </div>
     );
@@ -81,7 +81,7 @@ const Storefront = () => {
 
   if (error || !store) {
     return (
-      <div style={{ minHeight: 'calc(100vh - 70px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
         <h2 style={{ fontSize: '2rem', color: '#1e293b', marginBottom: '1rem' }}>Oops!</h2>
         <p style={{ color: '#64748b', fontSize: '1.2rem', marginBottom: '2rem' }}>{error || 'Store not found.'}</p>
         <button onClick={() => navigate('/')} className="btn btn-primary" style={{ padding: '0.8rem 1.5rem', fontSize: '1rem' }}>
@@ -92,7 +92,7 @@ const Storefront = () => {
   }
 
   return (
-    <div style={{ backgroundColor: '#f8fafc', minHeight: 'calc(100vh - 70px)' }}>
+    <div style={{ backgroundColor: '#f8fafc', flex: 1, display: 'flex', flexDirection: 'column' }}>
       {/* Storefront Header - Themed with Custom Color */}
       <div style={{ 
         background: `linear-gradient(135deg, ${store.ribbonColor || '#4f46e5'} 0%, ${store.ribbonColor || '#3b82f6'} 80%)`, 
@@ -141,7 +141,7 @@ const Storefront = () => {
 
 
       {/* Main Content Area */}
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', flex: 1 }}>
         
         {/* Left Sidebar Menu */}
         <aside style={{ 
@@ -151,7 +151,7 @@ const Storefront = () => {
           flexShrink: 0,
           borderRight: isSidebarOpen ? '1px solid #e2e8f0' : 'none',
           boxShadow: isSidebarOpen ? '4px 0 10px rgba(0,0,0,0.02)' : 'none',
-          minHeight: 'calc(100vh - 250px)',
+          // Removed flex: 1 which was causing the sidebar to push products to the corner
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           overflow: 'hidden'
         }}>
@@ -317,11 +317,7 @@ const Storefront = () => {
                     flexShrink: 0,
                   }}
                 >
-                  {isSidebarOpen ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                  )}
+                    {isSidebarOpen ? '◀' : '▶'}
                 </button>
                 <div style={{ width: '1px', height: '18px', backgroundColor: '#e2e8f0', flexShrink: 0 }}></div>
                 {siblingStores.length > 0 && (

@@ -228,6 +228,7 @@ public class ProductController {
         dto.setStoreId(product.getStore().getId());
         dto.setStoreName(product.getStore().getName());
         dto.setStoreUniqueUrl(product.getStore().getUniqueUrl());
+        dto.setStoreRibbonColor(product.getStore().getRibbonColor());
         dto.setSellerCity(product.getStore().getSeller().getCity());
         
         List<String> urls = product.getImages().stream()
