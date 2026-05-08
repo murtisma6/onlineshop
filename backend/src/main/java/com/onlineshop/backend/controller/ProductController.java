@@ -53,11 +53,13 @@ public class ProductController {
     public ResponseEntity<?> uploadProduct(
             @RequestParam("name") String name,
             @RequestParam("price") BigDecimal price,
+            @RequestParam(value = "mrp", required = false) BigDecimal mrp,
             @RequestParam("description") String description,
             @RequestParam("category") String category,
             @RequestParam("subcategory") String subcategory,
             @RequestParam("sellerContact") String sellerContact,
             @RequestParam("storeId") Long storeId,
+            @RequestParam(value = "hidePrice", defaultValue = "false") Boolean hidePrice,
             @RequestParam(value = "images", required = false) MultipartFile[] images) {
 
         Optional<Store> storeOpt = storeRepository.findById(storeId);
@@ -69,10 +71,12 @@ public class ProductController {
             Product product = new Product();
             product.setName(name);
             product.setPrice(price);
+            product.setMrp(mrp);
             product.setDescription(description);
             product.setCategory(category);
             product.setSubcategory(subcategory);
             product.setSellerContact(sellerContact);
+            product.setHidePrice(hidePrice);
             product.setStore(storeOpt.get());
 
             productRepository.save(product);
@@ -105,11 +109,13 @@ public class ProductController {
             @PathVariable Long id,
             @RequestParam("name") String name,
             @RequestParam("price") BigDecimal price,
+            @RequestParam(value = "mrp", required = false) BigDecimal mrp,
             @RequestParam("description") String description,
             @RequestParam("category") String category,
             @RequestParam("subcategory") String subcategory,
             @RequestParam("sellerContact") String sellerContact,
             @RequestParam(value = "retainedImageIds", required = false) List<Long> retainedImageIds,
+            @RequestParam(value = "hidePrice", defaultValue = "false") Boolean hidePrice,
             @RequestParam(value = "images", required = false) MultipartFile[] images) {
 
         Optional<Product> productOpt = productRepository.findById(id);
@@ -121,10 +127,12 @@ public class ProductController {
             Product product = productOpt.get();
             product.setName(name);
             product.setPrice(price);
+            product.setMrp(mrp);
             product.setDescription(description);
             product.setCategory(category);
             product.setSubcategory(subcategory);
             product.setSellerContact(sellerContact);
+            product.setHidePrice(hidePrice);
 
             productRepository.save(product);
             Store store = product.getStore();
@@ -221,6 +229,8 @@ public class ProductController {
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setPrice(product.getPrice());
+        dto.setMrp(product.getMrp());
+        dto.setHidePrice(product.getHidePrice());
         dto.setDescription(product.getDescription());
         dto.setCategory(product.getCategory());
         dto.setSubcategory(product.getSubcategory());

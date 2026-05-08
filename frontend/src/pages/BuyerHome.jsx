@@ -468,9 +468,27 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                       </p>
                     )}
                     <div style={{ marginTop: 'auto' }}>
-                      <p style={{ fontWeight: '900', fontSize: '1.1rem', color: '#4f46e5', marginBottom: '0.5rem', letterSpacing: '-0.2px' }}>
-                        ₹{product.price.toLocaleString()}
-                      </p>
+                      {product.hidePrice ? (
+                        <p style={{ fontWeight: '800', fontSize: '1rem', color: '#6366f1', marginBottom: '0.5rem' }}>
+                          DM for Price
+                        </p>
+                      ) : (
+                        <>
+                          {product.mrp && product.mrp > product.price && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.2rem' }}>
+                              <span style={{ fontSize: '0.75rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                                ₹{product.mrp.toLocaleString()}
+                              </span>
+                              <span style={{ fontSize: '0.7rem', color: '#ef4444', fontWeight: '800', backgroundColor: '#fef2f2', padding: '0.1rem 0.4rem', borderRadius: '0.3rem' }}>
+                                {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+                              </span>
+                            </div>
+                          )}
+                          <p style={{ fontWeight: '900', fontSize: '1.1rem', color: '#4f46e5', marginBottom: '0.5rem', letterSpacing: '-0.2px' }}>
+                            ₹{product.price.toLocaleString()}
+                          </p>
+                        </>
+                      )}
                       <button 
                         onClick={(e) => handleWhatsAppClick(e, product)}
                         className="btn" 

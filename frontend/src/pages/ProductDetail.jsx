@@ -217,9 +217,27 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
             </div>
             
             <div style={{ borderTop: '2px solid #f1f5f9', borderBottom: '2px solid #f1f5f9', padding: '1.5rem 0', marginBottom: '2rem' }}>
-              <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#4f46e5', margin: 0 }}>
-                ₹{product.price}
-              </p>
+              {product.hidePrice ? (
+                <p style={{ fontSize: '2.5rem', fontWeight: '800', color: '#6366f1', margin: 0 }}>
+                  DM for Price
+                </p>
+              ) : (
+                <>
+                  {product.mrp && product.mrp > product.price && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '1.25rem', color: '#94a3b8', textDecoration: 'line-through' }}>
+                        ₹{product.mrp.toLocaleString()}
+                      </span>
+                      <span style={{ fontSize: '1.1rem', color: '#ef4444', fontWeight: '800', backgroundColor: '#fef2f2', padding: '0.2rem 0.75rem', borderRadius: '0.5rem' }}>
+                        {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+                      </span>
+                    </div>
+                  )}
+                  <p style={{ fontSize: '3rem', fontWeight: 'bold', color: '#4f46e5', margin: 0 }}>
+                    ₹{product.price.toLocaleString()}
+                  </p>
+                </>
+              )}
             </div>
 
             <div style={{ marginBottom: '2.5rem' }}>

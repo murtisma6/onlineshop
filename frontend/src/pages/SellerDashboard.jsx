@@ -11,6 +11,8 @@ const SellerDashboard = ({ user }) => {
   // Product Management State
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [mrp, setMrp] = useState('');
+  const [hidePrice, setHidePrice] = useState(false);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
@@ -221,6 +223,8 @@ const SellerDashboard = ({ user }) => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('price', price);
+    if (mrp) formData.append('mrp', mrp);
+    formData.append('hidePrice', hidePrice);
     formData.append('description', description);
     formData.append('category', category);
     formData.append('subcategory', subcategory);
@@ -255,6 +259,8 @@ const SellerDashboard = ({ user }) => {
     setEditingProductId(product.id);
     setName(product.name);
     setPrice(product.price);
+    setMrp(product.mrp || '');
+    setHidePrice(product.hidePrice || false);
     setDescription(product.description || '');
     setCategory(product.category || '');
     setSubcategory(product.subcategory || '');
@@ -279,6 +285,8 @@ const SellerDashboard = ({ user }) => {
     setEditingProductId(null);
     setName('');
     setPrice('');
+    setMrp('');
+    setHidePrice(false);
     setDescription('');
     setCategory('');
     setSubcategory('');
@@ -699,23 +707,39 @@ const SellerDashboard = ({ user }) => {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Price (₹)</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Selling Price (₹)</label>
                   <input type="number" step="0.01" placeholder="0.00" className="input-field" value={price} onChange={(e) => setPrice(e.target.value)} required style={{ border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>WhatsApp Contact</label>
-                  <input 
-                    type="text" 
-                    placeholder="+1234567890" 
-                    className="input-field" 
-                    value={sellerContact} 
-                    onChange={(e) => setSellerContact(e.target.value)} 
-                    required 
-                    readOnly
-                    style={{ border: '1px solid #cbd5e1', backgroundColor: '#f1f5f9', cursor: 'not-allowed' }} 
-                    title="WhatsApp number is pulled from your account settings"
-                  />
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>MRP (₹) <span style={{ fontWeight: 'normal', color: '#94a3b8', fontSize: '0.75rem' }}>(Optional)</span></label>
+                  <input type="number" step="0.01" placeholder="0.00" className="input-field" value={mrp} onChange={(e) => setMrp(e.target.value)} style={{ border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }} />
                 </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                <input 
+                  type="checkbox" 
+                  id="hidePrice" 
+                  checked={hidePrice} 
+                  onChange={(e) => setHidePrice(e.target.checked)} 
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <label htmlFor="hidePrice" style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.9rem', cursor: 'pointer' }}>
+                  Hide Price from buyers (Show "DM for Price" instead)
+                </label>
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>WhatsApp Contact</label>
+                <input 
+                  type="text" 
+                  placeholder="+1234567890" 
+                  className="input-field" 
+                  value={sellerContact} 
+                  onChange={(e) => setSellerContact(e.target.value)} 
+                  required 
+                  readOnly
+                  style={{ border: '1px solid #cbd5e1', backgroundColor: '#f1f5f9', cursor: 'not-allowed' }} 
+                  title="WhatsApp number is pulled from your account settings"
+                />
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Product Description</label>

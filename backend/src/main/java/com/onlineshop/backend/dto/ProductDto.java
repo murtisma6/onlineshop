@@ -8,6 +8,8 @@ public class ProductDto {
     private Long id;
     private String name;
     private BigDecimal price;
+    private BigDecimal mrp;
+    private Boolean hidePrice;
     private String description;
     private String category;
     private String subcategory;

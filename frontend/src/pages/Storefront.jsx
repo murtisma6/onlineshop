@@ -482,8 +482,22 @@ const Storefront = () => {
                       <span>📍</span> {product.sellerCity}
                     </p>
                   )}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
-                    <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#4f46e5' }}>₹{product.price.toFixed(0)}</span>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      {product.hidePrice ? (
+                        <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#6366f1' }}>DM for Price</span>
+                      ) : (
+                        <>
+                          {product.mrp && product.mrp > product.price && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.1rem' }}>
+                              <span style={{ fontSize: '0.65rem', color: '#94a3b8', textDecoration: 'line-through' }}>₹{product.mrp.toFixed(0)}</span>
+                              <span style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>-{Math.round(((product.mrp - product.price) / product.mrp) * 100)}%</span>
+                            </div>
+                          )}
+                          <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#4f46e5' }}>₹{product.price.toFixed(0)}</span>
+                        </>
+                      )}
+                    </div>
                     <div style={{ display: 'flex', gap: '0.3rem' }}>
                       <button 
                         className="btn"

@@ -40,7 +40,7 @@ const Navbar = ({ user, onLogout }) => {
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#ffffff" strokeWidth="2"/>
           <polyline points="9 22 9 12 15 12 15 22" stroke="#ffffff" strokeWidth="2"/>
         </svg>
-        <span className="nav-title" style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>{user ? "Buyers Digital Store" : "Digital Store"}</span>
+        <span className="nav-title" style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>{user ? "Bohra's Digital Store" : "Digital Store"}</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <button

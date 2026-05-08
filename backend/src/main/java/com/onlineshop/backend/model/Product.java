@@ -20,6 +20,12 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column
+    private BigDecimal mrp;
+
+    @Column
+    private Boolean hidePrice;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
