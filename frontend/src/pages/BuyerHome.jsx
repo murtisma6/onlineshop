@@ -377,16 +377,30 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                     </div>
                   </div>
                   <div style={{ padding: '0.65rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <h3 style={{ fontSize: '0.85rem', marginBottom: '0.15rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.2, height: '2.4em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>
+                    <h3 style={{ fontSize: '0.82rem', marginBottom: '0.1rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.2, height: '2.4em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>
                     
+                    <p style={{ 
+                      fontSize: '0.68rem', 
+                      color: '#64748b', 
+                      marginBottom: '0.3rem', 
+                      lineHeight: 1.2,
+                      height: '2.4em',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {product.description}
+                    </p>
+
                     {/* Star Rating Display */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.2rem' }}>
-                      <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.7rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.3rem' }}>
+                      <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.65rem' }}>
                         {[1, 2, 3, 4, 5].map((star) => (
                           <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
                         ))}
                       </div>
-                      <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '600' }}>
+                      <span style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: '600' }}>
                         ({product.reviewCount || 0})
                       </span>
                       <button 
@@ -396,6 +410,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                         Rate
                       </button>
                     </div>
+
                     <div 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -404,25 +419,25 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '0.35rem',
+                        gap: '0.3rem',
                         backgroundColor: '#f8fafc',
                         border: '1px solid #e2e8f0',
                         borderRadius: '2rem',
-                        padding: '0.2rem 0.6rem 0.2rem 0.25rem',
+                        padding: '0.15rem 0.5rem 0.15rem 0.2rem',
                         cursor: product.storeUniqueUrl ? 'pointer' : 'default',
-                        fontSize: '0.72rem',
+                        fontSize: '0.68rem',
                         fontWeight: '700',
                         color: '#1E3147',
                         transition: 'all 0.2s',
-                        marginBottom: '0.5rem',
+                        marginBottom: '0.4rem',
                         width: 'fit-content'
                       }}
                       onMouseOver={(e) => { if(product.storeUniqueUrl) { e.currentTarget.style.backgroundColor = '#1E3147'; e.currentTarget.style.color = '#ffffff'; } }}
                       onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; e.currentTarget.style.color = '#1E3147'; }}
                     >
                       <div style={{ 
-                        width: '18px', 
-                        height: '18px', 
+                        width: '16px', 
+                        height: '16px', 
                         borderRadius: '50%', 
                         background: `linear-gradient(135deg, ${product.storeRibbonColor || '#4f46e5'}, ${product.storeRibbonColor || '#3b82f6'})`, 
                         display: 'flex', 
@@ -430,7 +445,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                         justifyContent: 'center', 
                         flexShrink: 0, 
                         overflow: 'hidden', 
-                        fontSize: '0.6rem', 
+                        fontSize: '0.55rem', 
                         fontWeight: '800', 
                         color: '#fff',
                         border: '1px solid rgba(255,255,255,0.2)'

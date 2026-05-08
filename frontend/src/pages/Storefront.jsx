@@ -429,16 +429,30 @@ const Storefront = () => {
                   </div>
                 </div>
                 <div style={{ padding: '0.65rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ fontSize: '0.85rem', marginBottom: '0.15rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.2, height: '2.4em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>
+                  <h3 style={{ fontSize: '0.82rem', marginBottom: '0.1rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.2, height: '2.4em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>
                   
+                  <p style={{ 
+                    fontSize: '0.68rem', 
+                    color: '#64748b', 
+                    marginBottom: '0.3rem', 
+                    lineHeight: 1.2,
+                    height: '2.4em',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {product.description}
+                  </p>
+
                   {/* Star Rating Display */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.2rem' }}>
-                    <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.7rem' }}>
+                    <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.65rem' }}>
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
                       ))}
                     </div>
-                    <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '600' }}>
+                    <span style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: '600' }}>
                       ({product.reviewCount || 0})
                     </span>
                   </div>
