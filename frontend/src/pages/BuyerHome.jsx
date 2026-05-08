@@ -298,7 +298,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
       <main style={{ flex: 1, padding: '1.5rem 1rem', backgroundColor: '#f8fafc', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minWidth: 0 }}>
         <div style={{ width: '100%', margin: '0' }}>
           
-        <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+        <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
             className="btn"
@@ -306,17 +306,24 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
               backgroundColor: '#ffffff', 
               color: '#475569', 
               border: '1px solid #cbd5e1', 
-              padding: '0.4rem 0.8rem', 
-              fontSize: '0.85rem',
+              padding: '0.4rem 0.6rem', 
+              fontSize: '1rem',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              justifyContent: 'center',
               borderRadius: '0.5rem',
-              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+              minWidth: '40px'
             }}
           >
-            {isSidebarOpen ? '◀ Hide Menu' : '▶ Show Menu'}
+            {isSidebarOpen ? '◀' : '▶'}
           </button>
+          <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '1.25rem', margin: 0 }}>
+              {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length})` : ''}` : 'Featured Products'}
+            </h2>
+            {!loading && <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{filteredProducts.length} items</span>}
+          </div>
         </div>
 
         {loading ? (
@@ -325,24 +332,18 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
           </div>
         ) : (
           <div>
-            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ fontSize: '1.5rem' }}>
-                {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length} subcategories)` : ''}` : 'Featured Products'}
-              </h2>
-              <span style={{ fontSize: '0.9rem', color: '#64748b' }}>{filteredProducts.length} items found</span>
-            </div>
 
             <div style={{ 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', 
-              gap: '1.5rem' 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
+              gap: '0.75rem' 
             }}>
               {filteredProducts.map(product => (
                 <div 
                   key={product.id} 
                   className="glass" 
                   style={{ 
-                    borderRadius: '1.5rem', 
+                    borderRadius: '1rem', 
                     overflow: 'hidden',
                     transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                     cursor: 'pointer',
@@ -350,7 +351,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                     flexDirection: 'column',
                     backgroundColor: '#ffffff',
                     border: '1px solid #f1f5f9',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)'
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04)'
                   }}
                   onMouseOver={(e) => {
                     e.currentTarget.style.transform = 'translateY(-12px) scale(1.02)';
@@ -362,35 +363,35 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                   }}
                   onClick={() => navigate(`/product/${product.id}`)}
                 >
-                  <div style={{ height: '220px', backgroundColor: '#f1f5f9', overflow: 'hidden', position: 'relative' }}>
+                  <div style={{ height: '140px', backgroundColor: '#f1f5f9', overflow: 'hidden', position: 'relative' }}>
                     <img 
                       src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : ''} 
                       alt={product.name} 
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
-                    <div style={{ position: 'absolute', top: '0.75rem', left: '0.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                      <span style={{ fontSize: '0.65rem', backgroundColor: 'rgba(255,255,255,0.9)', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 'bold', color: '#1e293b' }}>{product.category}</span>
+                    <div style={{ position: 'absolute', top: '0.4rem', left: '0.4rem', display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
+                      <span style={{ fontSize: '0.55rem', backgroundColor: 'rgba(255,255,255,0.95)', padding: '0.15rem 0.4rem', borderRadius: '1rem', fontWeight: 'bold', color: '#1e293b', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.category}</span>
                       {product.subcategory && (
-                        <span style={{ fontSize: '0.65rem', backgroundColor: 'rgba(59, 130, 246, 0.9)', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontWeight: 'bold', color: '#ffffff' }}>{product.subcategory}</span>
+                        <span style={{ fontSize: '0.55rem', backgroundColor: 'rgba(59, 130, 246, 0.95)', padding: '0.15rem 0.4rem', borderRadius: '1rem', fontWeight: 'bold', color: '#ffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.subcategory}</span>
                       )}
                     </div>
                   </div>
-                  <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <h3 style={{ marginBottom: '0.5rem', fontSize: '1.1rem', fontWeight: '600' }}>{product.name}</h3>
+                  <div style={{ padding: '0.65rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <h3 style={{ fontSize: '0.85rem', marginBottom: '0.15rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.2, height: '2.4em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>
                     
                     {/* Star Rating Display */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.75rem' }}>
-                      <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.9rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.2rem' }}>
+                      <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.7rem' }}>
                         {[1, 2, 3, 4, 5].map((star) => (
                           <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
                         ))}
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
-                        {product.averageRating ? product.averageRating.toFixed(1) : '0.0'} ({product.reviewCount || 0})
+                      <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '600' }}>
+                        ({product.reviewCount || 0})
                       </span>
                       <button 
                         onClick={(e) => { e.stopPropagation(); setReviewingProduct(product); }}
-                        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.7rem', fontWeight: '700', cursor: 'pointer', marginLeft: 'auto', textDecoration: 'underline' }}
+                        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.6rem', fontWeight: '700', cursor: 'pointer', marginLeft: 'auto', textDecoration: 'underline' }}
                       >
                         Rate
                       </button>
@@ -439,7 +440,7 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                       </p>
                     )}
                     <div style={{ marginTop: 'auto' }}>
-                      <p style={{ fontWeight: '900', fontSize: '1.6rem', color: '#4f46e5', marginBottom: '1rem', letterSpacing: '-0.5px' }}>
+                      <p style={{ fontWeight: '900', fontSize: '1.1rem', color: '#4f46e5', marginBottom: '0.5rem', letterSpacing: '-0.2px' }}>
                         ₹{product.price.toLocaleString()}
                       </p>
                       <button 
@@ -453,11 +454,10 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                           display: 'flex', 
                           alignItems: 'center', 
                           justifyContent: 'center', 
-                          gap: '0.6rem',
-                          padding: '0.8rem',
-                          borderRadius: '1rem',
-                          fontSize: '1rem',
-                          boxShadow: '0 4px 6px -1px rgba(37, 211, 102, 0.3)'
+                          gap: '0.4rem',
+                          padding: '0.4rem',
+                          borderRadius: '0.5rem',
+                          fontSize: '0.8rem'
                         }}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">

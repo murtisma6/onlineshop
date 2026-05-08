@@ -382,17 +382,20 @@ const Storefront = () => {
             <p style={{ color: '#64748b', fontSize: '1.2rem' }}>No products found in this category.</p>
           </div>
         ) : (
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-            gap: '2rem' 
-          }}>
+          <div 
+            className="product-grid"
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
+              gap: '0.75rem' 
+            }}
+          >
             {filteredProducts.map(product => (
               <div 
                 key={product.id} 
                 className="glass" 
                 style={{ 
-                  borderRadius: '1.5rem', 
+                  borderRadius: '1rem', 
                   overflow: 'hidden',
                   transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                   cursor: 'pointer',
@@ -400,7 +403,7 @@ const Storefront = () => {
                   flexDirection: 'column',
                   backgroundColor: '#ffffff',
                   border: '1px solid #f1f5f9',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)'
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04)'
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-12px) scale(1.02)';
@@ -412,7 +415,7 @@ const Storefront = () => {
                 }}
                 onClick={() => navigate(`/product/${product.id}`, { state: { fromStore: store.uniqueUrl, storeName: store.name } })}
               >
-                <div style={{ height: '240px', backgroundColor: '#f1f5f9', overflow: 'hidden', position: 'relative' }}>
+                <div style={{ height: '140px', backgroundColor: '#f1f5f9', overflow: 'hidden', position: 'relative' }}>
                   <img 
                     src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : ''} 
                     alt={product.name} 
@@ -422,35 +425,35 @@ const Storefront = () => {
                       e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_18b5b5c5b5a%20text%20%7B%20fill%3A%2394a3b8%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_18b5b5c5b5a%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f1f5f9%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2274.5%22%20y%3D%22104.5%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
                     }}
                   />
-                  <div style={{ position: 'absolute', top: '0.75rem', left: '0.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                    <span style={{ fontSize: '0.65rem', backgroundColor: 'rgba(255,255,255,0.95)', padding: '0.3rem 0.7rem', borderRadius: '1rem', fontWeight: 'bold', color: '#1e293b', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.category}</span>
+                  <div style={{ position: 'absolute', top: '0.4rem', left: '0.4rem', display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
+                    <span style={{ fontSize: '0.55rem', backgroundColor: 'rgba(255,255,255,0.95)', padding: '0.15rem 0.4rem', borderRadius: '1rem', fontWeight: 'bold', color: '#1e293b', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.category}</span>
                     {product.subcategory && (
-                      <span style={{ fontSize: '0.65rem', backgroundColor: 'rgba(59, 130, 246, 0.95)', padding: '0.3rem 0.7rem', borderRadius: '1rem', fontWeight: 'bold', color: '#ffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.subcategory}</span>
+                      <span style={{ fontSize: '0.55rem', backgroundColor: 'rgba(59, 130, 246, 0.95)', padding: '0.15rem 0.4rem', borderRadius: '1rem', fontWeight: 'bold', color: '#ffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.subcategory}</span>
                     )}
                   </div>
                 </div>
-                <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ fontSize: '1.1rem', marginBottom: '0.2rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.3 }}>{product.name}</h3>
+                <div style={{ padding: '0.65rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <h3 style={{ fontSize: '0.85rem', marginBottom: '0.15rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.2, height: '2.4em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>
                   
                   {/* Star Rating Display */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
-                    <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.9rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.2rem' }}>
+                    <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.7rem' }}>
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
                       ))}
                     </div>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
-                      {product.averageRating ? product.averageRating.toFixed(1) : '0.0'} ({product.reviewCount || 0})
+                    <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '600' }}>
+                      ({product.reviewCount || 0})
                     </span>
                   </div>
                   {product.sellerCity && (
-                    <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <p style={{ color: '#94a3b8', fontSize: '0.65rem', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
                       <span>📍</span> {product.sellerCity}
                     </p>
                   )}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#4f46e5' }}>₹{product.price.toFixed(2)}</span>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
+                    <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#4f46e5' }}>₹{product.price.toFixed(0)}</span>
+                    <div style={{ display: 'flex', gap: '0.3rem' }}>
                       <button 
                         className="btn"
                         onClick={(e) => {
@@ -458,16 +461,14 @@ const Storefront = () => {
                           setReviewingProduct(product);
                         }}
                         style={{ 
-                          padding: '0.4rem 0.75rem', 
-                          fontSize: '0.8rem', 
+                          padding: '0.2rem 0.4rem', 
+                          fontSize: '0.65rem', 
                           backgroundColor: '#f8fafc',
                           color: '#64748b',
                           border: '1px solid #e2e8f0',
-                          borderRadius: '0.5rem',
+                          borderRadius: '0.3rem',
                           fontWeight: '600'
                         }}
-                        onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; e.currentTarget.style.color = '#1e293b'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; e.currentTarget.style.color = '#64748b'; }}
                       >
                         Rate
                       </button>
@@ -477,7 +478,7 @@ const Storefront = () => {
                           e.stopPropagation();
                           navigate(`/product/${product.id}`, { state: { fromStore: uniqueUrl, storeName: store.name } });
                         }}
-                        style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}
+                        style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
                       >
                         View
                       </button>
