@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProducts, trackEvent } from '../api';
+import ReviewModal from '../components/ReviewModal';
 
 const BuyerHome = ({ user }) => {
   const navigate = useNavigate();
@@ -12,28 +13,30 @@ const BuyerHome = ({ user }) => {
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLocationFilterOpen, setIsLocationFilterOpen] = useState(false);
+  const [reviewingProduct, setReviewingProduct] = useState(null);
+
+  const loadProducts = async () => {
+    try {
+      const res = await fetchProducts();
+      setProducts(res.data);
+      setFilteredProducts(res.data);
+      
+      // Track view events
+      res.data.forEach(product => {
+        trackEvent({
+          eventType: 'PRODUCT_VIEW',
+          productId: product.id,
+          userId: user ? user.id : null
+        }).catch(e => console.error(e));
+      });
+    } catch (err) {
+      console.error('Failed to fetch products', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const res = await fetchProducts();
-        setProducts(res.data);
-        setFilteredProducts(res.data);
-        
-        // Track view events
-        res.data.forEach(product => {
-          trackEvent({
-            eventType: 'PRODUCT_VIEW',
-            productId: product.id,
-            userId: user ? user.id : null
-          }).catch(e => console.error(e));
-        });
-      } catch (err) {
-        console.error('Failed to fetch products', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     loadProducts();
   }, [user]);
 
@@ -374,6 +377,24 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
                   </div>
                   <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <h3 style={{ marginBottom: '0.5rem', fontSize: '1.1rem', fontWeight: '600' }}>{product.name}</h3>
+                    
+                    {/* Star Rating Display */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                      <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.9rem' }}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
+                        ))}
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
+                        {product.averageRating ? product.averageRating.toFixed(1) : '0.0'} ({product.reviewCount || 0})
+                      </span>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setReviewingProduct(product); }}
+                        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.7rem', fontWeight: '700', cursor: 'pointer', marginLeft: 'auto', textDecoration: 'underline' }}
+                      >
+                        Rate
+                      </button>
+                    </div>
                     <div 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -459,6 +480,16 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
         )}
         </div>
       </main>
+      {reviewingProduct && (
+        <ReviewModal 
+          productId={reviewingProduct.id}
+          productName={reviewingProduct.name}
+          onClose={() => setReviewingProduct(null)}
+          onReviewAdded={() => {
+            loadProducts(); // Refresh
+          }}
+        />
+      )}
     </div>
   );
 };

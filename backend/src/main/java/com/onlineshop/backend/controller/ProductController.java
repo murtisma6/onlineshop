@@ -10,6 +10,8 @@ import com.onlineshop.backend.repository.ProductRepository;
 import com.onlineshop.backend.repository.ProductImageRepository;
 import com.onlineshop.backend.repository.StoreRepository;
 import com.onlineshop.backend.repository.UserRepository;
+import com.onlineshop.backend.repository.ReviewRepository;
+import com.onlineshop.backend.model.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,9 @@ public class ProductController {
 
     @Autowired
     private AnalyticsEventRepository analyticsEventRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @PostMapping
     public ResponseEntity<?> uploadProduct(
@@ -237,6 +242,15 @@ public class ProductController {
 
         if (product.getStore().getLogoPath() != null) {
             dto.setStoreLogoUrl(baseUrl + "/api/stores/" + product.getStore().getId() + "/logo");
+        }
+
+        List<Review> reviews = reviewRepository.findByProductId(product.getId());
+        dto.setReviewCount(reviews.size());
+        if (!reviews.isEmpty()) {
+            double avg = reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+            dto.setAverageRating(Math.round(avg * 10.0) / 10.0); // Round to 1 decimal place
+        } else {
+            dto.setAverageRating(0.0);
         }
 
         return dto;

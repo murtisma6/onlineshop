@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { fetchProductById } from '../api';
+import { fetchProductById, fetchReviews } from '../api';
+import ReviewModal from '../components/ReviewModal';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -12,19 +13,25 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [reviews, setReviews] = useState([]);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   useEffect(() => {
-    const loadProduct = async () => {
+    const loadProductAndReviews = async () => {
       try {
-        const res = await fetchProductById(id);
-        setProduct(res.data);
+        const [productRes, reviewsRes] = await Promise.all([
+          fetchProductById(id),
+          fetchReviews(id)
+        ]);
+        setProduct(productRes.data);
+        setReviews(reviewsRes.data);
       } catch (err) {
-        console.error('Failed to load product', err);
+        console.error('Failed to load product or reviews', err);
       } finally {
         setLoading(false);
       }
     };
-    loadProduct();
+    loadProductAndReviews();
   }, [id]);
 
   const handleWhatsAppClick = () => {
@@ -136,6 +143,24 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
             
             <h1 style={{ fontSize: '2.5rem', color: '#1E3147', marginBottom: '0.5rem', lineHeight: 1.2 }}>{product.name}</h1>
             
+            {/* Rating Summary */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', color: '#fbbf24', fontSize: '1.2rem' }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
+                ))}
+              </div>
+              <span style={{ fontSize: '1rem', color: '#64748b', fontWeight: '700' }}>
+                {product.averageRating ? product.averageRating.toFixed(1) : '0.0'} ({product.reviewCount || 0} reviews)
+              </span>
+              <button 
+                onClick={() => setIsReviewModalOpen(true)}
+                style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Rate this product
+              </button>
+            </div>
+            
             <div style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {product.storeLogoUrl ? (
                 <img 
@@ -205,7 +230,63 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
           </div>
           
         </div>
+
+        {/* Reviews Section */}
+        <div style={{ marginTop: '5rem', borderTop: '2px solid #e2e8f0', paddingTop: '3rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1e293b' }}>Customer Reviews</h2>
+            <button 
+              onClick={() => setIsReviewModalOpen(true)}
+              className="btn"
+              style={{ backgroundColor: '#ffffff', color: '#4f46e5', border: '2px solid #4f46e5', padding: '0.6rem 1.2rem', fontWeight: '700' }}
+            >
+              Write a Review
+            </button>
+          </div>
+
+          {reviews.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem', backgroundColor: '#ffffff', borderRadius: '1rem', border: '1px dashed #cbd5e1' }}>
+              <p style={{ color: '#64748b' }}>No reviews yet. Be the first to share your experience!</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '1.5rem' }}>
+              {reviews.map((review) => (
+                <div key={review.id} style={{ backgroundColor: '#ffffff', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <div>
+                      <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span key={star} style={{ opacity: star <= review.rating ? 1 : 0.2 }}>★</span>
+                        ))}
+                      </div>
+                      <strong style={{ color: '#1e293b', fontSize: '1rem' }}>{review.userName}</strong>
+                    </div>
+                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p style={{ color: '#475569', lineHeight: 1.6, margin: 0 }}>{review.comment || 'No comment provided.'}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
+      {isReviewModalOpen && (
+        <ReviewModal 
+          productId={product.id}
+          productName={product.name}
+          onClose={() => setIsReviewModalOpen(false)}
+          onReviewAdded={async () => {
+            const res = await fetchReviews(id);
+            setReviews(res.data);
+            // Also refresh product for average rating
+            const prodRes = await fetchProductById(id);
+            setProduct(prodRes.data);
+          }}
+        />
+      )}
     </div>
   );
 };

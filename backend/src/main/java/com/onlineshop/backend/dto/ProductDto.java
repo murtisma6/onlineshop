@@ -20,4 +20,6 @@ public class ProductDto {
     private Long clicks;
     private String sellerCity;
     private String storeLogoUrl;
+    private Double averageRating;
+    private Integer reviewCount;
 }

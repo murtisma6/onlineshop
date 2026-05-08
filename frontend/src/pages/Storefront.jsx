@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchStoreByUrl, fetchStoreProducts, fetchSellerStores } from '../api';
+import ReviewModal from '../components/ReviewModal';
 
 const Storefront = () => {
   const { uniqueUrl } = useParams();
@@ -16,6 +17,7 @@ const Storefront = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [siblingStores, setSiblingStores] = useState([]);
+  const [reviewingProduct, setReviewingProduct] = useState(null);
 
   useEffect(() => {
     loadStoreAndProducts();
@@ -429,6 +431,18 @@ const Storefront = () => {
                 </div>
                 <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ fontSize: '1.1rem', marginBottom: '0.2rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.3 }}>{product.name}</h3>
+                  
+                  {/* Star Rating Display */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.9rem' }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span key={star} style={{ opacity: star <= Math.round(product.averageRating || 0) ? 1 : 0.2 }}>★</span>
+                      ))}
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
+                      {product.averageRating ? product.averageRating.toFixed(1) : '0.0'} ({product.reviewCount || 0})
+                    </span>
+                  </div>
                   {product.sellerCity && (
                     <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                       <span>📍</span> {product.sellerCity}
@@ -436,16 +450,38 @@ const Storefront = () => {
                   )}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
                     <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#4f46e5' }}>₹{product.price.toFixed(2)}</span>
-                    <button 
-                      className="btn btn-primary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/product/${product.id}`, { state: { fromStore: store.uniqueUrl, storeName: store.name } });
-                      }}
-                      style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}
-                    >
-                      View
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button 
+                        className="btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setReviewingProduct(product);
+                        }}
+                        style={{ 
+                          padding: '0.4rem 0.75rem', 
+                          fontSize: '0.8rem', 
+                          backgroundColor: '#f8fafc',
+                          color: '#64748b',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '0.5rem',
+                          fontWeight: '600'
+                        }}
+                        onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#f1f5f9'; e.currentTarget.style.color = '#1e293b'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc'; e.currentTarget.style.color = '#64748b'; }}
+                      >
+                        Rate
+                      </button>
+                      <button 
+                        className="btn btn-primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/product/${product.id}`, { state: { fromStore: uniqueUrl, storeName: store.name } });
+                        }}
+                        style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}
+                      >
+                        View
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -455,6 +491,16 @@ const Storefront = () => {
       </main>
       </div>
 
+      {reviewingProduct && (
+        <ReviewModal 
+          productId={reviewingProduct.id}
+          productName={reviewingProduct.name}
+          onClose={() => setReviewingProduct(null)}
+          onReviewAdded={() => {
+            loadStoreAndProducts(); // Refresh to get new ratings
+          }}
+        />
+      )}
     </div>
   );
 };

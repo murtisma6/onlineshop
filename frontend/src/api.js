@@ -42,4 +42,7 @@ export const fetchAdminTraffic = () => api.get('/admin/traffic');
 export const createBulkUsers = (users) => api.post('/admin/users/bulk', users);
 export const createBulkStores = (stores) => api.post('/admin/stores/bulk', stores);
 
+export const fetchReviews = (productId) => api.get(`/reviews/product/${productId}`);
+export const addReview = (productId, data) => api.post(`/reviews/product/${productId}`, data);
+
 export default api;
