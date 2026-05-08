@@ -122,55 +122,28 @@ public class StoreController {
 
         if (logo != null && !logo.isEmpty()) {
             try {
-                String uploadDir = "uploads/stores/" + id + "/";
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                String fileName = "logo_" + System.currentTimeMillis() + "_" + logo.getOriginalFilename();
-                Path filePath = uploadPath.resolve(fileName);
-                Files.copy(logo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                
-                store.setLogoPath(uploadDir + fileName);
+                store.setLogoData(logo.getBytes());
+                store.setLogoType(logo.getContentType());
             } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload logo");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process logo");
             }
         }
 
         if (leftBanner != null && !leftBanner.isEmpty()) {
             try {
-                String uploadDir = "uploads/stores/" + id + "/";
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                String fileName = "left_banner_" + System.currentTimeMillis() + "_" + leftBanner.getOriginalFilename();
-                Path filePath = uploadPath.resolve(fileName);
-                Files.copy(leftBanner.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                
-                store.setLeftBannerPath(uploadDir + fileName);
+                store.setLeftBannerData(leftBanner.getBytes());
+                store.setLeftBannerType(leftBanner.getContentType());
             } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload left banner");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process left banner");
             }
         }
 
         if (rightBanner != null && !rightBanner.isEmpty()) {
             try {
-                String uploadDir = "uploads/stores/" + id + "/";
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                String fileName = "right_banner_" + System.currentTimeMillis() + "_" + rightBanner.getOriginalFilename();
-                Path filePath = uploadPath.resolve(fileName);
-                Files.copy(rightBanner.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                
-                store.setRightBannerPath(uploadDir + fileName);
+                store.setRightBannerData(rightBanner.getBytes());
+                store.setRightBannerType(rightBanner.getContentType());
             } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload right banner");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process right banner");
             }
         }
 
@@ -197,23 +170,25 @@ public class StoreController {
     private ResponseEntity<Resource> getStoreImage(Long id, String type) {
         Optional<Store> storeOpt = storeRepository.findById(id);
         if (storeOpt.isPresent()) {
-            String pathStr = null;
-            if ("logo".equals(type)) pathStr = storeOpt.get().getLogoPath();
-            else if ("left-banner".equals(type)) pathStr = storeOpt.get().getLeftBannerPath();
-            else if ("right-banner".equals(type)) pathStr = storeOpt.get().getRightBannerPath();
+            Store store = storeOpt.get();
+            byte[] data = null;
+            String contentType = null;
 
-            if (pathStr != null) {
-                try {
-                    Path path = Paths.get(pathStr);
-                    Resource resource = new UrlResource(path.toUri());
-                    if (resource.exists()) {
-                        return ResponseEntity.ok()
-                                .contentType(MediaType.IMAGE_JPEG)
-                                .body(resource);
-                    }
-                } catch (Exception e) {
-                    return ResponseEntity.notFound().build();
-                }
+            if ("logo".equals(type)) {
+                data = store.getLogoData();
+                contentType = store.getLogoType();
+            } else if ("left-banner".equals(type)) {
+                data = store.getLeftBannerData();
+                contentType = store.getLeftBannerType();
+            } else if ("right-banner".equals(type)) {
+                data = store.getRightBannerData();
+                contentType = store.getRightBannerType();
+            }
+
+            if (data != null && contentType != null) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .body(new org.springframework.core.io.ByteArrayResource(data));
             }
         }
         return ResponseEntity.notFound().build();
@@ -229,13 +204,13 @@ public class StoreController {
         dto.setRibbonColor(s.getRibbonColor());
         dto.setHeaderTagline(s.getHeaderTagline());
         
-        if (s.getLogoPath() != null) {
+        if (s.getLogoData() != null) {
             dto.setLogoUrl(baseUrl + "/api/stores/" + s.getId() + "/logo");
         }
-        if (s.getLeftBannerPath() != null) {
+        if (s.getLeftBannerData() != null) {
             dto.setLeftBannerUrl(baseUrl + "/api/stores/" + s.getId() + "/left-banner");
         }
-        if (s.getRightBannerPath() != null) {
+        if (s.getRightBannerData() != null) {
             dto.setRightBannerUrl(baseUrl + "/api/stores/" + s.getId() + "/right-banner");
         }
 
@@ -272,24 +247,19 @@ public class StoreController {
         Optional<Store> storeOpt = storeRepository.findById(id);
         if (storeOpt.isPresent()) {
             Store store = storeOpt.get();
-            String pathStr = null;
-            if ("logo".equals(type)) pathStr = store.getLogoPath();
-            else if ("left-banner".equals(type)) pathStr = store.getLeftBannerPath();
-            else if ("right-banner".equals(type)) pathStr = store.getRightBannerPath();
-
-            if (pathStr != null) {
-                try {
-                    Files.deleteIfExists(Paths.get(pathStr));
-                    if ("logo".equals(type)) store.setLogoPath(null);
-                    else if ("left-banner".equals(type)) store.setLeftBannerPath(null);
-                    else if ("right-banner".equals(type)) store.setRightBannerPath(null);
-                    
-                    storeRepository.save(store);
-                    return ResponseEntity.ok(mapToDto(store));
-                } catch (IOException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete image file");
-                }
+            if ("logo".equals(type)) {
+                store.setLogoData(null);
+                store.setLogoType(null);
+            } else if ("left-banner".equals(type)) {
+                store.setLeftBannerData(null);
+                store.setLeftBannerType(null);
+            } else if ("right-banner".equals(type)) {
+                store.setRightBannerData(null);
+                store.setRightBannerType(null);
             }
+            
+            storeRepository.save(store);
+            return ResponseEntity.ok(mapToDto(store));
         }
         return ResponseEntity.notFound().build();
     }

@@ -251,7 +251,7 @@ public class ProductController {
         dto.setViews(views);
         dto.setClicks(clicks);
 
-        if (product.getStore().getLogoPath() != null) {
+        if (product.getStore().getLogoData() != null) {
             dto.setStoreLogoUrl(baseUrl + "/api/stores/" + product.getStore().getId() + "/logo");
         }
 

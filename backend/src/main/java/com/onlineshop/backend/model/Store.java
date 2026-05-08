@@ -30,8 +30,11 @@ public class Store {
     @Column
     private String headerTagline = "Welcome to our store! Browse our collection below.";
 
+    @Column(columnDefinition = "bytea")
+    private byte[] logoData;
+    
     @Column
-    private String logoPath;
+    private String logoType;
 
     @Column
     private String instagramUrl;
@@ -42,11 +45,17 @@ public class Store {
     @Column
     private String youtubeUrl;
     
-    @Column
-    private String leftBannerPath;
+    @Column(columnDefinition = "bytea")
+    private byte[] leftBannerData;
     
     @Column
-    private String rightBannerPath;
+    private String leftBannerType;
+    
+    @Column(columnDefinition = "bytea")
+    private byte[] rightBannerData;
+    
+    @Column
+    private String rightBannerType;
 
     @Column
     @org.hibernate.annotations.UpdateTimestamp
