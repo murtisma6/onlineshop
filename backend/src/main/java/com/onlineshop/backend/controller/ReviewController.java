@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reviews")
-@CrossOrigin(origins = {"http://localhost", "http://192.168.0.105"})
 public class ReviewController {
     @Autowired
     private ReviewService reviewService;

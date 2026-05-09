@@ -15,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/stores")
-@CrossOrigin(origins = {"http://localhost", "${app.frontend-url}"})
 public class StoreController {
 
     @Value("${app.base-url}")
@@ -216,14 +216,16 @@ public class StoreController {
         dto.setRibbonColor(s.getRibbonColor());
         dto.setHeaderTagline(s.getHeaderTagline());
         
+        String currentBaseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+        
         if (s.getLogoData() != null) {
-            dto.setLogoUrl(baseUrl + "/api/stores/" + s.getId() + "/logo");
+            dto.setLogoUrl(currentBaseUrl + "/api/stores/" + s.getId() + "/logo");
         }
         if (s.getLeftBannerData() != null) {
-            dto.setLeftBannerUrl(baseUrl + "/api/stores/" + s.getId() + "/left-banner");
+            dto.setLeftBannerUrl(currentBaseUrl + "/api/stores/" + s.getId() + "/left-banner");
         }
         if (s.getRightBannerData() != null) {
-            dto.setRightBannerUrl(baseUrl + "/api/stores/" + s.getId() + "/right-banner");
+            dto.setRightBannerUrl(currentBaseUrl + "/api/stores/" + s.getId() + "/right-banner");
         }
 
         dto.setInstagramUrl(s.getInstagramUrl());

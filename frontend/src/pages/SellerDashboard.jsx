@@ -869,7 +869,7 @@ const SellerDashboard = ({ user }) => {
         }}>
           
           {/* Left Column: Form */}
-          <div className="glass" style={{ padding: '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff' }}>
+          <div className="glass dashboard-glass-container" style={{ padding: window.innerWidth < 768 ? '1.25rem' : '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#eef2ff', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem', fontWeight: 'bold', fontSize: '1.2rem' }}>
                 {editingProductId ? '✎' : '+'}
@@ -1045,7 +1045,7 @@ const SellerDashboard = ({ user }) => {
           </div>
 
           {/* Right Column: List */}
-          <div className="glass" style={{ padding: '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff', minHeight: '600px' }}>
+          <div className="glass dashboard-glass-container" style={{ padding: window.innerWidth < 768 ? '1.25rem' : '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff', minHeight: '600px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#f0fdf4', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem', fontWeight: 'bold', fontSize: '1.2rem' }}>
@@ -1068,7 +1068,7 @@ const SellerDashboard = ({ user }) => {
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Use the form to list your first product.</p>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '0.5rem' }}>
+              <div className="inventory-list-scroll" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '0.5rem' }}>
                 {myProducts.map(product => (
                   <div key={product.id} className="inventory-card">
                     <div className="inventory-card-image">
@@ -1104,7 +1104,7 @@ const SellerDashboard = ({ user }) => {
                         </div>
                         <p style={{ color: '#4f46e5', fontWeight: 'bold', fontSize: '1.2rem', margin: 0 }}>₹{product.price}</p>
                       </div>
-                      <div style={{ marginTop: 'auto', paddingTop: '0.75rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                      <div className="inventory-card-actions" style={{ marginTop: 'auto', paddingTop: '0.75rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                         <button 
                           onClick={() => handleEdit(product)} 
                           style={{ backgroundColor: '#eef2ff', color: '#4f46e5', border: 'none', padding: '0.4rem 1rem', borderRadius: '0.25rem', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}

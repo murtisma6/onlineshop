@@ -8,7 +8,10 @@ export default defineConfig({
     port: 80,
     host: '192.168.0.105',
     allowedHosts: [
-      "deaths-feeding-trinity-reporter.trycloudflare.com"
+      "localhost",
+      "192.168.0.105",
+      "expertise-modifications-voip-interim.trycloudflare.com",
+      ".trycloudflare.com"
     ]
   }
 })

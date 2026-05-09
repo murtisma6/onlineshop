@@ -518,12 +518,7 @@ const Storefront = () => {
                       {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
                     </div>
                   )}
-                  <div style={{ position: 'absolute', top: '0.4rem', left: '0.4rem', display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
-                    <span style={{ fontSize: '0.55rem', backgroundColor: 'rgba(255,255,255,0.95)', padding: '0.15rem 0.4rem', borderRadius: '1rem', fontWeight: 'bold', color: '#1e293b', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.category}</span>
-                    {product.subcategory && (
-                      <span style={{ fontSize: '0.55rem', backgroundColor: 'rgba(59, 130, 246, 0.95)', padding: '0.15rem 0.4rem', borderRadius: '1rem', fontWeight: 'bold', color: '#ffffff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.subcategory}</span>
-                    )}
-                  </div>
+                  {/* Category and Subcategory tags removed for cleaner storefront view */}
                 </div>
                 <div style={{ padding: '0.65rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <h3 style={{ fontSize: '0.82rem', marginBottom: '0.1rem', color: '#1e293b', fontWeight: '700', lineHeight: 1.2, height: '2.4em', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>

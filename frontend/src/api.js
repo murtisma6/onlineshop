@@ -1,6 +1,21 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const getApiUrl = () => {
+  const { hostname, protocol } = window.location;
+  // If accessing via local network or localhost
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '192.168.0.105') {
+    return `http://${hostname}:8080/api`;
+  }
+  // Fallback to env variable (Cloudflare tunnel)
+  // Ensure we use the defined env variable if available
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl) return envUrl;
+
+  // Last resort: dynamic fallback based on current protocol
+  return `${protocol}//${hostname}/api`;
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
