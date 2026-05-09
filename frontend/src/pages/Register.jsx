@@ -1,11 +1,18 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { register } from '../api';
 
 const Register = ({ setUser }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if role is forced from URL (e.g. from Own your Digistore page)
+  const queryParams = new URLSearchParams(location.search);
+  const forcedRole = queryParams.get('role');
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('BUYER');
+  const [role, setRole] = useState(forcedRole || 'BUYER');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -16,7 +23,6 @@ const Register = ({ setUser }) => {
   const [pincode, setPincode] = useState('');
   const [state, setState] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -33,7 +39,9 @@ const Register = ({ setUser }) => {
   return (
     <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: '2rem 0' }}>
       <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', width: '100%', maxWidth: '500px', textAlign: 'center' }}>
-        <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary-color)' }}>Create Account</h2>
+        <h2 style={{ marginBottom: '1.5rem', color: 'var(--primary-color)' }}>
+          {forcedRole === 'SELLER' ? 'Seller Registration' : 'Create Account'}
+        </h2>
         {error && <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
         <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <input type="text" placeholder="Username" className="input-field" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -54,15 +62,19 @@ const Register = ({ setUser }) => {
           </div>
           <input type="text" placeholder="State" className="input-field" value={state} onChange={(e) => setState(e.target.value)} required />
           
-          <label style={{ textAlign: 'left', fontWeight: 'bold', marginTop: '0.5rem', fontSize: '0.9rem' }}>Account Type:</label>
-          <select 
-            className="input-field" 
-            value={role} 
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="BUYER">Buyer</option>
-            <option value="SELLER">Seller</option>
-          </select>
+          {!forcedRole && (
+            <>
+              <label style={{ textAlign: 'left', fontWeight: 'bold', marginTop: '0.5rem', fontSize: '0.9rem' }}>Account Type:</label>
+              <select 
+                className="input-field" 
+                value={role} 
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="BUYER">Buyer</option>
+                <option value="SELLER">Seller</option>
+              </select>
+            </>
+          )}
           <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.75rem' }}>Register</button>
         </form>
         <p style={{ marginTop: '1rem', fontSize: '0.875rem' }}>
