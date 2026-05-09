@@ -41,6 +41,11 @@ export const trackEvent = (data) => api.post('/analytics', data);
 
 export const fetchAdminDashboard = () => api.get('/admin/dashboard');
 export const fetchAdminTraffic = () => api.get('/admin/traffic');
+export const fetchAllUsers = () => api.get('/admin/users');
+export const adminCreateUser = (data) => api.post('/admin/users', data);
+export const adminUpdateUser = (id, data) => api.put(`/admin/users/${id}`, data);
+export const adminDeleteUser = (id) => api.delete(`/admin/users/${id}`);
+export const adminResetPassword = (id, password) => api.post(`/admin/users/${id}/reset-password`, { password });
 export const createBulkUsers = (users) => api.post('/admin/users/bulk', users);
 export const createBulkStores = (stores) => api.post('/admin/stores/bulk', stores);
 

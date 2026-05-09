@@ -121,7 +121,7 @@ const Storefront = () => {
           </div>
 
           {/* Middle Section: Store Name, Logo, Socials */}
-          <div style={{ 
+          <div className="store-middle-section" style={{ 
             padding: '1.5rem', 
             textAlign: 'center',
             display: 'flex',
@@ -332,15 +332,18 @@ const Storefront = () => {
           
           {/* Responsive styles via <style> tag */}
           <style>{`
-            .store-header-grid { grid-template-columns: 30% 40% 30%; }
+            .store-header-grid { display: grid; grid-template-columns: 30% 40% 30%; width: 100%; }
+            .store-middle-section { grid-column: 2; }
             .store-banner-container { min-height: 180px; }
-            .marquee-container { display: flex; align-items: center; gap: 1rem; overflow: hidden; flex-wrap: nowrap; }
+            .marquee-container { width: 100%; overflow: hidden; margin-top: 0.75rem; }
+            .heading-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; }
             
             @media (max-width: 1024px) {
               .store-header-grid { grid-template-columns: 1fr; }
+              .store-middle-section { grid-column: auto; }
               .store-banner-container { min-height: 100px; }
-              .marquee-container { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-              .marquee-inner { width: 100% !important; }
+              .heading-row { flex-wrap: wrap; gap: 0.5rem; }
+              .heading-row h2 { font-size: 1.1rem !important; }
             }
 
             @media (max-width: 640px) {
@@ -428,21 +431,23 @@ const Storefront = () => {
                   </>
                 )}
               </div>
-              {/* Right: items badge */}
-              <span className="storefront-row1-right" style={{ fontSize: '0.9rem', color: '#64748b', backgroundColor: '#e2e8f0', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontWeight: '700', flexShrink: 0 }}>
-                {filteredProducts.length} Items
-              </span>
             </div>
 
-            {/* Row 2: Our Collection heading + Rolling Text */}
-            <div className="marquee-container">
+            {/* Row 2: Our Collection heading + Items Badge */}
+            <div className="heading-row">
               <h2 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#1E3147', margin: 0, whiteSpace: 'nowrap' }}>
                 {selectedCategory
                   ? `${selectedCategory}${selectedSubcategories.length > 0 ? ` (${selectedSubcategories.length} sub)` : ''}`
                   : 'Our Collection'}
               </h2>
-              
-              {store.rollingText && (
+              <span style={{ fontSize: '0.85rem', color: '#4f46e5', backgroundColor: '#eef2ff', padding: '0.3rem 0.9rem', borderRadius: '2rem', fontWeight: '800', flexShrink: 0, border: '1px solid #e0e7ff' }}>
+                {filteredProducts.length} Items
+              </span>
+            </div>
+
+            {/* Row 3: Rolling Text */}
+            {store.rollingText && (
+              <div className="marquee-container">
                 <div className="marquee-inner" style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
                   <div className="rolling-marquee" style={{
                     color: store.rollingTextColor || '#000000',
@@ -454,8 +459,8 @@ const Storefront = () => {
                     {store.rollingText}
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
 
@@ -501,12 +506,18 @@ const Storefront = () => {
                   <img 
                     src={product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : ''} 
                     alt={product.name} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                    className="product-image"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_18b5b5c5b5a%20text%20%7B%20fill%3A%2394a3b8%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_18b5b5c5b5a%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f1f5f9%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2274.5%22%20y%3D%22104.5%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
                     }}
                   />
+                  {product.mrp && product.mrp > product.price && (
+                    <div style={{ position: 'absolute', top: '0.6rem', right: '0.6rem', backgroundColor: '#ef4444', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '0.4rem', fontSize: '0.65rem', fontWeight: '800', boxShadow: '0 4px 6px rgba(239, 68, 68, 0.3)' }}>
+                      {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+                    </div>
+                  )}
                   <div style={{ position: 'absolute', top: '0.4rem', left: '0.4rem', display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
                     <span style={{ fontSize: '0.55rem', backgroundColor: 'rgba(255,255,255,0.95)', padding: '0.15rem 0.4rem', borderRadius: '1rem', fontWeight: 'bold', color: '#1e293b', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>{product.category}</span>
                     {product.subcategory && (
@@ -550,34 +561,31 @@ const Storefront = () => {
                   <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       {product.hidePrice ? (
-                        <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#6366f1' }}>DM for Price</span>
+                        <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#6366f1', letterSpacing: '-0.2px' }}>DM for Price</span>
                       ) : (
                         <>
                           {product.mrp && product.mrp > product.price && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.1rem' }}>
-                              <span style={{ fontSize: '0.65rem', color: '#94a3b8', textDecoration: 'line-through' }}>₹{product.mrp.toFixed(0)}</span>
-                              <span style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>-{Math.round(((product.mrp - product.price) / product.mrp) * 100)}%</span>
-                            </div>
+                            <span style={{ fontSize: '0.7rem', color: '#94a3b8', textDecoration: 'line-through', marginBottom: '-2px' }}>₹{product.mrp.toFixed(0)}</span>
                           )}
-                          <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#4f46e5' }}>₹{product.price.toFixed(0)}</span>
+                          <span style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-0.5px' }}>₹{product.price.toFixed(0)}</span>
                         </>
                       )}
                     </div>
                     <div style={{ display: 'flex', gap: '0.3rem' }}>
-                      <button 
+                       <button 
                         className="btn"
                         onClick={(e) => {
                           e.stopPropagation();
                           setReviewingProduct(product);
                         }}
                         style={{ 
-                          padding: '0.2rem 0.4rem', 
-                          fontSize: '0.65rem', 
+                          padding: '0.3rem 0.6rem', 
+                          fontSize: '0.7rem', 
                           backgroundColor: '#f8fafc',
                           color: '#64748b',
                           border: '1px solid #e2e8f0',
-                          borderRadius: '0.3rem',
-                          fontWeight: '600'
+                          borderRadius: '0.5rem',
+                          fontWeight: '700'
                         }}
                       >
                         Rate
@@ -588,7 +596,12 @@ const Storefront = () => {
                           e.stopPropagation();
                           navigate(`/product/${product.id}`, { state: { fromStore: uniqueUrl, storeName: store.name } });
                         }}
-                        style={{ padding: '0.2rem 0.5rem', fontSize: '0.7rem' }}
+                        style={{ 
+                          padding: '0.3rem 0.75rem', 
+                          fontSize: '0.75rem',
+                          fontWeight: '700',
+                          borderRadius: '0.5rem'
+                        }}
                       >
                         View
                       </button>

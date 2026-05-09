@@ -125,13 +125,22 @@ const AdminDashboard = ({ user }) => {
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
           <h1 className="dashboard-title" style={{ fontSize: '2.5rem', color: '#1E3147', margin: 0 }}>Admin Dashboard</h1>
-          <button 
-            onClick={refreshData} 
-            className="btn btn-secondary"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem' }}
-          >
-            <span>🔄</span> Refresh Stats
-          </button>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button 
+              onClick={() => navigate('/admin/users')}
+              className="btn btn-primary"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem' }}
+            >
+              <span>👥</span> Manage Users
+            </button>
+            <button 
+              onClick={refreshData} 
+              className="btn btn-secondary"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem' }}
+            >
+              <span>🔄</span> Refresh Stats
+            </button>
+          </div>
         </div>
 
         {/* System Health */}

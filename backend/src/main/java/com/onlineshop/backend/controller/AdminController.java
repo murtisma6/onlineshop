@@ -33,6 +33,9 @@ public class AdminController {
     @Autowired
     private AnalyticsEventRepository analyticsEventRepository;
 
+    @Autowired
+    private com.onlineshop.backend.repository.ReviewRepository reviewRepository;
+
     @GetMapping("/dashboard")
     public ResponseEntity<?> getDashboardStats() {
         // System Health
@@ -128,6 +131,119 @@ public class AdminController {
         response.put("message", "Successfully created " + createdCount + " stores.");
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/users")
+    public ResponseEntity<List<com.onlineshop.backend.dto.UserDto>> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        List<com.onlineshop.backend.dto.UserDto> dtos = users.stream().map(this::mapUserToDto).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<?> createUser(@RequestBody com.onlineshop.backend.dto.UserDto dto) {
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest().body("Username already exists");
+        }
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPasswordHash("password123"); // Default password
+        user.setRole(dto.getRole());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setWhatsapp(dto.getWhatsapp());
+        user.setAddress(dto.getAddress());
+        user.setCity(dto.getCity());
+        user.setPincode(dto.getPincode());
+        user.setState(dto.getState());
+        user.setEmailVerified(true);
+        user.setPhoneVerified(true);
+        
+        userRepository.save(user);
+        return ResponseEntity.ok(mapUserToDto(user));
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody com.onlineshop.backend.dto.UserDto dto) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        User user = userOpt.get();
+        
+        user.setRole(dto.getRole());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setWhatsapp(dto.getWhatsapp());
+        user.setAddress(dto.getAddress());
+        user.setCity(dto.getCity());
+        user.setPincode(dto.getPincode());
+        user.setState(dto.getState());
+        
+        userRepository.save(user);
+        return ResponseEntity.ok(mapUserToDto(user));
+    }
+
+    @DeleteMapping("/users/{id}")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        User user = userOpt.get();
+        
+        // 1. Cleanup Analytics Events (linked to user)
+        analyticsEventRepository.deleteByUserId(id);
+        
+        // 2. Handle associated stores if user is seller
+        List<Store> stores = storeRepository.findBySellerId(id);
+        for (Store store : stores) {
+            // Delete reviews for each product in the store
+            for (com.onlineshop.backend.model.Product product : store.getProducts()) {
+                reviewRepository.deleteByProductId(product.getId());
+                analyticsEventRepository.deleteByProductId(product.getId());
+            }
+            storeRepository.delete(store);
+        }
+        
+        userRepository.delete(user);
+        return ResponseEntity.ok("User and all associated data deleted successfully");
+    }
+
+    @PostMapping("/users/{id}/reset-password")
+    public ResponseEntity<?> resetPassword(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
+        User user = userOpt.get();
+        
+        String newPassword = request.get("password");
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Password is required");
+        }
+        
+        user.setPasswordHash(newPassword);
+        userRepository.save(user);
+        return ResponseEntity.ok("Password reset successfully");
+    }
+
+    private com.onlineshop.backend.dto.UserDto mapUserToDto(User user) {
+        com.onlineshop.backend.dto.UserDto dto = new com.onlineshop.backend.dto.UserDto();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setRole(user.getRole());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
+        dto.setWhatsapp(user.getWhatsapp());
+        dto.setAddress(user.getAddress());
+        dto.setCity(user.getCity());
+        dto.setPincode(user.getPincode());
+        dto.setState(user.getState());
+        dto.setEmailVerified(user.isEmailVerified());
+        dto.setPhoneVerified(user.isPhoneVerified());
+        return dto;
+    }
+
     @Autowired
     private jakarta.persistence.EntityManager entityManager;
 

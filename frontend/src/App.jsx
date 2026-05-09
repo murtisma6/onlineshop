@@ -10,6 +10,7 @@ import Account from './pages/Account';
 import Storefront from './pages/Storefront';
 import AdminDashboard from './pages/AdminDashboard';
 import DigiStorePricing from './pages/DigiStorePricing';
+import UserManagement from './pages/UserManagement';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -73,12 +74,20 @@ function App() {
               } 
             />
             
-            {/* Protected Admin Route */}
+            {/* Protected Admin Routes */}
             <Route 
               path="/admin" 
               element={
                 user && user.role === 'ADMIN' ? 
                 <AdminDashboard user={user} /> : 
+                <Navigate to="/" />
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                user && user.role === 'ADMIN' ? 
+                <UserManagement /> : 
                 <Navigate to="/" />
               } 
             />
