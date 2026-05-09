@@ -335,7 +335,18 @@ const Storefront = () => {
             .store-header-grid { display: grid; grid-template-columns: 30% 40% 30%; width: 100%; }
             .store-middle-section { grid-column: 2; }
             .store-banner-container { min-height: 180px; }
-            .marquee-container { width: 100%; overflow: hidden; margin-top: 0.75rem; }
+            .marquee-container { 
+              width: 100%; 
+              overflow: hidden; 
+              margin-top: 0.75rem; 
+              background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+              background-size: 400% 400%;
+              animation: gradientBG 15s ease infinite;
+              border-radius: 0.5rem;
+              padding: 0.6rem 0;
+              box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+              border: 1px solid rgba(255,255,255,0.2);
+            }
             .heading-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; }
             
             @media (max-width: 1024px) {
@@ -361,10 +372,20 @@ const Storefront = () => {
               0% { transform: translateX(100%); }
               100% { transform: translateX(-100%); }
             }
+            @keyframes gradientBG {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+            }
             .rolling-marquee {
               display: inline-block;
               padding-left: 100%;
-              animation: marquee 15s linear infinite;
+              animation: marquee 10s linear infinite;
+              text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+              font-size: 1.4rem !important;
+              font-weight: 800 !important;
+              letter-spacing: 1px;
+              text-transform: uppercase;
             }
           `}</style>
           
@@ -448,9 +469,9 @@ const Storefront = () => {
             {/* Row 3: Rolling Text */}
             {store.rollingText && (
               <div className="marquee-container">
-                <div className="marquee-inner" style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                <div className="marquee-inner" style={{ flex: 1, overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <div className="rolling-marquee" style={{
-                    color: store.rollingTextColor || '#000000',
+                    color: store.rollingTextColor || '#ffffff',
                     fontWeight: (store.rollingTextStyle?.includes('bold')) ? 'bold' : 'normal',
                     fontStyle: (store.rollingTextStyle?.includes('italic')) ? 'italic' : 'normal',
                     fontSize: '1rem',
