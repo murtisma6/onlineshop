@@ -58,6 +58,15 @@ public class Store {
     private String rightBannerType;
 
     @Column
+    private String rollingText;
+
+    @Column
+    private String rollingTextColor = "#000000";
+
+    @Column
+    private String rollingTextStyle = "normal";
+
+    @Column
     @org.hibernate.annotations.UpdateTimestamp
     private java.time.LocalDateTime updatedAt;
 

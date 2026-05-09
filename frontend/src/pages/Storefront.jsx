@@ -102,20 +102,17 @@ const Storefront = () => {
       }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(rgba(255,255,255,0.1), transparent)', pointerEvents: 'none' }}></div>
         
-        <div style={{ 
+        <div className="store-header-grid" style={{ 
           width: '100%', 
           display: 'grid', 
-          gridTemplateColumns: window.innerWidth < 1024 ? '1fr' : '30% 40% 30%', 
           alignItems: 'stretch',
           position: 'relative', 
           zIndex: 1 
         }}>
-          {/* Left Section: Configurable Image */}
-          <div style={{ 
-            display: window.innerWidth < 1024 && !store.leftBannerUrl ? 'none' : 'flex',
+          <div className="store-banner-container left-banner" style={{ 
+            display: !store.leftBannerUrl ? 'none' : 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            minHeight: '180px',
             overflow: 'hidden'
           }}>
             {store.leftBannerUrl && (
@@ -177,12 +174,10 @@ const Storefront = () => {
             </div>
           </div>
 
-          {/* Right Section: Configurable Image */}
-          <div style={{ 
-            display: window.innerWidth < 1024 && !store.rightBannerUrl ? 'none' : 'flex',
+          <div className="store-banner-container right-banner" style={{ 
+            display: !store.rightBannerUrl ? 'none' : 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            minHeight: '180px',
             overflow: 'hidden'
           }}>
             {store.rightBannerUrl && (
@@ -337,6 +332,17 @@ const Storefront = () => {
           
           {/* Responsive styles via <style> tag */}
           <style>{`
+            .store-header-grid { grid-template-columns: 30% 40% 30%; }
+            .store-banner-container { min-height: 180px; }
+            .marquee-container { display: flex; align-items: center; gap: 1rem; overflow: hidden; flex-wrap: nowrap; }
+            
+            @media (max-width: 1024px) {
+              .store-header-grid { grid-template-columns: 1fr; }
+              .store-banner-container { min-height: 100px; }
+              .marquee-container { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+              .marquee-inner { width: 100% !important; }
+            }
+
             @media (max-width: 640px) {
               .storefront-main { padding: 1rem !important; }
               .storefront-toolbar { padding-bottom: 0.5rem !important; }
@@ -346,6 +352,16 @@ const Storefront = () => {
               .storefront-chips-container { overflow-x: auto !important; padding-bottom: 0.25rem !important; width: 100% !important; }
               .storefront-chips-container::-webkit-scrollbar { height: 3px; }
               .storefront-chips-container::-webkit-scrollbar-thumb { background: #cbd5e1; borderRadius: 3px; }
+            }
+
+            @keyframes marquee {
+              0% { transform: translateX(100%); }
+              100% { transform: translateX(-100%); }
+            }
+            .rolling-marquee {
+              display: inline-block;
+              padding-left: 100%;
+              animation: marquee 15s linear infinite;
             }
           `}</style>
           
@@ -418,12 +434,28 @@ const Storefront = () => {
               </span>
             </div>
 
-            {/* Row 2: Our Collection heading */}
-            <h2 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#1E3147', margin: 0 }}>
-              {selectedCategory
-                ? `${selectedCategory}${selectedSubcategories.length > 0 ? ` (${selectedSubcategories.length} sub)` : ''}`
-                : 'Our Collection'}
-            </h2>
+            {/* Row 2: Our Collection heading + Rolling Text */}
+            <div className="marquee-container">
+              <h2 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#1E3147', margin: 0, whiteSpace: 'nowrap' }}>
+                {selectedCategory
+                  ? `${selectedCategory}${selectedSubcategories.length > 0 ? ` (${selectedSubcategories.length} sub)` : ''}`
+                  : 'Our Collection'}
+              </h2>
+              
+              {store.rollingText && (
+                <div className="marquee-inner" style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                  <div className="rolling-marquee" style={{
+                    color: store.rollingTextColor || '#000000',
+                    fontWeight: (store.rollingTextStyle?.includes('bold')) ? 'bold' : 'normal',
+                    fontStyle: (store.rollingTextStyle?.includes('italic')) ? 'italic' : 'normal',
+                    fontSize: '1rem',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {store.rollingText}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
 

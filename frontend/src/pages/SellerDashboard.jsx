@@ -38,6 +38,9 @@ const SellerDashboard = ({ user }) => {
   const [rightBanner, setRightBanner] = useState(null);
   const [leftBannerPreview, setLeftBannerPreview] = useState(null);
   const [rightBannerPreview, setRightBannerPreview] = useState(null);
+  const [editRollingText, setEditRollingText] = useState('');
+  const [editRollingTextColor, setEditRollingTextColor] = useState('#000000');
+  const [editRollingTextStyle, setEditRollingTextStyle] = useState('normal');
 
 
   // Category State
@@ -101,6 +104,9 @@ const SellerDashboard = ({ user }) => {
     setEditInstagram(store.instagramUrl || '');
     setEditFacebook(store.facebookUrl || '');
     setEditYoutube(store.youtubeUrl || '');
+    setEditRollingText(store.rollingText || '');
+    setEditRollingTextColor(store.rollingTextColor || '#000000');
+    setEditRollingTextStyle(store.rollingTextStyle || 'normal');
     setStoreLogo(null);
     setLeftBanner(null);
     setRightBanner(null);
@@ -121,6 +127,9 @@ const SellerDashboard = ({ user }) => {
       formData.append('instagramUrl', editInstagram);
       formData.append('facebookUrl', editFacebook);
       formData.append('youtubeUrl', editYoutube);
+      formData.append('rollingText', editRollingText);
+      formData.append('rollingTextColor', editRollingTextColor);
+      formData.append('rollingTextStyle', editRollingTextStyle);
       if (storeLogo) {
         if (storeLogo.size > 300 * 1024) {
           setUpdateStoreStatus('Logo file size exceeds 300KB limit');
@@ -622,6 +631,57 @@ const SellerDashboard = ({ user }) => {
                     placeholder="https://youtube.com/@yourchannel"
                     style={{ border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }}
                   />
+                </div>
+              </div>
+              
+              <div style={{ backgroundColor: '#f0f9ff', padding: '1rem', borderRadius: '0.6rem', border: '1px solid #bae6fd', marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 700, color: '#0369a1', fontSize: '1rem' }}>📣 Collection Rolling Text (Marquee)</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>Text Content</label>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      value={editRollingText} 
+                      onChange={(e) => setEditRollingText(e.target.value)} 
+                      placeholder="e.g. New Arrivals! | 20% Off All Items! | Free Shipping!"
+                      style={{ border: '1px solid #cbd5e1', backgroundColor: '#ffffff' }}
+                    />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>Text Color</label>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <input 
+                          type="color" 
+                          value={editRollingTextColor} 
+                          onChange={(e) => setEditRollingTextColor(e.target.value)} 
+                          style={{ width: '40px', height: '40px', border: 'none', padding: 0, cursor: 'pointer', borderRadius: '0.3rem', overflow: 'hidden' }}
+                        />
+                        <input 
+                          type="text" 
+                          value={editRollingTextColor} 
+                          onChange={(e) => setEditRollingTextColor(e.target.value)} 
+                          className="input-field"
+                          style={{ margin: 0, padding: '0.5rem', fontSize: '0.85rem', width: '100px' }}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>Text Style</label>
+                      <select 
+                        className="input-field" 
+                        value={editRollingTextStyle} 
+                        onChange={(e) => setEditRollingTextStyle(e.target.value)}
+                        style={{ border: '1px solid #cbd5e1', backgroundColor: '#ffffff', margin: 0 }}
+                      >
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="italic">Italic</option>
+                        <option value="bold-italic">Bold & Italic</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
 

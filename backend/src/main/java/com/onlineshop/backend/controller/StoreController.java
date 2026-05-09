@@ -91,6 +91,9 @@ public class StoreController {
             @RequestParam(value = "instagramUrl", required = false) String instagramUrl,
             @RequestParam(value = "facebookUrl", required = false) String facebookUrl,
             @RequestParam(value = "youtubeUrl", required = false) String youtubeUrl,
+            @RequestParam(value = "rollingText", required = false) String rollingText,
+            @RequestParam(value = "rollingTextColor", required = false) String rollingTextColor,
+            @RequestParam(value = "rollingTextStyle", required = false) String rollingTextStyle,
             @RequestParam(value = "logo", required = false) MultipartFile logo,
             @RequestParam(value = "leftBanner", required = false) MultipartFile leftBanner,
             @RequestParam(value = "rightBanner", required = false) MultipartFile rightBanner) {
@@ -118,6 +121,15 @@ public class StoreController {
         }
         if (youtubeUrl != null) {
             store.setYoutubeUrl(youtubeUrl);
+        }
+        if (rollingText != null) {
+            store.setRollingText(rollingText);
+        }
+        if (rollingTextColor != null) {
+            store.setRollingTextColor(rollingTextColor);
+        }
+        if (rollingTextStyle != null) {
+            store.setRollingTextStyle(rollingTextStyle);
         }
 
         if (logo != null && !logo.isEmpty()) {
@@ -217,6 +229,9 @@ public class StoreController {
         dto.setInstagramUrl(s.getInstagramUrl());
         dto.setFacebookUrl(s.getFacebookUrl());
         dto.setYoutubeUrl(s.getYoutubeUrl());
+        dto.setRollingText(s.getRollingText());
+        dto.setRollingTextColor(s.getRollingTextColor());
+        dto.setRollingTextStyle(s.getRollingTextStyle());
 
         Long views = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.PRODUCT_VIEW);
         Long clicks = analyticsEventRepository.countByStoreIdAndEventType(s.getId(), com.onlineshop.backend.model.EventType.WHATSAPP_CLICK);

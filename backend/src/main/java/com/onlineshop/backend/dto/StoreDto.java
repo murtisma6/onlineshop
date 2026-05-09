@@ -19,5 +19,8 @@ public class StoreDto {
     private String youtubeUrl;
     private String leftBannerUrl;
     private String rightBannerUrl;
+    private String rollingText;
+    private String rollingTextColor;
+    private String rollingTextStyle;
     private java.time.LocalDateTime updatedAt;
 }
