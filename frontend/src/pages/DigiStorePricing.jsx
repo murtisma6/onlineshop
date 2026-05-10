@@ -143,7 +143,7 @@ const DigiStorePricing = () => {
           </p>
           <div className="digi-hero-btns" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
-              onClick={() => navigate('/register?role=SELLER')}
+              onClick={() => navigate('/register?role=SELLER&plan=STARTER')}
               style={{ backgroundColor: '#3b82f6', color: '#ffffff', padding: '0.8rem 1.75rem', borderRadius: '0.6rem', border: 'none', fontWeight: '700', fontSize: '0.95rem', cursor: 'pointer' }}
               onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
               onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
@@ -219,7 +219,13 @@ const DigiStorePricing = () => {
                   ))}
                 </ul>
                 <button
-                  onClick={() => navigate('/register?role=SELLER')}
+                  onClick={() => {
+                    if (plan.name === 'Starter') {
+                      navigate('/register?role=SELLER&plan=STARTER');
+                    } else {
+                      navigate('/contact-us');
+                    }
+                  }}
                   style={{
                     width: '100%',
                     padding: '0.8rem',
@@ -247,7 +253,7 @@ const DigiStorePricing = () => {
         <h2 className="digi-cta-title" style={{ fontSize: '1.75rem', fontWeight: '800', marginBottom: '0.75rem' }}>Ready to launch your DigiStore?</h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '1.75rem', fontSize: '0.95rem' }}>Join hundreds of sellers already growing their business online.</p>
         <button
-          onClick={() => navigate('/register?role=SELLER')}
+          onClick={() => navigate('/register?role=SELLER&plan=STARTER')}
           style={{ backgroundColor: '#3b82f6', color: '#ffffff', padding: '0.85rem 2rem', borderRadius: '0.6rem', border: 'none', fontWeight: '700', fontSize: '0.95rem', cursor: 'pointer' }}
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}

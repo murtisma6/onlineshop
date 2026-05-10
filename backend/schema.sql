@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS users (
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
     phone_verified BOOLEAN NOT NULL DEFAULT FALSE,
     email_otp VARCHAR(255),
-    phone_otp VARCHAR(255)
+    phone_otp VARCHAR(255),
+    plan VARCHAR(255) DEFAULT 'STARTER'
 );
 
 -- 2. Stores Table

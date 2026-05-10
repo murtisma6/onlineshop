@@ -9,10 +9,12 @@ const Register = ({ setUser }) => {
   // Check if role is forced from URL (e.g. from Own your Digistore page)
   const queryParams = new URLSearchParams(location.search);
   const forcedRole = queryParams.get('role');
+  const initialPlan = queryParams.get('plan') || 'STARTER';
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(forcedRole || 'BUYER');
+  const [plan, setPlan] = useState(initialPlan);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -27,7 +29,7 @@ const Register = ({ setUser }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const payload = { username, password, role, firstName, lastName, email, phone, whatsapp, address, city, pincode, state };
+      const payload = { username, password, role, plan, firstName, lastName, email, phone, whatsapp, address, city, pincode, state };
       const res = await register(payload);
       setUser(res.data);
       navigate('/account'); // redirect to account page for verification

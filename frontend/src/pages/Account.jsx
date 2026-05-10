@@ -112,6 +112,22 @@ const Account = ({ user, setUser }) => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div><strong style={{ color: '#64748b' }}>Username:</strong> {profile.username}</div>
                 <div><strong style={{ color: '#64748b' }}>Role:</strong> {profile.role}</div>
+                {profile.role === 'SELLER' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <strong style={{ color: '#64748b' }}>Subscription Plan:</strong>
+                    <span style={{ 
+                      backgroundColor: profile.plan === 'STARTER' ? '#f1f5f9' : profile.plan === 'BUSINESS' ? '#e0e7ff' : '#f3e8ff',
+                      color: profile.plan === 'STARTER' ? '#475569' : profile.plan === 'BUSINESS' ? '#4f46e5' : '#7c3aed',
+                      padding: '0.2rem 0.6rem',
+                      borderRadius: '1rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                      textTransform: 'uppercase'
+                    }}>
+                      {profile.plan || 'STARTER'}
+                    </span>
+                  </div>
+                )}
                 
                 <div className="grid-inner">
                   <div>

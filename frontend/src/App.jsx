@@ -11,6 +11,7 @@ import Storefront from './pages/Storefront';
 import AdminDashboard from './pages/AdminDashboard';
 import DigiStorePricing from './pages/DigiStorePricing';
 import UserManagement from './pages/UserManagement';
+import ContactUs from './pages/ContactUs';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -60,6 +61,9 @@ function App() {
             
             {/* Storefront Route */}
             <Route path="/store/:uniqueUrl" element={<Storefront />} />
+
+            {/* Contact Us Route */}
+            <Route path="/contact-us" element={<ContactUs />} />
 
             {/* DigiStore Pricing Route */}
             <Route path="/own-your-digistore" element={<DigiStorePricing />} />

@@ -59,4 +59,7 @@ public class User {
 
     @Column
     private String phoneOtp;
+
+    @Column(name = "plan", length = 255)
+    private String plan = "STARTER";
 }

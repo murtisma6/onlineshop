@@ -1,4 +1,5 @@
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\BackendApplication.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\config\DatabaseMigration.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\config\WebConfig.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AdminController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AnalyticsController.java
@@ -21,6 +22,7 @@ C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\ba
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Review.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Role.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Store.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\SubscriptionPlan.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\User.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\AnalyticsEventRepository.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\ProductImageRepository.java
