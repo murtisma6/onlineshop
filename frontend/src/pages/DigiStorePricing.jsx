@@ -137,8 +137,8 @@ const DigiStorePricing = () => {
           <h1 style={{ fontWeight: '800', lineHeight: 1.2, marginBottom: '1rem', letterSpacing: '-0.5px' }}>
             Own Your <span style={{ color: '#60a5fa' }}>DigiStore</span>
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.8)', maxWidth: '520px', margin: '0 auto 1.75rem auto', lineHeight: 1.7 }}>
-            Create a beautiful online store in minutes. Showcase your products, reach more customers, and grow your business — all from one place.
+          <p style={{ color: 'rgba(255,255,255,0.8)', maxWidth: '580px', margin: '0 auto 1.75rem auto', lineHeight: 1.7 }}>
+            Empowering <strong>Bohra Businesses</strong> with professional digital storefronts. Connect with <strong>Dawoodi Bohra community</strong> members worldwide and grow your sales through WhatsApp.
           </p>
           <div className="digi-hero-btns" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button

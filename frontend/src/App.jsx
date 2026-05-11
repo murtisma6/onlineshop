@@ -97,9 +97,17 @@ function App() {
             />
           </Routes>
         </div>
-        <footer style={{ backgroundColor: '#1E3147', color: '#94a3b8', padding: '0.75rem', textAlign: 'center', fontSize: '0.875rem', borderTop: '1px solid #1e293b' }}>
-          &copy; copyright 2026 MCube Hive IT Solutions
-      </footer>
+        <footer style={{ backgroundColor: '#1E3147', color: '#94a3b8', padding: '1.5rem 1rem', textAlign: 'center', borderTop: '1px solid #1e293b' }}>
+          <div style={{ maxWidth: '800px', margin: '0 auto 1rem auto' }}>
+            <h3 style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem', fontWeight: 'bold' }}>Global Dawoodi Bohra Marketplace</h3>
+            <p style={{ fontSize: '0.75rem', lineHeight: '1.5', margin: 0 }}>
+              Empowering Bohra Businesses worldwide. Discover authentic products, unique digital storefronts, and connect with sellers from the Dawoodi Bohra Community.
+            </p>
+          </div>
+          <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+            &copy; copyright 2026 MCube Hive IT Solutions
+          </div>
+        </footer>
     </Router>
   );
 }

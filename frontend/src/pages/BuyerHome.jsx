@@ -321,8 +321,8 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
             {isSidebarOpen ? '◀' : '▶'}
           </button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '1.25rem', margin: 0 }}>
-              {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length})` : ''}` : 'Featured Products'}
+            <h2 style={{ fontSize: '1.25rem', margin: 0, color: '#1e293b', fontWeight: '700' }}>
+              {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length})` : ''}` : 'Products'}
             </h2>
             {!loading && <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{filteredProducts.length} items</span>}
           </div>
