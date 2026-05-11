@@ -62,4 +62,7 @@ public class User {
 
     @Column(name = "plan", length = 255)
     private String plan = "STARTER";
+
+    @Column
+    private String country;
 }

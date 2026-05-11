@@ -19,4 +19,6 @@ public class UserDto {
     private String state;
     private boolean emailVerified;
     private boolean phoneVerified;
+    private String plan;
+    private String country;
 }

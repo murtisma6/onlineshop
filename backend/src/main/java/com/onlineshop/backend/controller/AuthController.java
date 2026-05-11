@@ -38,6 +38,7 @@ public class AuthController {
         user.setCity(request.getCity());
         user.setPincode(request.getPincode());
         user.setState(request.getState());
+        user.setCountry(request.getCountry());
         
         userRepository.save(user);
         
@@ -143,6 +144,7 @@ public class AuthController {
         if (request.getCity() != null) user.setCity(request.getCity());
         if (request.getPincode() != null) user.setPincode(request.getPincode());
         if (request.getState() != null) user.setState(request.getState());
+        if (request.getCountry() != null) user.setCountry(request.getCountry());
         
         userRepository.save(user);
         return ResponseEntity.ok(mapToDto(user));
@@ -162,6 +164,7 @@ public class AuthController {
         dto.setCity(user.getCity());
         dto.setPincode(user.getPincode());
         dto.setState(user.getState());
+        dto.setCountry(user.getCountry());
         dto.setEmailVerified(user.isEmailVerified());
         dto.setPhoneVerified(user.isPhoneVerified());
         return dto;

@@ -155,8 +155,12 @@ public class AdminController {
         user.setCity(dto.getCity());
         user.setPincode(dto.getPincode());
         user.setState(dto.getState());
+        user.setCountry(dto.getCountry());
         user.setEmailVerified(true);
         user.setPhoneVerified(true);
+        if (dto.getPlan() != null) {
+            user.setPlan(dto.getPlan());
+        }
         
         userRepository.save(user);
         return ResponseEntity.ok(mapUserToDto(user));
@@ -178,6 +182,10 @@ public class AdminController {
         user.setCity(dto.getCity());
         user.setPincode(dto.getPincode());
         user.setState(dto.getState());
+        user.setCountry(dto.getCountry());
+        if (dto.getPlan() != null) {
+            user.setPlan(dto.getPlan());
+        }
         
         userRepository.save(user);
         return ResponseEntity.ok(mapUserToDto(user));
@@ -238,8 +246,10 @@ public class AdminController {
         dto.setCity(user.getCity());
         dto.setPincode(user.getPincode());
         dto.setState(user.getState());
+        dto.setCountry(user.getCountry());
         dto.setEmailVerified(user.isEmailVerified());
         dto.setPhoneVerified(user.isPhoneVerified());
+        dto.setPlan(user.getPlan());
         return dto;
     }
 

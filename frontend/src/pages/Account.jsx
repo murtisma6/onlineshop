@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { fetchUser, sendOtp, verifyOtp } from '../api';
+import { fetchUser, sendOtp, verifyOtp, updateUser } from '../api';
+import { Country, State } from 'country-state-city';
 
 const Account = ({ user, setUser }) => {
   const [profile, setProfile] = useState(null);
@@ -206,8 +207,44 @@ const Account = ({ user, setUser }) => {
                 </div>
                 <div className="grid-inner">
                   <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b' }}>Country</label>
+                    {editMode ? (
+                      <select 
+                        name="country" 
+                        value={formData.country || ''} 
+                        onChange={(e) => {
+                          setFormData({ ...formData, country: e.target.value, state: '' });
+                        }}
+                        className="input-field"
+                      >
+                        <option value="">Select Country</option>
+                        {Country.getAllCountries().map(c => (
+                          <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input type="text" value={Country.getCountryByCode(profile.country)?.name || profile.country || ''} readOnly className="input-field" style={{ backgroundColor: '#f8fafc' }} />
+                    )}
+                  </div>
+                  <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b' }}>State</label>
-                    <input type="text" name="state" value={editMode ? formData.state : profile.state} onChange={handleInputChange} readOnly={!editMode} className="input-field" style={{ backgroundColor: !editMode ? '#f8fafc' : 'white' }} />
+                    {editMode ? (
+                      <select 
+                        name="state" 
+                        value={formData.state || ''} 
+                        onChange={handleInputChange}
+                        className="input-field"
+                      >
+                        <option value="">Select State</option>
+                        {(() => {
+                          const countryObj = Country.getAllCountries().find(c => c.isoCode === formData.country || c.name === formData.country);
+                          const sList = countryObj ? State.getStatesOfCountry(countryObj.isoCode) : [];
+                          return sList.map(s => <option key={s.isoCode} value={s.name}>{s.name}</option>);
+                        })()}
+                      </select>
+                    ) : (
+                      <input type="text" value={profile.state || ''} readOnly className="input-field" style={{ backgroundColor: '#f8fafc' }} />
+                    )}
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: '#64748b' }}>Pincode</label>

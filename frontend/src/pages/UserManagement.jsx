@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchAllUsers, adminCreateUser, adminUpdateUser, adminDeleteUser, adminResetPassword } from '../api';
+import { Country, State } from 'country-state-city';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -22,7 +23,9 @@ const UserManagement = () => {
     phone: '',
     whatsapp: '',
     city: '',
-    state: ''
+    state: '',
+    country: 'IN',
+    plan: 'STARTER'
   });
   const [newPassword, setNewPassword] = useState('');
 
@@ -53,7 +56,9 @@ const UserManagement = () => {
       phone: user.phone || '',
       whatsapp: user.whatsapp || '',
       city: user.city || '',
-      state: user.state || ''
+      state: user.state || '',
+      country: user.country || 'India',
+      plan: user.plan || 'STARTER'
     });
     setIsEditModalOpen(true);
   };
@@ -143,7 +148,7 @@ const UserManagement = () => {
         <div className="user-mgmt-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>User Management</h1>
           <button 
-            onClick={() => { setSelectedUser(null); setFormData({ username: '', role: 'BUYER', firstName: '', lastName: '', email: '', phone: '', whatsapp: '', city: '', state: '' }); setIsEditModalOpen(true); }}
+            onClick={() => { setSelectedUser(null); setFormData({ username: '', role: 'BUYER', firstName: '', lastName: '', email: '', phone: '', whatsapp: '', city: '', state: '', country: 'IN', plan: 'STARTER' }); setIsEditModalOpen(true); }}
             className="btn btn-primary"
             style={{ padding: '0.75rem 1.5rem', fontWeight: '700' }}
           >
@@ -162,6 +167,7 @@ const UserManagement = () => {
                 <th style={{ padding: '1rem', color: '#64748b', fontSize: '0.85rem' }}>Name</th>
                 <th style={{ padding: '1rem', color: '#64748b', fontSize: '0.85rem' }}>Email</th>
                 <th style={{ padding: '1rem', color: '#64748b', fontSize: '0.85rem' }}>Role</th>
+                <th style={{ padding: '1rem', color: '#64748b', fontSize: '0.85rem' }}>Plan</th>
                 <th style={{ padding: '1rem', color: '#64748b', fontSize: '0.85rem' }}>Actions</th>
               </tr>
             </thead>
@@ -182,6 +188,21 @@ const UserManagement = () => {
                     }}>
                       {user.role}
                     </span>
+                  </td>
+                  <td data-label="Plan" style={{ padding: '1rem' }}>
+                    {user.role === 'SELLER' ? (
+                      <span style={{ 
+                        padding: '0.2rem 0.5rem', 
+                        borderRadius: '0.4rem', 
+                        fontSize: '0.7rem', 
+                        fontWeight: '700',
+                        backgroundColor: user.plan === 'ENTERPRISE' ? '#f3e8ff' : user.plan === 'BUSINESS' ? '#e0e7ff' : '#f1f5f9',
+                        color: user.plan === 'ENTERPRISE' ? '#7c3aed' : user.plan === 'BUSINESS' ? '#4f46e5' : '#64748b',
+                        textTransform: 'uppercase'
+                      }}>
+                        {user.plan || 'STARTER'}
+                      </span>
+                    ) : '-'}
                   </td>
                   <td data-label="Actions" className="user-mgmt-actions" style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
                     <button onClick={() => handleEditClick(user)} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', backgroundColor: '#f1f5f9' }}>Edit</button>
@@ -243,10 +264,46 @@ const UserManagement = () => {
                   <input type="text" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }} />
                 </div>
                 <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>Country</label>
+                  <select 
+                    value={formData.country} 
+                    onChange={e => setFormData({...formData, country: e.target.value, state: ''})} 
+                    style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }}
+                  >
+                    <option value="">Select Country</option>
+                    {Country.getAllCountries().map(c => (
+                      <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>State</label>
-                  <input type="text" value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }} />
+                  <select 
+                    value={formData.state} 
+                    onChange={e => setFormData({...formData, state: e.target.value})} 
+                    style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }}
+                  >
+                    <option value="">Select State</option>
+                    {(() => {
+                      const countryObj = Country.getAllCountries().find(c => c.isoCode === formData.country || c.name === formData.country);
+                      const sList = countryObj ? State.getStatesOfCountry(countryObj.isoCode) : [];
+                      return sList.map(s => <option key={s.isoCode} value={s.name}>{s.name}</option>);
+                    })()}
+                  </select>
                 </div>
               </div>
+
+              {formData.role === 'SELLER' && (
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>Subscription Plan</label>
+                  <select value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }}>
+                    <option value="STARTER">STARTER</option>
+                    <option value="BUSINESS">BUSINESS</option>
+                    <option value="ENTERPRISE">ENTERPRISE</option>
+                  </select>
+                </div>
+              )}
+
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1, padding: '0.75rem', fontWeight: '700' }}>{selectedUser ? 'Update' : 'Create'}</button>
                 <button type="button" onClick={() => setIsEditModalOpen(false)} className="btn" style={{ flex: 1, padding: '0.75rem', backgroundColor: '#f1f5f9', fontWeight: '700' }}>Cancel</button>

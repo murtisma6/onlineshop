@@ -13,7 +13,7 @@ const DigiStorePricing = () => {
       description: 'Perfect for individuals testing the waters.',
       features: [
         '1 Digital Store',
-        'Up to 10 Products',
+        'Up to 7 Products',
         'Basic Store Customization',
         'Unique Store URL',
         'WhatsApp Contact Button',
@@ -30,10 +30,9 @@ const DigiStorePricing = () => {
       description: 'For growing businesses that need more reach.',
       features: [
         '3 Digital Stores',
-        'Unlimited Products',
+        '21 Products each store',
         'Advanced Store Branding',
-        'Custom Logo & Banner',
-        'Product Categories & Tags',
+        'Store Logo & Event Banner',
         'Analytics Dashboard',
         'Priority Email Support',
       ],
@@ -48,7 +47,7 @@ const DigiStorePricing = () => {
       description: 'Full-featured solution for power sellers.',
       features: [
         'Unlimited Digital Stores',
-        'Unlimited Products',
+        '53 Products each store',
         'White-label Branding',
         'Dedicated Account Manager',
         'Bulk Product Import',
