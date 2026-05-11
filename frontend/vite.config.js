@@ -10,8 +10,8 @@ export default defineConfig({
     allowedHosts: [
       "localhost",
       "192.168.0.105",
-      "expertise-modifications-voip-interim.trycloudflare.com",
-      ".trycloudflare.com"
+      "dbohramart.com",
+
     ]
   }
 })
