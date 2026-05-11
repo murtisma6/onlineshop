@@ -469,15 +469,18 @@ const SellerDashboard = ({ user }) => {
                     </span>
                     <span>Active Products Listed</span>
                   </div>
-                  <div style={{ color: '#64748b', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <span style={{ fontSize: '1.2rem' }}>👁️</span>
-                      <strong>{store.totalViews || 0}</strong> Views
+                  <div style={{ color: '#64748b', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ fontSize: '1.2rem' }}>👁️</span>
+                        <strong>{isStarter ? 'xx' : (store.totalViews || 0)}</strong> Views
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ fontSize: '1.2rem' }}>👆</span>
+                        <strong>{isStarter ? 'xx' : (store.totalClicks || 0)}</strong> Clicks
+                      </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <span style={{ fontSize: '1.2rem' }}>👆</span>
-                      <strong>{store.totalClicks || 0}</strong> Clicks
-                    </div>
+                    {isStarter && <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontStyle: 'italic' }}>Upgrade to Business/Enterprise to view exact analytics.</div>}
                   </div>
                 </div>
                 
@@ -552,7 +555,13 @@ const SellerDashboard = ({ user }) => {
         <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 className="dashboard-title" style={{ color: '#ffffff', fontSize: '2rem', marginBottom: '0.5rem' }}>{selectedStore.name}</h1>
-            <p className="dashboard-subtitle" style={{ color: '#cbd5e1' }}>Manage your inventory and list new products.</p>
+            <div style={{ color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.2rem', fontSize: '0.9rem' }}>
+              <div style={{ display: 'flex', gap: '1.5rem' }}>
+                <span>👁️ <strong>{isStarter ? 'xx' : (selectedStore.totalViews || 0)}</strong> Views</span>
+                <span>👆 <strong>{isStarter ? 'xx' : (selectedStore.totalClicks || 0)}</strong> WhatsApp Clicks</span>
+              </div>
+              {isStarter && <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontStyle: 'italic' }}>Upgrade plan to view analytics.</div>}
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button 
@@ -957,9 +966,12 @@ const SellerDashboard = ({ user }) => {
                             <span>&bull;</span>
                             <span>{product.subcategory || 'Uncategorized'}</span>
                           </div>
-                          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
-                            <span title="Total Views">👁️ {product.views || 0}</span>
-                            <span title="WhatsApp Clicks">👆 {product.clicks || 0}</span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>
+                              <span title="Total Views">👁️ {isStarter ? 'xx' : (product.views || 0)}</span>
+                              <span title="WhatsApp Clicks">👆 {isStarter ? 'xx' : (product.clicks || 0)}</span>
+                            </div>
+                            {isStarter && <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontStyle: 'italic' }}>Upgrade plan to view analytics</div>}
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.4rem' }}>
                             <div style={{ display: 'flex', color: '#fbbf24', fontSize: '0.8rem' }}>
