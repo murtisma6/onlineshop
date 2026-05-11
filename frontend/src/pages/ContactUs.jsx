@@ -18,7 +18,7 @@ const ContactUs = () => {
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1E3147" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1E3147', marginBottom: '0.5rem' }}>Call Us</h3>
-            <p style={{ color: '#475569', fontWeight: '600' }}>+91 98765 43210</p>
+            <p style={{ color: '#475569', fontWeight: '600' }}>+91-9833186775</p>
             <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Mon-Fri, 9am - 6pm IST</p>
           </div>
 
@@ -27,7 +27,7 @@ const ContactUs = () => {
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1E3147" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1E3147', marginBottom: '0.5rem' }}>Email Us</h3>
-            <p style={{ color: '#475569', fontWeight: '600' }}>support@digistore.com</p>
+            <p style={{ color: '#475569', fontWeight: '600' }}>mcubehiveitsolutions@gmail.com</p>
             <p style={{ color: '#64748b', fontSize: '0.9rem' }}>We'll respond within 24 hours</p>
           </div>
         </div>
