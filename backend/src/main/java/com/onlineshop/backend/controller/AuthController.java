@@ -39,6 +39,8 @@ public class AuthController {
         user.setPincode(request.getPincode());
         user.setState(request.getState());
         user.setCountry(request.getCountry());
+        user.setPlan(request.getPlan());
+        user.setCreatedAt(java.time.LocalDateTime.now());
         
         userRepository.save(user);
         
@@ -167,6 +169,8 @@ public class AuthController {
         dto.setCountry(user.getCountry());
         dto.setEmailVerified(user.isEmailVerified());
         dto.setPhoneVerified(user.isPhoneVerified());
+        dto.setPlan(user.getPlan());
+        dto.setCreatedAt(user.getCreatedAt());
         return dto;
     }
 }

@@ -42,6 +42,19 @@ const SellerDashboard = ({ user }) => {
   const [editRollingTextColor, setEditRollingTextColor] = useState('#000000');
   const [editRollingTextStyle, setEditRollingTextStyle] = useState('normal');
 
+  // Plan Expiry Check (3 Months for Starter)
+  const checkIfExpired = () => {
+    const plan = user?.plan?.toUpperCase() || 'STARTER';
+    if (!user || plan !== 'STARTER' || !user.createdAt) return false;
+    const created = new Date(user.createdAt);
+    const now = new Date();
+    const threeMonthsLater = new Date(created);
+    threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+    return now > threeMonthsLater;
+  };
+  const isExpired = checkIfExpired();
+  const isStarter = !user?.plan || user.plan.toUpperCase() === 'STARTER';
+
 
   // Category State
   const [categoryMap, setCategoryMap] = useState({});
@@ -74,13 +87,17 @@ const SellerDashboard = ({ user }) => {
   const handleCreateStore = async (e) => {
     e.preventDefault();
     if (!newStoreName) return;
+    if (isStarter && stores.length >= 1) {
+      alert("Starter plan limit reached (1 store). Please upgrade to Business or Enterprise plan to create more stores.");
+      return;
+    }
     try {
       await createStore({ name: newStoreName, sellerId: user.id });
       setNewStoreName('');
       setStoreStatus('Store created successfully!');
       loadStores();
     } catch (err) {
-      setStoreStatus('Failed to create store.');
+      setStoreStatus(err.response?.data || 'Failed to create store.');
     }
   };
 
@@ -262,10 +279,22 @@ const SellerDashboard = ({ user }) => {
   };
 
   const handleUpload = async (e) => {
-    e.preventDefault();
+    if (isExpired) {
+      alert("Your Starter plan has expired. Please upgrade to Business or Enterprise plan to upload or update products.");
+      return;
+    }
     if (!editingProductId && (!images || images.length === 0)) {
       setStatus('Please select at least one image');
       return;
+    }
+    
+    // Product Limit Check
+    const currentProductCount = myProducts.length;
+    if (!editingProductId) {
+       if (isStarter && currentProductCount >= 7) {
+         alert("Starter plan limit reached (7 products). Please upgrade to Business or Enterprise plan to upload more products.");
+         return;
+       }
     }
     const totalImages = existingImages.length + (images ? images.length : 0);
     if (totalImages > 5) {
@@ -368,6 +397,24 @@ const SellerDashboard = ({ user }) => {
             <p className="dashboard-subtitle" style={{ color: '#cbd5e1' }}>Select a store to manage inventory or create a new one.</p>
           </div>
         </div>
+
+        {isExpired && (
+          <div className="container" style={{ marginBottom: '1.5rem' }}>
+            <div style={{ backgroundColor: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '1rem', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span style={{ fontSize: '2rem' }}>⚠️</span>
+              <div>
+                <h3 style={{ color: '#9a3412', margin: 0, fontSize: '1.1rem' }}>Starter Plan Expired</h3>
+                <p style={{ color: '#c2410c', margin: '0.25rem 0 0.5rem 0', fontSize: '0.9rem' }}>Your 3-month trial period has ended. Store management and product updates are disabled.</p>
+                <button 
+                  onClick={() => window.location.href = '/contact-us'}
+                  style={{ backgroundColor: '#f97316', color: 'white', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '0.5rem', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                >
+                  Upgrade to Business/Enterprise
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '2rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
@@ -375,6 +422,12 @@ const SellerDashboard = ({ user }) => {
             {/* Create Store Card */}
             <div className="glass" style={{ padding: '2rem', borderRadius: '1rem', backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)' }}>
               <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Create New Store</h2>
+              
+              {isStarter && (
+                <div style={{ backgroundColor: '#fff7ed', border: '1px solid #ffedd5', padding: '0.75rem 1rem', borderRadius: '0.5rem', color: '#9a3412', fontSize: '0.8rem', marginBottom: '1rem', lineHeight: '1.4' }}>
+                  ℹ️ <strong>Starter Plan Limit:</strong> You can create only <strong>1 store</strong>. Upgrade to a <strong>Business</strong> or <strong>Enterprise</strong> plan to launch multiple digital stores.
+                </div>
+              )}
               {storeStatus && <p style={{ color: storeStatus.includes('successfully') ? 'green' : 'red', marginBottom: '1rem' }}>{storeStatus}</p>}
               <form onSubmit={handleCreateStore} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <input 
@@ -385,7 +438,8 @@ const SellerDashboard = ({ user }) => {
                   onChange={(e) => setNewStoreName(e.target.value)} 
                   required 
                 />
-                <button type="submit" className="btn btn-primary">Create Store</button>
+                <button type="submit" className="btn btn-primary" disabled={isExpired}>Create Store</button>
+                {isExpired && <p style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '-0.5rem' }}>Upgrade required to create stores.</p>}
               </form>
             </div>
 
@@ -579,276 +633,80 @@ const SellerDashboard = ({ user }) => {
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Header Tagline / Welcome Message</label>
-                <textarea 
-                  className="input-field" 
-                  value={editTagline} 
-                  onChange={(e) => setEditTagline(e.target.value)} 
-                  placeholder="Enter a catchy welcome message for your store header..."
-                />
-              </div>
+              {isStarter && (
+                <div style={{ backgroundColor: '#fefce8', border: '1px solid #fef08a', padding: '1rem', borderRadius: '0.5rem', color: '#854d0e', fontSize: '0.9rem', fontWeight: 600, textAlign: 'center', marginBottom: '0.5rem' }}>
+                  💡 Upgrade to Business/Enterprise Plan to access all settings under Store Customization
+                </div>
+              )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+              <div style={{ opacity: isStarter ? 0.5 : 1, pointerEvents: isStarter ? 'none' : 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#e1306c' }}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                    Instagram Link
-                  </label>
-                  <input 
-                    type="url" 
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Header Tagline / Welcome Message</label>
+                  <textarea 
                     className="input-field" 
-                    value={editInstagram} 
-                    onChange={(e) => setEditInstagram(e.target.value)} 
-                    placeholder="https://instagram.com/yourprofile"
-                    style={{ border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }}
+                    value={editTagline} 
+                    onChange={(e) => setEditTagline(e.target.value)} 
+                    placeholder="Enter a catchy welcome message for your store header..."
+                    disabled={isStarter}
                   />
                 </div>
-                <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#1877f2' }}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                    Facebook Link
-                  </label>
-                  <input 
-                    type="url" 
-                    className="input-field" 
-                    value={editFacebook} 
-                    onChange={(e) => setEditFacebook(e.target.value)} 
-                    placeholder="https://facebook.com/yourpage"
-                    style={{ border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ff0000' }}><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 2-2 69.1 69.1 0 0 1 15 0 2 2 0 0 1 2 2 24.12 24.12 0 0 1 0 10 2 2 0 0 1-2 2 69.1 69.1 0 0 1-15 0 2 2 0 0 1-2-2Z"/><path d="m10 15 5-3-5-3z"/></svg>
-                    YouTube Link
-                  </label>
-                  <input 
-                    type="url" 
-                    className="input-field" 
-                    value={editYoutube} 
-                    onChange={(e) => setEditYoutube(e.target.value)} 
-                    placeholder="https://youtube.com/@yourchannel"
-                    style={{ border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }}
-                  />
-                </div>
-              </div>
-              
-              <div style={{ backgroundColor: '#f0f9ff', padding: '1rem', borderRadius: '0.6rem', border: '1px solid #bae6fd', marginBottom: '1.5rem' }}>
-                <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 700, color: '#0369a1', fontSize: '1rem' }}>📣 Collection Rolling Text (Marquee)</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>Text Content</label>
-                    <input 
-                      type="text" 
-                      className="input-field" 
-                      value={editRollingText} 
-                      onChange={(e) => setEditRollingText(e.target.value)} 
-                      placeholder="e.g. New Arrivals! | 20% Off All Items! | Free Shipping!"
-                      style={{ border: '1px solid #cbd5e1', backgroundColor: '#ffffff' }}
-                    />
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>Text Color</label>
-                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <input 
-                          type="color" 
-                          value={editRollingTextColor} 
-                          onChange={(e) => setEditRollingTextColor(e.target.value)} 
-                          style={{ width: '40px', height: '40px', border: 'none', padding: 0, cursor: 'pointer', borderRadius: '0.3rem', overflow: 'hidden' }}
-                        />
-                        <input 
-                          type="text" 
-                          value={editRollingTextColor} 
-                          onChange={(e) => setEditRollingTextColor(e.target.value)} 
-                          className="input-field"
-                          style={{ margin: 0, padding: '0.5rem', fontSize: '0.85rem', width: '100px' }}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>Text Style</label>
-                      <select 
-                        className="input-field" 
-                        value={editRollingTextStyle} 
-                        onChange={(e) => setEditRollingTextStyle(e.target.value)}
-                        style={{ border: '1px solid #cbd5e1', backgroundColor: '#ffffff', margin: 0 }}
-                      >
-                        <option value="normal">Normal</option>
-                        <option value="bold">Bold</option>
-                        <option value="italic">Italic</option>
-                        <option value="bold-italic">Bold & Italic</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Store Logo</label>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', flexWrap: 'wrap' }}>
-                  {(selectedStore.logoUrl || storeLogo) ? (
-                    <div style={{ position: 'relative' }}>
-                      <img 
-                        src={storeLogo ? URL.createObjectURL(storeLogo) : selectedStore.logoUrl} 
-                        alt="Store Logo" 
-                        style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #3b82f6', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} 
-                      />
-                      {selectedStore.logoUrl && !storeLogo && (
-                        <button 
-                          type="button"
-                          onClick={handleDeleteLogo}
-                          style={{ position: 'absolute', top: '-5px', right: '-5px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}
-                          title="Delete Logo"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '1.5rem', border: '2px dashed #cbd5e1' }}>
-                      🖼️
-                    </div>
-                  )}
-                  
-                  <div style={{ flex: 1 }}>
-                    <input 
-                      type="file" 
-                      id="logo-upload"
-                      accept="image/*"
-                      onChange={(e) => setStoreLogo(e.target.files[0])}
-                      style={{ display: 'none' }}
-                    />
-                    <label 
-                      htmlFor="logo-upload" 
-                      className="btn" 
-                      style={{ display: 'inline-block', backgroundColor: '#ffffff', color: '#1e293b', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', fontSize: '0.85rem', cursor: 'pointer', borderRadius: '0.4rem', fontWeight: 600 }}
-                    >
-                      {selectedStore.logoUrl ? 'Change Logo' : 'Upload Logo'}
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#e1306c' }}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                      Instagram Link
                     </label>
-                    {storeLogo && (
-                      <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: '#3b82f6', fontWeight: 500 }}>Selected: {storeLogo.name}</span>
-                        <button type="button" onClick={() => setStoreLogo(null)} style={{ border: 'none', background: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
-                      </div>
-                    )}
+                    <input type="url" className="input-field" value={editInstagram} onChange={(e) => setEditInstagram(e.target.value)} placeholder="https://instagram.com/yourprofile" disabled={isStarter} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#1877f2' }}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                      Facebook Link
+                    </label>
+                    <input type="url" className="input-field" value={editFacebook} onChange={(e) => setEditFacebook(e.target.value)} placeholder="https://facebook.com/yourpage" disabled={isStarter} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ff0000' }}><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 2-2 69.1 69.1 0 0 1 15 0 2 2 0 0 1 2 2 24.12 24.12 0 0 1 0 10 2 2 0 0 1-2 2 69.1 69.1 0 0 1-15 0 2 2 0 0 1-2-2Z"/><path d="m10 15 5-3-5-3z"/></svg>
+                      YouTube Link
+                    </label>
+                    <input type="url" className="input-field" value={editYoutube} onChange={(e) => setEditYoutube(e.target.value)} placeholder="https://youtube.com/@yourchannel" disabled={isStarter} />
                   </div>
                 </div>
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Configurable Side Banners (Left & Right)</label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
-                  {/* Left Banner */}
-                  <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-                    <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 600, fontSize: '0.85rem' }}>Left Side Banner</label>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-                      {(selectedStore.leftBannerUrl || leftBannerPreview) ? (
-                        <div style={{ position: 'relative', width: '100%' }}>
-                          <img 
-                            src={leftBannerPreview || selectedStore.leftBannerUrl} 
-                            alt="Left Banner" 
-                            style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '0.5rem', border: '1px solid #cbd5e1' }} 
-                          />
-                          {selectedStore.leftBannerUrl && !leftBannerPreview && (
-                            <button 
-                              type="button"
-                              onClick={handleDeleteLeftBanner}
-                              style={{ position: 'absolute', top: '-5px', right: '-5px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: 10 }}
-                              title="Delete Left Banner"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      ) : (
-                        <div style={{ width: '100%', height: '100px', borderRadius: '0.5rem', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '1.5rem', border: '2px dashed #cbd5e1' }}>
-                          ⬅️
-                        </div>
-                      )}
-                      <div style={{ width: '100%' }}>
-                        <input 
-                          type="file" 
-                          id="left-banner-upload"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                              setLeftBanner(file);
-                              setLeftBannerPreview(URL.createObjectURL(file));
-                            }
-                          }}
-                          style={{ display: 'none' }}
-                        />
-                        <label 
-                          htmlFor="left-banner-upload" 
-                          className="btn" 
-                          style={{ display: 'block', textAlign: 'center', backgroundColor: '#ffffff', color: '#1e293b', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', fontSize: '0.85rem', cursor: 'pointer', borderRadius: '0.4rem', fontWeight: 600 }}
-                        >
-                          {selectedStore.leftBannerUrl ? 'Change Left Banner' : 'Upload Left Banner'}
-                        </label>
-                      </div>
+
+                <div style={{ backgroundColor: '#f0f9ff', padding: '1rem', borderRadius: '0.6rem', border: '1px solid #bae6fd' }}>
+                  <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 700, color: '#0369a1', fontSize: '1rem' }}>📣 Collection Rolling Text (Marquee)</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                    <input type="text" className="input-field" value={editRollingText} onChange={(e) => setEditRollingText(e.target.value)} placeholder="e.g. New Arrivals!" disabled={isStarter} />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Store Logo</label>
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                    <div style={{ flex: 1 }}>
+                      <input type="file" accept="image/*" onChange={(e) => setStoreLogo(e.target.files[0])} disabled={isStarter} />
                     </div>
                   </div>
+                </div>
 
-                  {/* Right Banner */}
-                  <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-                    <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 600, fontSize: '0.85rem' }}>Right Side Banner</label>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-                      {(selectedStore.rightBannerUrl || rightBannerPreview) ? (
-                        <div style={{ position: 'relative', width: '100%' }}>
-                          <img 
-                            src={rightBannerPreview || selectedStore.rightBannerUrl} 
-                            alt="Right Banner" 
-                            style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '0.5rem', border: '1px solid #cbd5e1' }} 
-                          />
-                          {selectedStore.rightBannerUrl && !rightBannerPreview && (
-                            <button 
-                              type="button"
-                              onClick={handleDeleteRightBanner}
-                              style={{ position: 'absolute', top: '-5px', right: '-5px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: 10 }}
-                              title="Delete Right Banner"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      ) : (
-                        <div style={{ width: '100%', height: '100px', borderRadius: '0.5rem', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '1.5rem', border: '2px dashed #cbd5e1' }}>
-                          ➡️
-                        </div>
-                      )}
-                      <div style={{ width: '100%' }}>
-                        <input 
-                          type="file" 
-                          id="right-banner-upload"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                              setRightBanner(file);
-                              setRightBannerPreview(URL.createObjectURL(file));
-                            }
-                          }}
-                          style={{ display: 'none' }}
-                        />
-                        <label 
-                          htmlFor="right-banner-upload" 
-                          className="btn" 
-                          style={{ display: 'block', textAlign: 'center', backgroundColor: '#ffffff', color: '#1e293b', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', fontSize: '0.85rem', cursor: 'pointer', borderRadius: '0.4rem', fontWeight: 600 }}
-                        >
-                          {selectedStore.rightBannerUrl ? 'Change Right Banner' : 'Upload Right Banner'}
-                        </label>
-                      </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Configurable Side Banners (Left & Right)</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                      <input type="file" accept="image/*" onChange={(e) => setLeftBanner(e.target.files[0])} disabled={isStarter} />
+                    </div>
+                    <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                      <input type="file" accept="image/*" onChange={(e) => setRightBanner(e.target.files[0])} disabled={isStarter} />
                     </div>
                   </div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <button type="submit" className="btn btn-primary" style={{ flex: 1, minWidth: '200px', height: '42px', fontWeight: 'bold' }}>
-                  Update Store Settings
+                <button type="submit" className="btn btn-primary" style={{ flex: 1, minWidth: '200px', height: '42px', fontWeight: 'bold' }} disabled={isExpired}>
+                  {isExpired ? 'Store Locked (Expired)' : 'Update Store Settings'}
                 </button>
                 <button type="button" onClick={(e) => handleDeleteStore(selectedStore, e)} className="btn" style={{ backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', flex: 1, minWidth: '200px' }}>
                   Delete Store
@@ -1031,11 +889,17 @@ const SellerDashboard = ({ user }) => {
                 </div>
               </div>
               
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button type="submit" className="btn btn-primary" style={{ flex: 1, padding: '1rem', fontSize: '1rem', fontWeight: 'bold', backgroundColor: '#4f46e5', boxShadow: '0 4px 14px 0 rgba(79, 70, 229, 0.39)' }}>
-                  {editingProductId ? 'Update Product' : 'Publish Product'}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary" 
+                  style={{ padding: '1rem', fontSize: '1rem', fontWeight: 'bold', backgroundColor: isExpired ? '#94a3b8' : '#4f46e5', boxShadow: isExpired ? 'none' : '0 4px 14px 0 rgba(79, 70, 229, 0.39)' }}
+                  disabled={isExpired}
+                >
+                  {isExpired ? 'Publishing Disabled (Expired)' : (editingProductId ? 'Update Product' : 'Publish Product')}
                 </button>
-                {editingProductId && (
+                {isExpired && <p style={{ color: '#ef4444', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center' }}>Upgrade to Business or Enterprise plan to list products.</p>}
+                {editingProductId && !isExpired && (
                   <button type="button" onClick={cancelEdit} className="btn" style={{ padding: '1rem', fontSize: '1rem', fontWeight: 'bold', backgroundColor: '#e2e8f0', color: '#475569' }}>
                     Cancel
                   </button>
@@ -1057,6 +921,12 @@ const SellerDashboard = ({ user }) => {
                 {myProducts.length} Items
               </span>
             </div>
+
+            {isStarter && (
+              <div style={{ backgroundColor: '#f0f9ff', border: '1px solid #bae6fd', padding: '0.75rem 1rem', borderRadius: '0.5rem', color: '#0369a1', fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: '1.4' }}>
+                ℹ️ <strong>Starter Plan Limit:</strong> You can upload a maximum of 7 products. Please upgrade to a <strong>Business</strong> or <strong>Enterprise</strong> plan to unlock more listings and grow your store.
+              </div>
+            )}
 
             {loading ? (
               <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>

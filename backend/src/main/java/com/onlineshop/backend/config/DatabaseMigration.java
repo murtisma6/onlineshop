@@ -17,7 +17,9 @@ public class DatabaseMigration implements CommandLineRunner {
         try {
             // Check if column exists
             jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS plan VARCHAR(255) DEFAULT 'STARTER'");
-            System.out.println("Migration successful: 'plan' column checked/added.");
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS country VARCHAR(255)");
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+            System.out.println("Migration successful: Columns checked/added.");
         } catch (Exception e) {
             System.err.println("Migration error: " + e.getMessage());
         }

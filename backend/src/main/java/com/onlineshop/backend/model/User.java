@@ -65,4 +65,7 @@ public class User {
 
     @Column
     private String country;
+
+    @Column(nullable = false, updatable = false)
+    private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
 }

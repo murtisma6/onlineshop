@@ -49,22 +49,28 @@ public class StoreController {
         if (!sellerOpt.isPresent() || !sellerOpt.get().getRole().name().equals("SELLER")) {
             return ResponseEntity.badRequest().body("Invalid seller");
         }
+        User seller = sellerOpt.get();
+        
+        // 3-Month Expiry Check
+        String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
+        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
+        }
+
+        // Store Count Limit Check
+        long storeCount = storeRepository.findBySellerId(seller.getId()).size();
+        if ("STARTER".equals(plan) && storeCount >= 1) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body("Starter plan limit reached (1 store). Please upgrade.");
+        } else if ("BUSINESS".equals(plan) && storeCount >= 3) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body("Business plan limit reached (3 stores). Please upgrade.");
+        }
 
         Store store = new Store();
         store.setName(storeDto.getName());
-        store.setSeller(sellerOpt.get());
+        store.setSeller(seller);
         storeRepository.save(store);
 
-        StoreDto responseDto = new StoreDto();
-        responseDto.setId(store.getId());
-        responseDto.setName(store.getName());
-        responseDto.setSellerId(store.getSeller().getId());
-        responseDto.setProductCount(0);
-        responseDto.setUniqueUrl(store.getUniqueUrl());
-        responseDto.setRibbonColor(store.getRibbonColor());
-        responseDto.setHeaderTagline(store.getHeaderTagline());
-
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.ok(mapToDto(store));
     }
 
     @GetMapping("/seller/{sellerId}")
@@ -104,58 +110,70 @@ public class StoreController {
         }
 
         Store store = storeOpt.get();
+        User seller = store.getSeller();
+
+        // 3-Month Expiry Check
+        String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
+        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
+        }
+
         if (name != null && !name.isEmpty()) {
             store.setName(name);
         }
         if (ribbonColor != null) {
             store.setRibbonColor(ribbonColor);
         }
-        if (headerTagline != null) {
-            store.setHeaderTagline(headerTagline);
-        }
-        if (instagramUrl != null) {
-            store.setInstagramUrl(instagramUrl);
-        }
-        if (facebookUrl != null) {
-            store.setFacebookUrl(facebookUrl);
-        }
-        if (youtubeUrl != null) {
-            store.setYoutubeUrl(youtubeUrl);
-        }
-        if (rollingText != null) {
-            store.setRollingText(rollingText);
-        }
-        if (rollingTextColor != null) {
-            store.setRollingTextColor(rollingTextColor);
-        }
-        if (rollingTextStyle != null) {
-            store.setRollingTextStyle(rollingTextStyle);
-        }
 
-        if (logo != null && !logo.isEmpty()) {
-            try {
-                store.setLogoData(logo.getBytes());
-                store.setLogoType(logo.getContentType());
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process logo");
+        // Restrict branding for Starter plan
+        if (!"STARTER".equals(plan)) {
+            if (headerTagline != null) {
+                store.setHeaderTagline(headerTagline);
             }
-        }
-
-        if (leftBanner != null && !leftBanner.isEmpty()) {
-            try {
-                store.setLeftBannerData(leftBanner.getBytes());
-                store.setLeftBannerType(leftBanner.getContentType());
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process left banner");
+            if (instagramUrl != null) {
+                store.setInstagramUrl(instagramUrl);
             }
-        }
+            if (facebookUrl != null) {
+                store.setFacebookUrl(facebookUrl);
+            }
+            if (youtubeUrl != null) {
+                store.setYoutubeUrl(youtubeUrl);
+            }
+            if (rollingText != null) {
+                store.setRollingText(rollingText);
+            }
+            if (rollingTextColor != null) {
+                store.setRollingTextColor(rollingTextColor);
+            }
+            if (rollingTextStyle != null) {
+                store.setRollingTextStyle(rollingTextStyle);
+            }
 
-        if (rightBanner != null && !rightBanner.isEmpty()) {
-            try {
-                store.setRightBannerData(rightBanner.getBytes());
-                store.setRightBannerType(rightBanner.getContentType());
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process right banner");
+            if (logo != null && !logo.isEmpty()) {
+                try {
+                    store.setLogoData(logo.getBytes());
+                    store.setLogoType(logo.getContentType());
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process logo");
+                }
+            }
+
+            if (leftBanner != null && !leftBanner.isEmpty()) {
+                try {
+                    store.setLeftBannerData(leftBanner.getBytes());
+                    store.setLeftBannerType(leftBanner.getContentType());
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process left banner");
+                }
+            }
+
+            if (rightBanner != null && !rightBanner.isEmpty()) {
+                try {
+                    store.setRightBannerData(rightBanner.getBytes());
+                    store.setRightBannerType(rightBanner.getContentType());
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process right banner");
+                }
             }
         }
 
@@ -280,6 +298,7 @@ public class StoreController {
         }
         return ResponseEntity.notFound().build();
     }
+
 
 
     @DeleteMapping("/{id}")

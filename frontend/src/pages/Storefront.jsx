@@ -380,7 +380,7 @@ const Storefront = () => {
             .rolling-marquee {
               display: inline-block;
               padding-left: 100%;
-              animation: marquee 10s linear infinite;
+              animation: marquee 20s linear infinite;
               text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
               font-size: 1.4rem !important;
               font-weight: 800 !important;

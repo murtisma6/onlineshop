@@ -21,4 +21,5 @@ public class UserDto {
     private boolean phoneVerified;
     private String plan;
     private String country;
+    private java.time.LocalDateTime createdAt;
 }

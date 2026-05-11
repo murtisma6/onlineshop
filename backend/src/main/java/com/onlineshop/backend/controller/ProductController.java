@@ -66,6 +66,24 @@ public class ProductController {
         if (storeOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid store ID");
         }
+        Store store = storeOpt.get();
+        User seller = store.getSeller();
+
+        // 3-Month Expiry Check
+        String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
+        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
+        }
+
+        // Product Count Limit Check
+        long productCount = productRepository.findByStoreId(storeId).size();
+        if ("STARTER".equals(plan) && productCount >= 7) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body("Starter plan limit reached (7 products). Please upgrade.");
+        } else if ("BUSINESS".equals(plan) && productCount >= 21) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body("Business plan limit reached (21 products each store). Please upgrade.");
+        } else if ("ENTERPRISE".equals(plan) && productCount >= 53) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body("Enterprise plan limit reached (53 products each store). Please upgrade.");
+        }
 
         try {
             Product product = new Product();
@@ -121,6 +139,14 @@ public class ProductController {
         Optional<Product> productOpt = productRepository.findById(id);
         if (productOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+        Product product = productOpt.get();
+        User seller = product.getStore().getSeller();
+
+        // 3-Month Expiry Check
+        String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
+        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
         }
 
         try {

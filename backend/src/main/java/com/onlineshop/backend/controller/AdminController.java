@@ -250,6 +250,7 @@ public class AdminController {
         dto.setEmailVerified(user.isEmailVerified());
         dto.setPhoneVerified(user.isPhoneVerified());
         dto.setPlan(user.getPlan());
+        dto.setCreatedAt(user.getCreatedAt());
         return dto;
     }
 
