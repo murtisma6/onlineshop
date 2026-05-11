@@ -25,7 +25,8 @@ const UserManagement = () => {
     city: '',
     state: '',
     country: 'IN',
-    plan: 'STARTER'
+    plan: 'STARTER',
+    subscriptionEndDate: ''
   });
   const [newPassword, setNewPassword] = useState('');
 
@@ -58,7 +59,8 @@ const UserManagement = () => {
       city: user.city || '',
       state: user.state || '',
       country: user.country || 'India',
-      plan: user.plan || 'STARTER'
+      plan: user.plan || 'STARTER',
+      subscriptionEndDate: user.subscriptionEndDate ? user.subscriptionEndDate.split('T')[0] : ''
     });
     setIsEditModalOpen(true);
   };
@@ -66,11 +68,19 @@ const UserManagement = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
+      const dataToSend = { ...formData };
+      if (dataToSend.subscriptionEndDate) {
+        // Append time to make it a valid LocalDateTime string for the backend
+        dataToSend.subscriptionEndDate = `${dataToSend.subscriptionEndDate}T23:59:59`;
+      } else {
+        dataToSend.subscriptionEndDate = null;
+      }
+
       if (selectedUser?.id) {
-        await adminUpdateUser(selectedUser.id, formData);
+        await adminUpdateUser(selectedUser.id, dataToSend);
         setSuccess("User updated successfully");
       } else {
-        await adminCreateUser(formData);
+        await adminCreateUser(dataToSend);
         setSuccess("User created successfully");
       }
       setIsEditModalOpen(false);
@@ -148,7 +158,7 @@ const UserManagement = () => {
         <div className="user-mgmt-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b' }}>User Management</h1>
           <button 
-            onClick={() => { setSelectedUser(null); setFormData({ username: '', role: 'BUYER', firstName: '', lastName: '', email: '', phone: '', whatsapp: '', city: '', state: '', country: 'IN', plan: 'STARTER' }); setIsEditModalOpen(true); }}
+            onClick={() => { setSelectedUser(null); setFormData({ username: '', role: 'BUYER', firstName: '', lastName: '', email: '', phone: '', whatsapp: '', city: '', state: '', country: 'IN', plan: 'STARTER', subscriptionEndDate: '' }); setIsEditModalOpen(true); }}
             className="btn btn-primary"
             style={{ padding: '0.75rem 1.5rem', fontWeight: '700' }}
           >
@@ -294,14 +304,26 @@ const UserManagement = () => {
               </div>
 
               {formData.role === 'SELLER' && (
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>Subscription Plan</label>
-                  <select value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }}>
-                    <option value="STARTER">STARTER</option>
-                    <option value="BUSINESS">BUSINESS</option>
-                    <option value="ENTERPRISE">ENTERPRISE</option>
-                  </select>
-                </div>
+                <>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>Subscription Plan</label>
+                    <select value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }}>
+                      <option value="STARTER">STARTER</option>
+                      <option value="BUSINESS">BUSINESS</option>
+                      <option value="ENTERPRISE">ENTERPRISE</option>
+                    </select>
+                  </div>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>Subscription End Date</label>
+                    <input 
+                      type="date" 
+                      value={formData.subscriptionEndDate} 
+                      onChange={e => setFormData({...formData, subscriptionEndDate: e.target.value})} 
+                      style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }} 
+                    />
+                    <small style={{ color: '#94a3b8', fontSize: '0.7rem' }}>Leave empty for default (3 months for Starter, Lifetime for others)</small>
+                  </div>
+                </>
               )}
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>

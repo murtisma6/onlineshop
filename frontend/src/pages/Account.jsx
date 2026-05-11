@@ -135,10 +135,14 @@ const Account = ({ user, setUser }) => {
                     <div>
                       <strong style={{ color: '#64748b' }}>Plan Expires:</strong> {(() => {
                         const plan = profile.plan?.toUpperCase() || 'STARTER';
-                        if (plan === 'STARTER') {
-                          if (!profile.createdAt) return 'N/A';
-                          const expiryDate = new Date(profile.createdAt);
+                        let expiryDate = profile.subscriptionEndDate ? new Date(profile.subscriptionEndDate) : null;
+                        
+                        if (!expiryDate && plan === 'STARTER' && profile.createdAt) {
+                          expiryDate = new Date(profile.createdAt);
                           expiryDate.setMonth(expiryDate.getMonth() + 3);
+                        }
+                        
+                        if (expiryDate) {
                           return expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
                         }
                         return <span style={{ color: '#16a34a', fontWeight: 'bold' }}>Unlimited / Lifetime</span>;

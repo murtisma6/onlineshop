@@ -69,10 +69,14 @@ public class ProductController {
         Store store = storeOpt.get();
         User seller = store.getSeller();
 
-        // 3-Month Expiry Check
+        // Subscription Expiry Check
         String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
-        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
+        java.time.LocalDateTime expiryDate = seller.getSubscriptionEndDate();
+        if (expiryDate == null && "STARTER".equals(plan)) {
+            expiryDate = seller.getCreatedAt().plusMonths(3);
+        }
+        if (expiryDate != null && expiryDate.isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(plan + " plan expired. Please upgrade to Business or Enterprise.");
         }
 
         // Product Count Limit Check
@@ -143,10 +147,14 @@ public class ProductController {
         Product product = productOpt.get();
         User seller = product.getStore().getSeller();
 
-        // 3-Month Expiry Check
+        // Subscription Expiry Check
         String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
-        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
+        java.time.LocalDateTime expiryDate = seller.getSubscriptionEndDate();
+        if (expiryDate == null && "STARTER".equals(plan)) {
+            expiryDate = seller.getCreatedAt().plusMonths(3);
+        }
+        if (expiryDate != null && expiryDate.isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(plan + " plan expired. Please upgrade to Business or Enterprise.");
         }
 
         try {

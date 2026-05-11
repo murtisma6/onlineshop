@@ -68,4 +68,7 @@ public class User {
 
     @Column(nullable = false, updatable = false)
     private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
+
+    @Column
+    private java.time.LocalDateTime subscriptionEndDate;
 }

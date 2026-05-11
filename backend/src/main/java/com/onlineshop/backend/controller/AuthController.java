@@ -147,6 +147,8 @@ public class AuthController {
         if (request.getPincode() != null) user.setPincode(request.getPincode());
         if (request.getState() != null) user.setState(request.getState());
         if (request.getCountry() != null) user.setCountry(request.getCountry());
+        if (request.getPlan() != null) user.setPlan(request.getPlan());
+        if (request.getSubscriptionEndDate() != null) user.setSubscriptionEndDate(request.getSubscriptionEndDate());
         
         userRepository.save(user);
         return ResponseEntity.ok(mapToDto(user));
@@ -171,6 +173,7 @@ public class AuthController {
         dto.setPhoneVerified(user.isPhoneVerified());
         dto.setPlan(user.getPlan());
         dto.setCreatedAt(user.getCreatedAt());
+        dto.setSubscriptionEndDate(user.getSubscriptionEndDate());
         return dto;
     }
 }

@@ -22,4 +22,5 @@ public class UserDto {
     private String plan;
     private String country;
     private java.time.LocalDateTime createdAt;
+    private java.time.LocalDateTime subscriptionEndDate;
 }

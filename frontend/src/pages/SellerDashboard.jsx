@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { uploadProduct, fetchStoreProducts, deleteProduct, fetchSellerStores, createStore, updateProduct, deleteStore, updateStore, deleteStoreLogo, deleteLeftBanner, deleteRightBanner } from '../api';
+import { fetchUser, uploadProduct, fetchStoreProducts, deleteProduct, fetchSellerStores, createStore, updateProduct, deleteStore, updateStore, deleteStoreLogo, deleteLeftBanner, deleteRightBanner } from '../api';
 
-const SellerDashboard = ({ user }) => {
+const SellerDashboard = ({ user: initialUser }) => {
+  const [user, setUser] = useState(initialUser);
   // Store Selection State
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState(null);
@@ -44,16 +45,21 @@ const SellerDashboard = ({ user }) => {
 
   // Plan Expiry Check (3 Months for Starter)
   const checkIfExpired = () => {
-    const plan = user?.plan?.toUpperCase() || 'STARTER';
-    if (!user || plan !== 'STARTER' || !user.createdAt) return false;
-    const created = new Date(user.createdAt);
-    const now = new Date();
-    const threeMonthsLater = new Date(created);
-    threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
-    return now > threeMonthsLater;
+    if (!user) return false;
+    const plan = user.plan?.toUpperCase() || 'STARTER';
+    let expiryDate = user.subscriptionEndDate ? new Date(user.subscriptionEndDate) : null;
+    
+    if (!expiryDate && plan === 'STARTER' && user.createdAt) {
+      expiryDate = new Date(user.createdAt);
+      expiryDate.setMonth(expiryDate.getMonth() + 3);
+    }
+    
+    if (!expiryDate) return false;
+    return new Date() > expiryDate;
   };
   const isExpired = checkIfExpired();
   const isStarter = !user?.plan || user.plan.toUpperCase() === 'STARTER';
+  const currentPlanName = user?.plan?.charAt(0).toUpperCase() + user?.plan?.slice(1).toLowerCase() || 'Starter';
 
 
   // Category State
@@ -61,9 +67,19 @@ const SellerDashboard = ({ user }) => {
   const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1cndRBsDSs3t9CEJuX7oDeFY68mSVZ38r92RInHsLriY/export?format=csv';
 
   useEffect(() => {
+    loadUserInfo();
     loadStores();
     loadCategories();
-  }, [user]);
+  }, [initialUser]);
+
+  const loadUserInfo = async () => {
+    try {
+      const res = await fetchUser(initialUser.id);
+      setUser(res.data);
+    } catch (err) {
+      console.error('Failed to load user info', err);
+    }
+  };
 
   // Keep WhatsApp in sync with user profile
   useEffect(() => {
@@ -87,6 +103,10 @@ const SellerDashboard = ({ user }) => {
   const handleCreateStore = async (e) => {
     e.preventDefault();
     if (!newStoreName) return;
+    if (isExpired) {
+      alert(`${currentPlanName} Plan Expired. Please renew or upgrade to create or manage stores.`);
+      return;
+    }
     if (isStarter && stores.length >= 1) {
       alert("Starter plan limit reached (1 store). Please upgrade to Business or Enterprise plan to create more stores.");
       return;
@@ -660,34 +680,46 @@ const SellerDashboard = ({ user }) => {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                {isExpired && (
+              <div style={{ backgroundColor: '#fee2e2', border: '1px solid #fecaca', borderRadius: '1rem', padding: '1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ backgroundColor: '#ef4444', color: 'white', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div>
+                  <h3 style={{ color: '#991b1b', fontWeight: '800', margin: 0 }}>{currentPlanName} Plan Expired</h3>
+                  <p style={{ color: '#b91c1c', fontSize: '0.9rem', margin: '0.25rem 0 0 0' }}>Your {currentPlanName.toLowerCase()} subscription has expired. Store features are disabled. Please renew or contact support to reactivate your store.</p>
+                </div>
+              </div>
+            )}
+
+            <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
                   <div>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#e1306c' }}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
                       Instagram Link
                     </label>
-                    <input type="url" className="input-field" value={editInstagram} onChange={(e) => setEditInstagram(e.target.value)} placeholder="https://instagram.com/yourprofile" disabled={isStarter} />
+                    <input type="url" className="input-field" value={editInstagram} onChange={(e) => setEditInstagram(e.target.value)} placeholder="https://instagram.com/yourprofile" />
                   </div>
                   <div>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#1877f2' }}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                       Facebook Link
                     </label>
-                    <input type="url" className="input-field" value={editFacebook} onChange={(e) => setEditFacebook(e.target.value)} placeholder="https://facebook.com/yourpage" disabled={isStarter} />
+                    <input type="url" className="input-field" value={editFacebook} onChange={(e) => setEditFacebook(e.target.value)} placeholder="https://facebook.com/yourpage" />
                   </div>
                   <div>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ff0000' }}><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 2-2 69.1 69.1 0 0 1 15 0 2 2 0 0 1 2 2 24.12 24.12 0 0 1 0 10 2 2 0 0 1-2 2 69.1 69.1 0 0 1-15 0 2 2 0 0 1-2-2Z"/><path d="m10 15 5-3-5-3z"/></svg>
                       YouTube Link
                     </label>
-                    <input type="url" className="input-field" value={editYoutube} onChange={(e) => setEditYoutube(e.target.value)} placeholder="https://youtube.com/@yourchannel" disabled={isStarter} />
+                    <input type="url" className="input-field" value={editYoutube} onChange={(e) => setEditYoutube(e.target.value)} placeholder="https://youtube.com/@yourchannel" />
                   </div>
                 </div>
 
                 <div style={{ backgroundColor: '#f0f9ff', padding: '1rem', borderRadius: '0.6rem', border: '1px solid #bae6fd' }}>
                   <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 700, color: '#0369a1', fontSize: '1rem' }}>📣 Collection Rolling Text (Marquee)</label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-                    <input type="text" className="input-field" value={editRollingText} onChange={(e) => setEditRollingText(e.target.value)} placeholder="e.g. New Arrivals!" disabled={isStarter} />
+                    <input type="text" className="input-field" value={editRollingText} onChange={(e) => setEditRollingText(e.target.value)} placeholder="e.g. New Arrivals!" />
                   </div>
                 </div>
 
@@ -695,7 +727,7 @@ const SellerDashboard = ({ user }) => {
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Store Logo</label>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
                     <div style={{ flex: 1 }}>
-                      <input type="file" accept="image/*" onChange={(e) => setStoreLogo(e.target.files[0])} disabled={isStarter} />
+                      <input type="file" accept="image/*" onChange={(e) => setStoreLogo(e.target.files[0])} />
                     </div>
                   </div>
                 </div>
@@ -704,18 +736,23 @@ const SellerDashboard = ({ user }) => {
                   <label style={{ display: 'block', marginBottom: '1rem', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>Configurable Side Banners (Left & Right)</label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-                      <input type="file" accept="image/*" onChange={(e) => setLeftBanner(e.target.files[0])} disabled={isStarter} />
+                      <input type="file" accept="image/*" onChange={(e) => setLeftBanner(e.target.files[0])} />
                     </div>
                     <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-                      <input type="file" accept="image/*" onChange={(e) => setRightBanner(e.target.files[0])} disabled={isStarter} />
+                      <input type="file" accept="image/*" onChange={(e) => setRightBanner(e.target.files[0])} />
                     </div>
                   </div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <button type="submit" className="btn btn-primary" style={{ flex: 1, minWidth: '200px', height: '42px', fontWeight: 'bold' }} disabled={isExpired}>
-                  {isExpired ? 'Store Locked (Expired)' : 'Update Store Settings'}
+                <button 
+                  onClick={handleUpdateStore} 
+                  className="btn btn-primary" 
+                  style={{ padding: '1rem 2rem', fontWeight: 'bold' }}
+                  disabled={isExpired}
+                >
+                  {isExpired ? 'Plan Expired' : 'Update Store'}
                 </button>
                 <button type="button" onClick={(e) => handleDeleteStore(selectedStore, e)} className="btn" style={{ backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', flex: 1, minWidth: '200px' }}>
                   Delete Store
@@ -907,7 +944,7 @@ const SellerDashboard = ({ user }) => {
                 >
                   {isExpired ? 'Publishing Disabled (Expired)' : (editingProductId ? 'Update Product' : 'Publish Product')}
                 </button>
-                {isExpired && <p style={{ color: '#ef4444', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center' }}>Upgrade to Business or Enterprise plan to list products.</p>}
+                {isExpired && <p style={{ color: '#ef4444', fontSize: '0.8rem', fontWeight: 600, textAlign: 'center' }}>Renew your {currentPlanName.toLowerCase()} plan or upgrade to list products.</p>}
                 {editingProductId && !isExpired && (
                   <button type="button" onClick={cancelEdit} className="btn" style={{ padding: '1rem', fontSize: '1rem', fontWeight: 'bold', backgroundColor: '#e2e8f0', color: '#475569' }}>
                     Cancel
@@ -926,9 +963,20 @@ const SellerDashboard = ({ user }) => {
                 </div>
                 <h2 style={{ fontSize: '1.5rem', color: '#1e293b', margin: 0 }}>Active Inventory</h2>
               </div>
-              <span style={{ backgroundColor: '#eef2ff', color: '#4f46e5', padding: '0.25rem 0.75rem', borderRadius: '1rem', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                {myProducts.length} Items
-              </span>
+              <button 
+                onClick={() => {
+                  if (isExpired) {
+                    alert(`${currentPlanName} Plan Expired. Please renew or upgrade to add products.`);
+                    return;
+                  }
+                  setSelectedStoreForProduct(selectedStore.id); 
+                  setShowProductModal(true); 
+                }} 
+                className="btn btn-primary" 
+                style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}
+              >
+                + Add Product
+              </button>
             </div>
 
             {isStarter && (

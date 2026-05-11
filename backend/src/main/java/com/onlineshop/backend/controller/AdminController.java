@@ -161,6 +161,9 @@ public class AdminController {
         if (dto.getPlan() != null) {
             user.setPlan(dto.getPlan());
         }
+        if (dto.getSubscriptionEndDate() != null) {
+            user.setSubscriptionEndDate(dto.getSubscriptionEndDate());
+        }
         
         userRepository.save(user);
         return ResponseEntity.ok(mapUserToDto(user));
@@ -185,6 +188,9 @@ public class AdminController {
         user.setCountry(dto.getCountry());
         if (dto.getPlan() != null) {
             user.setPlan(dto.getPlan());
+        }
+        if (dto.getSubscriptionEndDate() != null) {
+            user.setSubscriptionEndDate(dto.getSubscriptionEndDate());
         }
         
         userRepository.save(user);
@@ -251,6 +257,7 @@ public class AdminController {
         dto.setPhoneVerified(user.isPhoneVerified());
         dto.setPlan(user.getPlan());
         dto.setCreatedAt(user.getCreatedAt());
+        dto.setSubscriptionEndDate(user.getSubscriptionEndDate());
         return dto;
     }
 

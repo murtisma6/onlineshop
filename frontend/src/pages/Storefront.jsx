@@ -91,6 +91,41 @@ const Storefront = () => {
     );
   }
 
+  // Check if Seller's plan is expired
+  const isStoreExpired = (() => {
+    const plan = store.sellerPlan?.toUpperCase() || 'STARTER';
+    let expiryDate = store.sellerSubscriptionEndDate ? new Date(store.sellerSubscriptionEndDate) : null;
+    
+    if (!expiryDate && plan === 'STARTER' && store.sellerCreatedAt) {
+      expiryDate = new Date(store.sellerCreatedAt);
+      expiryDate.setMonth(expiryDate.getMonth() + 3);
+    }
+    
+    if (!expiryDate) return false;
+    return new Date() > expiryDate;
+  })();
+
+  if (isStoreExpired) {
+    return (
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc', padding: '2rem' }}>
+        <div style={{ backgroundColor: 'white', padding: '3rem', borderRadius: '1.5rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', textAlign: 'center', maxWidth: '500px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ backgroundColor: '#fee2e2', padding: '1rem', borderRadius: '50%' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+          </div>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1e293b', marginBottom: '1rem' }}>Store Suspended</h2>
+          <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '2rem', lineHeight: '1.6' }}>
+            The subscription for <strong>{store.name}</strong> has expired. Please contact the store owner to renew their plan.
+          </p>
+          <button onClick={() => navigate('/')} className="btn btn-primary" style={{ padding: '0.8rem 1.5rem', fontSize: '1rem', width: '100%' }}>
+            Explore Other Stores
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ backgroundColor: '#f8fafc', flex: 1, display: 'flex', flexDirection: 'column' }}>
       <div style={{ 

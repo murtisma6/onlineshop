@@ -51,10 +51,14 @@ public class StoreController {
         }
         User seller = sellerOpt.get();
         
-        // 3-Month Expiry Check
+        // Subscription Expiry Check
         String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
-        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
+        java.time.LocalDateTime expiryDate = seller.getSubscriptionEndDate();
+        if (expiryDate == null && "STARTER".equals(plan)) {
+            expiryDate = seller.getCreatedAt().plusMonths(3);
+        }
+        if (expiryDate != null && expiryDate.isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(plan + " plan expired. Please upgrade to Business or Enterprise.");
         }
 
         // Store Count Limit Check
@@ -112,10 +116,14 @@ public class StoreController {
         Store store = storeOpt.get();
         User seller = store.getSeller();
 
-        // 3-Month Expiry Check
+        // Subscription Expiry Check
         String plan = seller.getPlan() != null ? seller.getPlan().trim().toUpperCase() : "STARTER";
-        if ("STARTER".equals(plan) && seller.getCreatedAt().plusMonths(3).isBefore(java.time.LocalDateTime.now())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Starter plan expired. Please upgrade to Business or Enterprise.");
+        java.time.LocalDateTime expiryDate = seller.getSubscriptionEndDate();
+        if (expiryDate == null && "STARTER".equals(plan)) {
+            expiryDate = seller.getCreatedAt().plusMonths(3);
+        }
+        if (expiryDate != null && expiryDate.isBefore(java.time.LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(plan + " plan expired. Please upgrade to Business or Enterprise.");
         }
 
         if (name != null && !name.isEmpty()) {
@@ -258,6 +266,12 @@ public class StoreController {
         dto.setTotalViews(views);
         dto.setTotalClicks(clicks);
         dto.setUpdatedAt(s.getUpdatedAt());
+        
+        if (s.getSeller() != null) {
+            dto.setSellerPlan(s.getSeller().getPlan());
+            dto.setSellerSubscriptionEndDate(s.getSeller().getSubscriptionEndDate());
+            dto.setSellerCreatedAt(s.getSeller().getCreatedAt());
+        }
         
         return dto;
     }

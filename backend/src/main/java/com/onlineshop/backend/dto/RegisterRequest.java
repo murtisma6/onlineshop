@@ -19,4 +19,5 @@ public class RegisterRequest {
     private String state;
     private String country;
     private String plan;
+    private java.time.LocalDateTime subscriptionEndDate;
 }

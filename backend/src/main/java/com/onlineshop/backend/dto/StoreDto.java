@@ -23,4 +23,7 @@ public class StoreDto {
     private String rollingTextColor;
     private String rollingTextStyle;
     private java.time.LocalDateTime updatedAt;
+    private String sellerPlan;
+    private java.time.LocalDateTime sellerSubscriptionEndDate;
+    private java.time.LocalDateTime sellerCreatedAt;
 }
