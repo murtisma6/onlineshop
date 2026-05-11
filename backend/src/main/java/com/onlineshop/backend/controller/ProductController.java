@@ -102,7 +102,6 @@ public class ProductController {
             product.setStore(storeOpt.get());
 
             productRepository.save(product);
-            Store store = storeOpt.get();
             store.setUpdatedAt(java.time.LocalDateTime.now());
             storeRepository.save(store);
 
@@ -158,7 +157,6 @@ public class ProductController {
         }
 
         try {
-            Product product = productOpt.get();
             product.setName(name);
             product.setPrice(price);
             product.setMrp(mrp);

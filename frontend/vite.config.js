@@ -11,7 +11,12 @@ export default defineConfig({
       "localhost",
       "192.168.0.105",
       "dbohramart.com",
-
-    ]
+    ],
+    proxy: {
+      '/sitemap.xml': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
+      }
+    }
   }
 })

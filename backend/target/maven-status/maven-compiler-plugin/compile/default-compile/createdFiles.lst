@@ -7,7 +7,6 @@ com\onlineshop\backend\model\Role.class
 com\onlineshop\backend\repository\StoreRepository.class
 com\onlineshop\backend\dto\AnalyticsEventDto.class
 com\onlineshop\backend\model\EventType.class
-com\onlineshop\backend\controller\ProductController.class
 com\onlineshop\backend\dto\RegisterRequest.class
 com\onlineshop\backend\dto\UserDto.class
 com\onlineshop\backend\model\Review.class
