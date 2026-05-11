@@ -423,8 +423,8 @@ const SellerDashboard = ({ user: initialUser }) => {
             <div style={{ backgroundColor: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '1rem', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ fontSize: '2rem' }}>⚠️</span>
               <div>
-                <h3 style={{ color: '#9a3412', margin: 0, fontSize: '1.1rem' }}>Starter Plan Expired</h3>
-                <p style={{ color: '#c2410c', margin: '0.25rem 0 0.5rem 0', fontSize: '0.9rem' }}>Your 3-month trial period has ended. Store management and product updates are disabled.</p>
+                <h3 style={{ color: '#9a3412', margin: 0, fontSize: '1.1rem' }}>{currentPlanName} Plan Expired</h3>
+                <p style={{ color: '#c2410c', margin: '0.25rem 0 0.5rem 0', fontSize: '0.9rem' }}>Your {currentPlanName.toLowerCase()} subscription has ended. Store management and product updates are disabled.</p>
                 <button 
                   onClick={() => window.location.href = '/contact-us'}
                   style={{ backgroundColor: '#f97316', color: 'white', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '0.5rem', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
