@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { fetchAllUsers, adminCreateUser, adminUpdateUser, adminDeleteUser, adminResetPassword } from '../api';
-import { Country, State } from 'country-state-city';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -24,7 +23,7 @@ const UserManagement = () => {
     whatsapp: '',
     city: '',
     state: '',
-    country: 'IN',
+    country: 'India',
     plan: 'STARTER',
     subscriptionEndDate: ''
   });
@@ -275,31 +274,11 @@ const UserManagement = () => {
                 </div>
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>Country</label>
-                  <select 
-                    value={formData.country} 
-                    onChange={e => setFormData({...formData, country: e.target.value, state: ''})} 
-                    style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }}
-                  >
-                    <option value="">Select Country</option>
-                    {Country.getAllCountries().map(c => (
-                      <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
-                    ))}
-                  </select>
+                  <input type="text" value={formData.country} onChange={e => setFormData({...formData, country: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }} />
                 </div>
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>State</label>
-                  <select 
-                    value={formData.state} 
-                    onChange={e => setFormData({...formData, state: e.target.value})} 
-                    style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }}
-                  >
-                    <option value="">Select State</option>
-                    {(() => {
-                      const countryObj = Country.getAllCountries().find(c => c.isoCode === formData.country || c.name === formData.country);
-                      const sList = countryObj ? State.getStatesOfCountry(countryObj.isoCode) : [];
-                      return sList.map(s => <option key={s.isoCode} value={s.name}>{s.name}</option>);
-                    })()}
-                  </select>
+                  <input type="text" value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} style={{ width: '100%', padding: '0.6rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '0.9rem' }} />
                 </div>
               </div>
 

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { register } from '../api';
-import { Country, State } from 'country-state-city';
 
 const Register = ({ setUser }) => {
   const navigate = useNavigate();
@@ -25,17 +24,13 @@ const Register = ({ setUser }) => {
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
   const [state, setState] = useState('');
-  const [country, setCountry] = useState('IN'); 
+  const [country, setCountry] = useState('India'); 
   const [error, setError] = useState('');
-
-  const countries = Country.getAllCountries();
-  const states = country ? State.getStatesOfCountry(country) : [];
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const selectedCountryName = Country.getCountryByCode(country)?.name || country;
-      const payload = { username, password, role, plan, firstName, lastName, email, phone, whatsapp, address, city, pincode, state, country: selectedCountryName };
+      const payload = { username, password, role, plan, firstName, lastName, email, phone, whatsapp, address, city, pincode, state, country };
       const res = await register(payload);
       setUser(res.data);
       navigate('/account'); // redirect to account page for verification
@@ -69,33 +64,8 @@ const Register = ({ setUser }) => {
             <input type="text" placeholder="Pincode" className="input-field" value={pincode} onChange={(e) => setPincode(e.target.value)} required style={{ flex: 1 }} />
           </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <select 
-              className="input-field" 
-              value={country} 
-              onChange={(e) => {
-                setCountry(e.target.value);
-                setState(''); // Reset state when country changes
-              }}
-              required
-              style={{ flex: 1 }}
-            >
-              <option value="">Select Country</option>
-              {countries.map(c => (
-                <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
-              ))}
-            </select>
-            <select 
-              className="input-field" 
-              value={state} 
-              onChange={(e) => setState(e.target.value)}
-              required
-              style={{ flex: 1 }}
-            >
-              <option value="">Select State</option>
-              {states.map(s => (
-                <option key={s.isoCode} value={s.name}>{s.name}</option>
-              ))}
-            </select>
+            <input type="text" placeholder="Country" className="input-field" value={country} onChange={(e) => setCountry(e.target.value)} required style={{ flex: 1 }} />
+            <input type="text" placeholder="State" className="input-field" value={state} onChange={(e) => setState(e.target.value)} required style={{ flex: 1 }} />
           </div>
           
           {!forcedRole && (
