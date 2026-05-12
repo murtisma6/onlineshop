@@ -18,7 +18,7 @@ const Navbar = ({ user, onLogout }) => {
   }, []);
 
   return (
-    <nav style={{
+    <nav className="nav-container" style={{
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -43,8 +43,9 @@ const Navbar = ({ user, onLogout }) => {
         </svg>
         <span className="nav-title" style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>DBohraMart</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <button
+          className="own-digistore-btn"
           onClick={() => navigate('/own-your-digistore')}
           style={{
             backgroundColor: 'transparent',
@@ -65,7 +66,7 @@ const Navbar = ({ user, onLogout }) => {
           onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'rgba(96,165,250,0.4)'; }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Own your DigiStore
+          <span className="own-digistore-text">Own your DigiStore</span>
         </button>
         {user ? (
           <div style={{ position: 'relative' }} ref={dropdownRef}>
@@ -86,7 +87,7 @@ const Navbar = ({ user, onLogout }) => {
               }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <span>My Account</span>
+              <span className="my-account-text">My Account</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}><polyline points="6 9 12 15 18 9"/></svg>
             </button>
 
@@ -159,7 +160,7 @@ const Navbar = ({ user, onLogout }) => {
             )}
           </div>
         ) : (
-          <button onClick={() => navigate('/login')} className="btn btn-nav" style={{ backgroundColor: '#ffffff', color: '#1E3147', fontWeight: 'bold', padding: '0.5rem 1.5rem', borderRadius: '0.5rem' }}>Login</button>
+          <button onClick={() => navigate('/login')} className="btn btn-nav login-btn" style={{ backgroundColor: '#ffffff', color: '#1E3147', fontWeight: 'bold', padding: '0.5rem 1.5rem', borderRadius: '0.5rem' }}>Login</button>
         )}
       </div>
     </nav>
