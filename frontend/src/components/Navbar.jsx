@@ -36,11 +36,12 @@ const Navbar = ({ user, onLogout }) => {
         onClick={() => navigate('/')}
         title="Home"
       >
-        <svg className="nav-logo-svg" width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#ffffff" strokeWidth="2"/>
-          <polyline points="9 22 9 12 15 12 15 22" stroke="#ffffff" strokeWidth="2"/>
+        <svg className="nav-logo-svg" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
-        <span className="nav-title" style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>{user ? "Bohra's Digital Store" : "Digital Store"}</span>
+        <span className="nav-title" style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>DBohraMart</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <button

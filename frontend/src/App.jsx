@@ -122,14 +122,14 @@ function App() {
           .footer-container {
             background-color: #1E3147;
             color: #94a3b8;
-            padding: 1.5rem 1.25rem;
+            padding: 0.75rem 1.25rem;
             text-align: center;
             border-top: 1px solid #1e293b;
           }
           .footer-description {
-            font-size: 0.72rem;
-            line-height: 1.6;
-            margin: 0 auto 1.25rem auto;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            margin: 0 auto 0.5rem auto;
             max-width: 1000px;
             color: #94a3b8;
           }
@@ -141,11 +141,11 @@ function App() {
           }
           @media (max-width: 768px) {
             .footer-description {
-              font-size: 0.8rem; /* Slightly larger for readability on mobile */
-              line-height: 1.5;
+              font-size: 0.75rem;
+              line-height: 1.3;
             }
             .footer-container {
-              padding: 2rem 1.5rem;
+              padding: 1rem 1.25rem;
             }
           }
         `}</style>
