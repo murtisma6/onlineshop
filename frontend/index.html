@@ -55,7 +55,38 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: #1E3147;">
+        <div style="text-align: center;">
+          <h2>Loading DBohra Mart...</h2>
+          <p>Please wait while we prepare your marketplace.</p>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // Global error handler to catch mobile-specific crashes
+      window.onerror = function(msg, url, line, col, error) {
+        var errorDiv = document.createElement('div');
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '0';
+        errorDiv.style.left = '0';
+        errorDiv.style.width = '100%';
+        errorDiv.style.height = '100%';
+        errorDiv.style.backgroundColor = 'white';
+        errorDiv.style.color = 'red';
+        errorDiv.style.padding = '20px';
+        errorDiv.style.zIndex = '9999';
+        errorDiv.style.overflow = 'auto';
+        errorDiv.innerHTML = '<h3>Application Error</h3>' +
+          '<p><strong>Message:</strong> ' + msg + '</p>' +
+          '<p><strong>Url:</strong> ' + url + '</p>' +
+          '<p><strong>Line:</strong> ' + line + '</p>' +
+          '<p>If you see this, please take a screenshot and send it to support.</p>';
+        document.body.appendChild(errorDiv);
+        return false;
+      };
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

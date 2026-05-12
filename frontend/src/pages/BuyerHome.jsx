@@ -21,14 +21,11 @@ const BuyerHome = ({ user }) => {
       setProducts(res.data);
       setFilteredProducts(res.data);
       
-      // Track view events
-      res.data.forEach(product => {
-        trackEvent({
-          eventType: 'PRODUCT_VIEW',
-          productId: product.id,
-          userId: user ? user.id : null
-        }).catch(e => console.error(e));
-      });
+      // Track page view event once
+      trackEvent({
+        eventType: 'HOME_VIEW',
+        userId: user ? user.id : null
+      }).catch(e => console.error(e));
     } catch (err) {
       console.error('Failed to fetch products', err);
     } finally {
@@ -38,7 +35,7 @@ const BuyerHome = ({ user }) => {
 
   useEffect(() => {
     loadProducts();
-  }, [user]);
+  }, [user?.id]);
 
   // Handle Filtering
   useEffect(() => {

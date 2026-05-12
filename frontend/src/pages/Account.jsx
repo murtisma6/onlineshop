@@ -15,18 +15,17 @@ const Account = ({ user, setUser }) => {
   const [otpStatus, setOtpStatus] = useState('');
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       loadProfile();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const loadProfile = async () => {
     try {
       const res = await fetchUser(user.id);
       setProfile(res.data);
       setFormData(res.data);
-      // update global user state just in case
-      setUser(res.data);
+      // NOTE: Do NOT call setUser(global) here — it causes an infinite loop.
     } catch (err) {
       console.error('Failed to load profile', err);
     } finally {
@@ -45,7 +44,7 @@ const Account = ({ user, setUser }) => {
       const res = await updateUser(user.id, formData);
       setProfile(res.data);
       setFormData(res.data);
-      setUser(res.data);
+      // NOTE: Do NOT call setUser(global) here — it causes an infinite loop.
       setUpdateStatus('Profile updated successfully!');
       setEditMode(false);
       setTimeout(() => setUpdateStatus(''), 3000);

@@ -1,22 +1,41 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import BuyerHome from './pages/BuyerHome';
-import SellerDashboard from './pages/SellerDashboard';
-import ProductDetail from './pages/ProductDetail';
-import Account from './pages/Account';
-import Storefront from './pages/Storefront';
-import AdminDashboard from './pages/AdminDashboard';
-import DigiStorePricing from './pages/DigiStorePricing';
-import UserManagement from './pages/UserManagement';
-import ContactUs from './pages/ContactUs';
+
+// Lazy-load all page components so heavy libraries (like country-state-city's
+// 8.5MB dataset) are NOT downloaded/parsed on the initial home-page load.
+// This is the fix for "RangeError: Maximum call stack size exceeded" on iOS Safari.
+const Login           = lazy(() => import('./pages/Login'));
+const Register        = lazy(() => import('./pages/Register'));
+const BuyerHome       = lazy(() => import('./pages/BuyerHome'));
+const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
+const ProductDetail   = lazy(() => import('./pages/ProductDetail'));
+const Account         = lazy(() => import('./pages/Account'));
+const Storefront      = lazy(() => import('./pages/Storefront'));
+const AdminDashboard  = lazy(() => import('./pages/AdminDashboard'));
+const DigiStorePricing = lazy(() => import('./pages/DigiStorePricing'));
+const UserManagement  = lazy(() => import('./pages/UserManagement'));
+const ContactUs       = lazy(() => import('./pages/ContactUs'));
+
+// Simple full-screen loading fallback shown while a page chunk is loading
+const PageLoader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 70px)', backgroundColor: '#f8fafc' }}>
+    <div style={{ textAlign: 'center', color: '#1E3147' }}>
+      <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⏳</div>
+      <p style={{ fontSize: '1rem', color: '#64748b' }}>Loading...</p>
+    </div>
+  </div>
+);
 
 function App() {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      console.error('Failed to parse user from localStorage', e);
+      return null;
+    }
   });
 
   const handleSetUser = (userData) => {
@@ -36,6 +55,7 @@ function App() {
     <Router>
       <Navbar user={user} onLogout={handleLogout} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/login" element={<Login setUser={handleSetUser} />} />
             <Route path="/register" element={<Register setUser={handleSetUser} />} />
@@ -96,15 +116,44 @@ function App() {
               } 
             />
           </Routes>
+          </Suspense>
         </div>
-        <footer style={{ backgroundColor: '#1E3147', color: '#94a3b8', padding: '1.5rem 1rem', textAlign: 'center', borderTop: '1px solid #1e293b' }}>
-          <div style={{ maxWidth: '800px', margin: '0 auto 1rem auto' }}>
-            <h3 style={{ fontSize: '0.9rem', color: '#cbd5e1', marginBottom: '0.5rem', fontWeight: 'bold' }}>Global Dawoodi Bohra Marketplace</h3>
-            <p style={{ fontSize: '0.75rem', lineHeight: '1.5', margin: 0 }}>
-              Empowering Bohra Businesses worldwide. Discover authentic products, unique digital storefronts, and connect with sellers from the Dawoodi Bohra Community.
-            </p>
+        <style>{`
+          .footer-container {
+            background-color: #1E3147;
+            color: #94a3b8;
+            padding: 1.5rem 1.25rem;
+            text-align: center;
+            border-top: 1px solid #1e293b;
+          }
+          .footer-description {
+            font-size: 0.72rem;
+            line-height: 1.6;
+            margin: 0 auto 1.25rem auto;
+            max-width: 1000px;
+            color: #94a3b8;
+          }
+          .footer-copyright {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: bold;
+            color: #cbd5e1;
+          }
+          @media (max-width: 768px) {
+            .footer-description {
+              font-size: 0.8rem; /* Slightly larger for readability on mobile */
+              line-height: 1.5;
+            }
+            .footer-container {
+              padding: 2rem 1.5rem;
+            }
+          }
+        `}</style>
+        <footer className="footer-container">
+          <div className="footer-description">
+            Empowering Bohra Businesses worldwide. Discover authentic products, unique digital storefronts, and connect with sellers from the Dawoodi Bohra Community.
           </div>
-          <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+          <div className="footer-copyright">
             &copy; copyright 2026 MCube Hive IT Solutions
           </div>
         </footer>
