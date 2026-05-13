@@ -15,6 +15,8 @@ const Storefront = () => {
   
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [siblingStores, setSiblingStores] = useState([]);
   const [reviewingProduct, setReviewingProduct] = useState(null);
@@ -50,17 +52,43 @@ const Storefront = () => {
     }
   };
 
-  // Handle Filtering
+  // Handle Filtering & Sorting
   useEffect(() => {
-    let filtered = products;
+    let filtered = [...products];
+
+    // Category & Subcategory Filter
     if (selectedCategory) {
       filtered = filtered.filter(p => p.category === selectedCategory);
       if (selectedSubcategories.length > 0) {
         filtered = filtered.filter(p => selectedSubcategories.includes(p.subcategory));
       }
     }
+
+    // Search Filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.subcategory && p.subcategory.toLowerCase().includes(q))
+      );
+    }
+
+    // Sorting Logic
+    if (sortBy === 'price-low') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-high') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'rating') {
+      filtered.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+    } else {
+      // Newest (Default)
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
+
     setFilteredProducts(filtered);
-  }, [selectedCategory, selectedSubcategories, products]);
+  }, [selectedCategory, selectedSubcategories, searchQuery, sortBy, products]);
 
   // Extract Categories and Subcategories
   const categoryMap = {};
@@ -429,31 +457,94 @@ const Storefront = () => {
             {/* Row 1: Toggle + More stores chips + Items badge */}
             <div className="storefront-row1" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
               {/* Left: toggle + more stores */}
-              <div className="storefront-row1-left" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flex: 1, minWidth: 0 }}>
-                <button
-                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                  className="btn"
-                  style={{
-                    backgroundColor: '#ffffff',
-                    color: '#475569',
-                    border: '1px solid #cbd5e1',
-                    padding: '0.4rem 0.6rem',
-                    fontSize: '0.82rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderRadius: '0.5rem',
-                    boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
-                    flexShrink: 0,
-                  }}
-                >
-                    {isSidebarOpen ? '◀' : '▶'}
-                </button>
-                <div style={{ width: '1px', height: '18px', backgroundColor: '#e2e8f0', flexShrink: 0 }}></div>
+              <div className="storefront-row1-left" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <button
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="btn"
+                    style={{
+                      backgroundColor: '#ffffff',
+                      color: '#475569',
+                      border: '1px solid #cbd5e1',
+                      padding: '0.4rem 0.6rem',
+                      fontSize: '0.82rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+                      flexShrink: 0,
+                    }}
+                  >
+                      {isSidebarOpen ? '◀' : '▶'}
+                  </button>
+                  <div style={{ width: '1px', height: '18px', backgroundColor: '#e2e8f0', flexShrink: 0 }}></div>
+                  
+                  {/* Local Search Input */}
+                  <div style={{ position: 'relative', width: '220px' }}>
+                    <input 
+                      type="text" 
+                      placeholder="Search in this store..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.45rem 1rem 0.45rem 2rem',
+                        borderRadius: '0.5rem',
+                        border: '1px solid #e2e8f0',
+                        backgroundColor: '#ffffff',
+                        fontSize: '0.82rem',
+                        outline: 'none',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                      }}
+                    />
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="14" height="14" 
+                      viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      style={{ position: 'absolute', left: '0.6rem', top: '50%', transform: 'translateY(-50%)' }}
+                    >
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    {searchQuery && (
+                      <button 
+                        onClick={() => setSearchQuery('')}
+                        style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '1rem' }}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Sorting Dropdown */}
+                  <select 
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    style={{
+                      padding: '0.45rem 0.75rem',
+                      borderRadius: '0.5rem',
+                      border: '1px solid #e2e8f0',
+                      backgroundColor: '#ffffff',
+                      fontSize: '0.82rem',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      color: '#475569',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                    }}
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Top Rated</option>
+                  </select>
+                </div>
+
                 {siblingStores.length > 0 && (
                   <>
+                    <div style={{ width: '1px', height: '18px', backgroundColor: '#e2e8f0', flexShrink: 0, margin: '0 0.4rem' }}></div>
                     <span style={{ fontSize: '0.78rem', fontWeight: '600', color: '#64748b', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                      More Store from Seller:
+                      Other Stores:
                     </span>
                     <div className="storefront-chips-container" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'nowrap' }}>
                       {siblingStores.map(s => (
@@ -522,7 +613,14 @@ const Storefront = () => {
 
         {filteredProducts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 2rem', backgroundColor: '#ffffff', borderRadius: '1rem', border: '1px dashed #cbd5e1' }}>
-            <p style={{ color: '#64748b', fontSize: '1.2rem' }}>No products found in this category.</p>
+            <p style={{ color: '#64748b', fontSize: '1.2rem' }}>No products found matching your search or filters.</p>
+            <button 
+              onClick={() => { setSelectedCategory(null); setSelectedSubcategories([]); setSearchQuery(''); }}
+              className="btn"
+              style={{ marginTop: '1rem', color: '#4f46e5', fontWeight: '700' }}
+            >
+              Clear All Filters
+            </button>
           </div>
         ) : (
           <div 
