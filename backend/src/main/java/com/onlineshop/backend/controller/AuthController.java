@@ -22,7 +22,25 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        String username = request.getUsername();
+        if (username == null || !username.matches("^[a-zA-Z0-9_]+$")) {
+            return ResponseEntity.badRequest().body("Username can only contain letters, numbers, and underscores (_). Spaces and other special characters are not allowed.");
+        }
+        
+        // Email validation
+        if (request.getEmail() == null || !request.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            return ResponseEntity.badRequest().body("Please enter a valid email address.");
+        }
+
+        // Phone validation (10 digits)
+        if (request.getPhone() == null || !request.getPhone().matches("^\\d{10}$")) {
+            return ResponseEntity.badRequest().body("Phone number must be exactly 10 digits.");
+        }
+        if (request.getWhatsapp() == null || !request.getWhatsapp().matches("^\\d{10}$")) {
+            return ResponseEntity.badRequest().body("WhatsApp number must be exactly 10 digits.");
+        }
+
+        if (userRepository.findByUsername(username).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
         }
         User user = new User();

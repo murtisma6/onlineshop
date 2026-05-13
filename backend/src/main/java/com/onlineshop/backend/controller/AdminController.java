@@ -139,7 +139,25 @@ public class AdminController {
 
     @PostMapping("/users")
     public ResponseEntity<?> createUser(@RequestBody com.onlineshop.backend.dto.UserDto dto) {
-        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
+        String username = dto.getUsername();
+        if (username == null || !username.matches("^[a-zA-Z0-9_]+$")) {
+            return ResponseEntity.badRequest().body("Username can only contain letters, numbers, and underscores (_). Spaces and other special characters are not allowed.");
+        }
+
+        // Email validation
+        if (dto.getEmail() != null && !dto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            return ResponseEntity.badRequest().body("Please enter a valid email address.");
+        }
+
+        // Phone validation (10 digits)
+        if (dto.getPhone() != null && !dto.getPhone().matches("^\\d{10}$")) {
+            return ResponseEntity.badRequest().body("Phone number must be exactly 10 digits.");
+        }
+        if (dto.getWhatsapp() != null && !dto.getWhatsapp().matches("^\\d{10}$")) {
+            return ResponseEntity.badRequest().body("WhatsApp number must be exactly 10 digits.");
+        }
+
+        if (userRepository.findByUsername(username).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
         }
         User user = new User();
@@ -174,6 +192,19 @@ public class AdminController {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
         User user = userOpt.get();
+
+        // Email validation
+        if (dto.getEmail() != null && !dto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            return ResponseEntity.badRequest().body("Please enter a valid email address.");
+        }
+
+        // Phone validation (10 digits)
+        if (dto.getPhone() != null && !dto.getPhone().matches("^\\d{10}$")) {
+            return ResponseEntity.badRequest().body("Phone number must be exactly 10 digits.");
+        }
+        if (dto.getWhatsapp() != null && !dto.getWhatsapp().matches("^\\d{10}$")) {
+            return ResponseEntity.badRequest().body("WhatsApp number must be exactly 10 digits.");
+        }
         
         user.setRole(dto.getRole());
         user.setFirstName(dto.getFirstName());

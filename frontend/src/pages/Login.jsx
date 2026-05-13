@@ -10,6 +10,15 @@ const Login = ({ setUser }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Username validation: letters, numbers, and underscores only
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+      setError('Username can only contain letters, numbers, and underscores (_). Spaces and other special characters are not allowed.');
+      return;
+    }
+
     try {
       const res = await login({ username, password });
       setUser(res.data);

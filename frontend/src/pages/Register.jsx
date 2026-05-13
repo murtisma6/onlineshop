@@ -29,13 +29,40 @@ const Register = ({ setUser }) => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Username validation: letters, numbers, and underscores only
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+      setError('Username can only contain letters, numbers, and underscores (_). Spaces and other special characters are not allowed.');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    // Phone validation (10 digits)
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      setError('Phone number must be exactly 10 digits.');
+      return;
+    }
+    if (!phoneRegex.test(whatsapp)) {
+      setError('WhatsApp number must be exactly 10 digits.');
+      return;
+    }
+
     try {
       const payload = { username, password, role, plan, firstName, lastName, email, phone, whatsapp, address, city, pincode, state, country };
       const res = await register(payload);
       setUser(res.data);
       navigate('/account'); // redirect to account page for verification
     } catch (err) {
-      setError('Registration failed. Username might exist.');
+      setError(err.response?.data || 'Registration failed. Username might exist.');
     }
   };
 

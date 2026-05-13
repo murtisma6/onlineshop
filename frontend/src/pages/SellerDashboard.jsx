@@ -299,6 +299,7 @@ const SellerDashboard = ({ user: initialUser }) => {
   };
 
   const handleUpload = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (isExpired) {
       alert("Your Starter plan has expired. Please upgrade to Business or Enterprise plan to upload or update products.");
       return;
@@ -773,7 +774,7 @@ const SellerDashboard = ({ user: initialUser }) => {
         }}>
           
           {/* Left Column: Form */}
-          <div className="glass dashboard-glass-container" style={{ padding: window.innerWidth < 768 ? '1.25rem' : '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff' }}>
+          <div id="product-form" className="glass dashboard-glass-container" style={{ padding: window.innerWidth < 768 ? '1.25rem' : '2.5rem', borderRadius: '1rem', border: '1px solid #e2e8f0', boxShadow: 'var(--shadow-lg)', backgroundColor: '#ffffff' }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#eef2ff', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem', fontWeight: 'bold', fontSize: '1.2rem' }}>
                 {editingProductId ? '✎' : '+'}
@@ -969,8 +970,7 @@ const SellerDashboard = ({ user: initialUser }) => {
                     alert(`${currentPlanName} Plan Expired. Please renew or upgrade to add products.`);
                     return;
                   }
-                  setSelectedStoreForProduct(selectedStore.id); 
-                  setShowProductModal(true); 
+                  document.getElementById('product-form')?.scrollIntoView({ behavior: 'smooth' });
                 }} 
                 className="btn btn-primary" 
                 style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}

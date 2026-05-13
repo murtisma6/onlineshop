@@ -66,6 +66,36 @@ const UserManagement = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setError(null);
+
+    // Username validation: letters, numbers, and underscores only
+    // Only check if it's a new user (not editing)
+    if (!selectedUser) {
+      const usernameRegex = /^[a-zA-Z0-9_]+$/;
+      if (!usernameRegex.test(formData.username)) {
+        setError('Username can only contain letters, numbers, and underscores (_). Spaces and other special characters are not allowed.');
+        return;
+      }
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    // Phone validation (10 digits)
+    const phoneRegex = /^\d{10}$/;
+    if (formData.phone && !phoneRegex.test(formData.phone)) {
+      setError('Phone number must be exactly 10 digits.');
+      return;
+    }
+    if (formData.whatsapp && !phoneRegex.test(formData.whatsapp)) {
+      setError('WhatsApp number must be exactly 10 digits.');
+      return;
+    }
+
     try {
       const dataToSend = { ...formData };
       if (dataToSend.subscriptionEndDate) {
