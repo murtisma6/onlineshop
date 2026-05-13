@@ -15,7 +15,7 @@ const getApiUrl = () => {
   return `${protocol}//${hostname}/api`;
 };
 
-const API_URL = getApiUrl();
+export const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
@@ -66,5 +66,12 @@ export const createBulkStores = (stores) => api.post('/admin/stores/bulk', store
 
 export const fetchReviews = (productId) => api.get(`/reviews/product/${productId}`);
 export const addReview = (productId, data) => api.post(`/reviews/product/${productId}`, data);
+
+export const fetchActivePromotions = () => api.get('/promotions/active');
+export const fetchAllPromotions = () => api.get('/promotions/admin/all');
+export const savePromotion = (data) => api.post('/promotions/admin', data, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+});
+export const deletePromotion = (id) => api.delete(`/promotions/admin/${id}`);
 
 export default api;

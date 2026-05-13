@@ -15,6 +15,7 @@ const Storefront      = lazy(() => import('./pages/Storefront'));
 const AdminDashboard  = lazy(() => import('./pages/AdminDashboard'));
 const DigiStorePricing = lazy(() => import('./pages/DigiStorePricing'));
 const UserManagement  = lazy(() => import('./pages/UserManagement'));
+const PromotionManagement = lazy(() => import('./pages/PromotionManagement'));
 const ContactUs       = lazy(() => import('./pages/ContactUs'));
 
 // Simple full-screen loading fallback shown while a page chunk is loading
@@ -112,6 +113,14 @@ function App() {
               element={
                 user && user.role === 'ADMIN' ? 
                 <UserManagement /> : 
+                <Navigate to="/" />
+              } 
+            />
+            <Route 
+              path="/admin/promotions" 
+              element={
+                user && user.role === 'ADMIN' ? 
+                <PromotionManagement user={user} /> : 
                 <Navigate to="/" />
               } 
             />

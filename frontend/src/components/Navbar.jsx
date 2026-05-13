@@ -43,6 +43,47 @@ const Navbar = ({ user, onLogout }) => {
         </svg>
         <span className="nav-title" style={{ fontSize: '1.35rem', fontWeight: '700', letterSpacing: '0.5px', color: '#ffffff' }}>DBohraMart</span>
       </div>
+
+      {/* Global Search Bar */}
+      <div style={{ flex: 1, maxWidth: '500px', margin: '0 2rem' }} className="nav-search-container">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const query = e.target.search.value;
+            navigate(`/?search=${encodeURIComponent(query)}`);
+          }}
+          style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+        >
+          <input 
+            name="search"
+            type="text" 
+            placeholder="Search products, categories, stores..." 
+            style={{
+              width: '100%',
+              padding: '0.6rem 1rem 0.6rem 2.5rem',
+              borderRadius: '2rem',
+              border: 'none',
+              backgroundColor: 'rgba(255,255,255,0.15)',
+              color: '#ffffff',
+              fontSize: '0.9rem',
+              outline: 'none',
+              transition: 'all 0.2s'
+            }}
+            onFocus={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.25)'}
+            onBlur={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.15)'}
+          />
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="18" height="18" 
+            viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            style={{ position: 'absolute', left: '0.75rem' }}
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </form>
+      </div>
+
       <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <button
           className="own-digistore-btn"

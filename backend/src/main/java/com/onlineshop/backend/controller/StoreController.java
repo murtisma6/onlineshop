@@ -158,6 +158,9 @@ public class StoreController {
             }
 
             if (logo != null && !logo.isEmpty()) {
+                if (logo.getSize() > 300 * 1024) {
+                    return ResponseEntity.badRequest().body("Store logo must be less than 300KB");
+                }
                 try {
                     store.setLogoData(logo.getBytes());
                     store.setLogoType(logo.getContentType());
@@ -167,6 +170,9 @@ public class StoreController {
             }
 
             if (leftBanner != null && !leftBanner.isEmpty()) {
+                if (leftBanner.getSize() > 300 * 1024) {
+                    return ResponseEntity.badRequest().body("Left banner must be less than 300KB");
+                }
                 try {
                     store.setLeftBannerData(leftBanner.getBytes());
                     store.setLeftBannerType(leftBanner.getContentType());
@@ -176,6 +182,9 @@ public class StoreController {
             }
 
             if (rightBanner != null && !rightBanner.isEmpty()) {
+                if (rightBanner.getSize() > 300 * 1024) {
+                    return ResponseEntity.badRequest().body("Right banner must be less than 300KB");
+                }
                 try {
                     store.setRightBannerData(rightBanner.getBytes());
                     store.setRightBannerType(rightBanner.getContentType());

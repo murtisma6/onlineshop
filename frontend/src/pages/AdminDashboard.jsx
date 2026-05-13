@@ -134,6 +134,13 @@ const AdminDashboard = ({ user }) => {
               <span>👥</span> Manage Users
             </button>
             <button 
+              onClick={() => navigate('/admin/promotions')}
+              className="btn btn-primary"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', backgroundColor: '#8b5cf6' }}
+            >
+              <span>📢</span> Manage Promotions
+            </button>
+            <button 
               onClick={refreshData} 
               className="btn btn-secondary"
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem' }}

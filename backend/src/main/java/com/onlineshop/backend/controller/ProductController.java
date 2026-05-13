@@ -110,6 +110,9 @@ public class ProductController {
                     return ResponseEntity.badRequest().body("Maximum 5 images allowed");
                 }
                 for (MultipartFile file : images) {
+                    if (file.getSize() > 300 * 1024) {
+                        return ResponseEntity.badRequest().body("Each product image must be less than 300KB");
+                    }
                     ProductImage pImage = new ProductImage();
                     pImage.setProduct(product);
                     pImage.setImageData(file.getBytes());
@@ -187,8 +190,11 @@ public class ProductController {
             }
 
             // Save new images
-            if (images != null) {
+            if (images != null && images.length > 0) {
                 for (MultipartFile file : images) {
+                    if (file.getSize() > 300 * 1024) {
+                        return ResponseEntity.badRequest().body("Each product image must be less than 300KB");
+                    }
                     ProductImage pImage = new ProductImage();
                     pImage.setProduct(product);
                     pImage.setImageData(file.getBytes());

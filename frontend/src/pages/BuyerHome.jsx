@@ -1,19 +1,33 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fetchProducts, trackEvent } from '../api';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { fetchProducts, trackEvent, fetchActivePromotions, API_URL } from '../api';
 import ReviewModal from '../components/ReviewModal';
 
 const BuyerHome = ({ user }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLocationFilterOpen, setIsLocationFilterOpen] = useState(false);
   const [reviewingProduct, setReviewingProduct] = useState(null);
+  const [promotions, setPromotions] = useState([]);
+
+  // Pick up search query from URL (Navbar search)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get('search');
+    if (q !== null) {
+      setSearchQuery(q);
+      window.scrollTo({ top: 400, behavior: 'smooth' }); // Scroll past slider if searching
+    }
+  }, [location.search]);
 
   const loadProducts = async () => {
     try {
@@ -35,22 +49,60 @@ const BuyerHome = ({ user }) => {
 
   useEffect(() => {
     loadProducts();
+    const loadPromotions = async () => {
+      try {
+        const res = await fetchActivePromotions();
+        setPromotions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error('Failed to load promotions', err);
+        setPromotions([]);
+      }
+    };
+    loadPromotions();
   }, [user?.id]);
 
-  // Handle Filtering
+  // Handle Filtering & Sorting
   useEffect(() => {
-    let filtered = products;
+    let filtered = [...products];
+
+    // Category Filter
     if (selectedCategory) {
       filtered = filtered.filter(p => p.category === selectedCategory);
       if (selectedSubcategories.length > 0) {
         filtered = filtered.filter(p => selectedSubcategories.includes(p.subcategory));
       }
     }
+
+    // Location Filter
     if (selectedLocations.length > 0) {
       filtered = filtered.filter(p => selectedLocations.includes(p.sellerCity));
     }
+
+    // Search Filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.storeName && p.storeName.toLowerCase().includes(q))
+      );
+    }
+
+    // Sorting Logic
+    if (sortBy === 'price-low') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-high') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'rating') {
+      filtered.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+    } else {
+      // Newest (Default)
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
+
     setFilteredProducts(filtered);
-  }, [selectedCategory, selectedSubcategories, selectedLocations, products]);
+  }, [selectedCategory, selectedSubcategories, selectedLocations, searchQuery, sortBy, products]);
 
   // Extract Categories, Subcategories and Locations
   const categoryMap = {};
@@ -83,6 +135,163 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
 
     const waUrl = `https://wa.me/${product.sellerContact.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');
+  };
+
+  // Hero Slider Component
+  const HeroSlider = () => {
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    useEffect(() => {
+      if (promotions.length <= 1) return;
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % promotions.length);
+      }, 6000);
+      return () => clearInterval(timer);
+    }, [promotions.length]);
+
+    if (!promotions || promotions.length === 0) {
+      // Fallback if no promotions configured
+      return (
+        <div style={{ 
+          width: '100%', height: '200px', background: '#1E3147', 
+          borderRadius: '1.5rem', marginBottom: '2rem', display: 'flex', 
+          alignItems: 'center', justifyContent: 'center', color: 'white' 
+        }}>
+          <h2>Welcome to DBohraMart</h2>
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ 
+        width: '100%', 
+        height: window.innerWidth < 768 ? '260px' : '400px', 
+        position: 'relative', 
+        overflow: 'hidden',
+        borderRadius: '1.5rem',
+        marginBottom: '2.5rem',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        background: '#000'
+      }}>
+        {Array.isArray(promotions) && promotions.map((promo, idx) => (
+          <div key={promo.id} style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            opacity: currentSlide === idx ? 1 : 0,
+            transform: currentSlide === idx ? 'scale(1)' : 'scale(1.08)',
+            transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            zIndex: currentSlide === idx ? 1 : 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            {/* Background Image */}
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              backgroundImage: `url(${API_URL}/promotions/image/${promo.id})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'brightness(0.65)'
+            }} />
+            
+            {/* Overlay Gradient */}
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, right: 0, bottom: 0,
+              background: `linear-gradient(to right, ${promo.backgroundColor || 'transparent'} 0%, transparent 100%)`,
+              opacity: 0.4
+            }} />
+
+            {/* Content Container (Glassmorphism) */}
+            <div style={{
+              position: 'relative',
+              zIndex: 2,
+              padding: window.innerWidth < 768 ? '1.5rem' : '3rem',
+              maxWidth: '800px',
+              width: '90%',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '2rem',
+              textAlign: window.innerWidth < 768 ? 'center' : 'left',
+              color: promo.textColor || '#ffffff',
+              boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+            }}>
+              <h1 style={{ 
+                fontSize: window.innerWidth < 768 ? '1.8rem' : '3.5rem', 
+                fontWeight: '900', 
+                marginBottom: '0.75rem', 
+                lineHeight: 1.1,
+                letterSpacing: '-1.5px',
+                textShadow: '0 2px 10px rgba(0,0,0,0.2)'
+              }}>
+                {promo.title}
+              </h1>
+              <p style={{ 
+                fontSize: window.innerWidth < 768 ? '0.9rem' : '1.2rem', 
+                opacity: 0.95, 
+                marginBottom: '1.5rem',
+                fontWeight: '500',
+                display: window.innerWidth < 480 ? 'none' : 'block'
+              }}>
+                {promo.subtitle}
+              </p>
+              {promo.buttonText && (
+                <button 
+                  onClick={() => navigate(promo.buttonLink || '/')}
+                  className="btn"
+                  style={{
+                    backgroundColor: promo.textColor || '#ffffff',
+                    color: promo.backgroundColor || '#1E3147',
+                    padding: window.innerWidth < 768 ? '0.6rem 1.5rem' : '0.8rem 2.5rem',
+                    borderRadius: '3rem',
+                    fontWeight: '800',
+                    fontSize: window.innerWidth < 768 ? '0.85rem' : '1rem',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.2)',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-3px)'}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  {promo.buttonText}
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {/* Indicators */}
+        {Array.isArray(promotions) && promotions.length > 1 && (
+          <div style={{ 
+            position: 'absolute', 
+            bottom: '1.5rem', 
+            left: window.innerWidth < 768 ? '50%' : '3rem',
+            transform: window.innerWidth < 768 ? 'translateX(-50%)' : 'none',
+            display: 'flex', 
+            gap: '0.75rem', 
+            zIndex: 10 
+          }}>
+            {promotions.map((_, idx) => (
+              <div 
+                key={idx} 
+                onClick={() => setCurrentSlide(idx)}
+                style={{ 
+                  width: currentSlide === idx ? '40px' : '10px', 
+                  height: '8px', 
+                  backgroundColor: currentSlide === idx ? 'white' : 'rgba(255,255,255,0.4)', 
+                  borderRadius: '10px', 
+                  cursor: 'pointer', 
+                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' 
+                }} 
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -297,26 +506,90 @@ ${productImage ? `*Image:* ${productImage}` : ''}`;
       <main style={{ flex: 1, padding: '1.5rem 1rem', backgroundColor: '#f8fafc', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minWidth: 0 }}>
         <div style={{ width: '100%', margin: '0' }}>
           
-        <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <button 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-            className="btn"
-            style={{ 
-              backgroundColor: '#ffffff', 
-              color: '#475569', 
-              border: '1px solid #cbd5e1', 
-              padding: '0.4rem 0.6rem', 
-              fontSize: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '0.5rem',
-              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-              minWidth: '40px'
-            }}
-          >
-            {isSidebarOpen ? '◀' : '▶'}
-          </button>
+          {/* Hero Slider */}
+          <HeroSlider />
+
+          <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', flex: 1, minWidth: '300px' }}>
+              <button 
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+                className="btn"
+                style={{ 
+                  backgroundColor: '#ffffff', 
+                  color: '#475569', 
+                  border: '1px solid #cbd5e1', 
+                  padding: '0.4rem 0.6rem', 
+                  fontSize: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '0.5rem',
+                  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                  minWidth: '40px'
+                }}
+              >
+                {isSidebarOpen ? '◀' : '▶'}
+              </button>
+              
+              {/* Local Search Input */}
+              <div style={{ position: 'relative', flex: 1 }}>
+                <input 
+                  type="text" 
+                  placeholder="Search in this collection..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.6rem 1rem 0.6rem 2.5rem',
+                    borderRadius: '0.75rem',
+                    border: '1px solid #e2e8f0',
+                    backgroundColor: '#ffffff',
+                    fontSize: '0.9rem',
+                    outline: 'none',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                  }}
+                />
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="16" height="16" 
+                  viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '1.2rem' }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+
+              {/* Sorting Dropdown */}
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{
+                  padding: '0.6rem 1rem',
+                  borderRadius: '0.75rem',
+                  border: '1px solid #e2e8f0',
+                  backgroundColor: '#ffffff',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  color: '#475569',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                }}
+              >
+                <option value="newest">Newest First</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+              </select>
+            </div>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 style={{ fontSize: '1.25rem', margin: 0, color: '#1e293b', fontWeight: '700' }}>
               {selectedCategory ? `${selectedCategory} ${selectedSubcategories.length > 0 ? `(${selectedSubcategories.length})` : ''}` : 'Products'}

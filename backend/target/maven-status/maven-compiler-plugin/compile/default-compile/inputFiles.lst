@@ -5,6 +5,7 @@ C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\ba
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AnalyticsController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\AuthController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\ProductController.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\PromotionController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\ReviewController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\SitemapController.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\controller\StoreController.java
@@ -20,6 +21,7 @@ C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\ba
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\EventType.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Product.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\ProductImage.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Promotion.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Review.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Role.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\model\Store.java
@@ -28,6 +30,7 @@ C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\ba
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\AnalyticsEventRepository.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\ProductImageRepository.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\ProductRepository.java
+C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\PromotionRepository.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\ReviewRepository.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\StoreRepository.java
 C:\Murtuza-dDrive\development\onlineshop\backend\src\main\java\com\onlineshop\backend\repository\UserRepository.java
