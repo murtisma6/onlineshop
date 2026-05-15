@@ -19,9 +19,10 @@ public class Promotion {
     private String backgroundColor; // Hex code
     private String textColor; // Hex code
 
-    @Column(columnDefinition="BYTEA")
-    private byte[] imageData;
     private String imageContentType;
+    
+    @Column
+    private String imagePath;
     
     private boolean active = true;
     private int orderIndex = 0;

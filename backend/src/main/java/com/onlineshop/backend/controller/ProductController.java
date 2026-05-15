@@ -12,6 +12,7 @@ import com.onlineshop.backend.repository.StoreRepository;
 import com.onlineshop.backend.repository.UserRepository;
 import com.onlineshop.backend.repository.ReviewRepository;
 import com.onlineshop.backend.model.Review;
+import com.onlineshop.backend.service.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,9 @@ public class ProductController {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+    @Autowired
+    private ImageStorageService imageStorageService;
 
     @PostMapping
     public ResponseEntity<?> uploadProduct(
@@ -115,8 +119,11 @@ public class ProductController {
                     }
                     ProductImage pImage = new ProductImage();
                     pImage.setProduct(product);
-                    pImage.setImageData(file.getBytes());
                     pImage.setImageContentType(file.getContentType());
+                    
+                    String path = imageStorageService.saveImage("products", file.getOriginalFilename(), file.getBytes());
+                    pImage.setImagePath(path);
+                    
                     productImageRepository.save(pImage);
                 }
             }
@@ -184,6 +191,9 @@ public class ProductController {
             List<ProductImage> existingImages = new java.util.ArrayList<>(product.getImages());
             for (ProductImage img : existingImages) {
                 if (retainedImageIds == null || !retainedImageIds.contains(img.getId())) {
+                    if (img.getImagePath() != null) {
+                        imageStorageService.deleteImage(img.getImagePath());
+                    }
                     productImageRepository.delete(img);
                     product.getImages().remove(img);
                 }
@@ -197,8 +207,11 @@ public class ProductController {
                     }
                     ProductImage pImage = new ProductImage();
                     pImage.setProduct(product);
-                    pImage.setImageData(file.getBytes());
                     pImage.setImageContentType(file.getContentType());
+                    
+                    String path = imageStorageService.saveImage("products", file.getOriginalFilename(), file.getBytes());
+                    pImage.setImagePath(path);
+                    
                     productImageRepository.save(pImage);
                 }
             }
@@ -242,7 +255,16 @@ public class ProductController {
             // Delete analytics events associated with this product first to avoid constraint violation
             analyticsEventRepository.deleteByProductId(id);
             Store store = productOpt.get().getStore();
-            productRepository.delete(productOpt.get());
+            Product product = productOpt.get();
+            
+            // Delete image files from disk
+            for (ProductImage img : product.getImages()) {
+                if (img.getImagePath() != null) {
+                    imageStorageService.deleteImage(img.getImagePath());
+                }
+            }
+            
+            productRepository.delete(product);
             store.setUpdatedAt(java.time.LocalDateTime.now());
             storeRepository.save(store); // Update store last updated date
             return ResponseEntity.ok().build();
@@ -255,9 +277,20 @@ public class ProductController {
         Optional<ProductImage> imageOpt = productImageRepository.findById(imageId);
         if (imageOpt.isPresent() && imageOpt.get().getProduct().getId().equals(productId)) {
             ProductImage pImage = imageOpt.get();
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, pImage.getImageContentType())
-                    .body(pImage.getImageData());
+            byte[] data = null;
+            try {
+                if (pImage.getImagePath() != null) {
+                    data = imageStorageService.loadImage(pImage.getImagePath());
+                }
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+            if (data != null) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, pImage.getImageContentType())
+                        .body(data);
+            }
         }
         return ResponseEntity.notFound().build();
     }
@@ -291,7 +324,7 @@ public class ProductController {
         dto.setViews(views);
         dto.setClicks(clicks);
 
-        if (product.getStore().getLogoData() != null) {
+        if (product.getStore().getLogoPath() != null) {
             dto.setStoreLogoUrl(currentBaseUrl + "/api/stores/" + product.getStore().getId() + "/logo");
         }
 

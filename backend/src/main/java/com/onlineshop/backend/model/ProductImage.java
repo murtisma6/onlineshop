@@ -15,9 +15,9 @@ public class ProductImage {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "image_data", columnDefinition="BYTEA", nullable = false)
-    private byte[] imageData;
-
     @Column(nullable = false)
     private String imageContentType;
+
+    @Column
+    private String imagePath;
 }

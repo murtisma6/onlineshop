@@ -7,6 +7,7 @@ import com.onlineshop.backend.model.Product;
 import com.onlineshop.backend.repository.StoreRepository;
 import com.onlineshop.backend.repository.UserRepository;
 import com.onlineshop.backend.repository.AnalyticsEventRepository;
+import com.onlineshop.backend.service.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,9 @@ public class StoreController {
 
     @Autowired
     private AnalyticsEventRepository analyticsEventRepository;
+
+    @Autowired
+    private ImageStorageService imageStorageService;
 
     @PostMapping
     public ResponseEntity<?> createStore(@RequestBody StoreDto storeDto) {
@@ -162,7 +166,11 @@ public class StoreController {
                     return ResponseEntity.badRequest().body("Store logo must be less than 300KB");
                 }
                 try {
-                    store.setLogoData(logo.getBytes());
+                    if (store.getLogoPath() != null) {
+                        imageStorageService.deleteImage(store.getLogoPath());
+                    }
+                    String path = imageStorageService.saveImage("stores/logos", logo.getOriginalFilename(), logo.getBytes());
+                    store.setLogoPath(path);
                     store.setLogoType(logo.getContentType());
                 } catch (IOException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process logo");
@@ -174,7 +182,11 @@ public class StoreController {
                     return ResponseEntity.badRequest().body("Left banner must be less than 300KB");
                 }
                 try {
-                    store.setLeftBannerData(leftBanner.getBytes());
+                    if (store.getLeftBannerPath() != null) {
+                        imageStorageService.deleteImage(store.getLeftBannerPath());
+                    }
+                    String path = imageStorageService.saveImage("stores/banners", leftBanner.getOriginalFilename(), leftBanner.getBytes());
+                    store.setLeftBannerPath(path);
                     store.setLeftBannerType(leftBanner.getContentType());
                 } catch (IOException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process left banner");
@@ -186,7 +198,11 @@ public class StoreController {
                     return ResponseEntity.badRequest().body("Right banner must be less than 300KB");
                 }
                 try {
-                    store.setRightBannerData(rightBanner.getBytes());
+                    if (store.getRightBannerPath() != null) {
+                        imageStorageService.deleteImage(store.getRightBannerPath());
+                    }
+                    String path = imageStorageService.saveImage("stores/banners", rightBanner.getOriginalFilename(), rightBanner.getBytes());
+                    store.setRightBannerPath(path);
                     store.setRightBannerType(rightBanner.getContentType());
                 } catch (IOException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process right banner");
@@ -222,13 +238,25 @@ public class StoreController {
             String contentType = null;
 
             if ("logo".equals(type)) {
-                data = store.getLogoData();
+                if (store.getLogoPath() != null) {
+                    try {
+                        data = imageStorageService.loadImage(store.getLogoPath());
+                    } catch (IOException ignored) {}
+                }
                 contentType = store.getLogoType();
             } else if ("left-banner".equals(type)) {
-                data = store.getLeftBannerData();
+                if (store.getLeftBannerPath() != null) {
+                    try {
+                        data = imageStorageService.loadImage(store.getLeftBannerPath());
+                    } catch (IOException ignored) {}
+                }
                 contentType = store.getLeftBannerType();
             } else if ("right-banner".equals(type)) {
-                data = store.getRightBannerData();
+                if (store.getRightBannerPath() != null) {
+                    try {
+                        data = imageStorageService.loadImage(store.getRightBannerPath());
+                    } catch (IOException ignored) {}
+                }
                 contentType = store.getRightBannerType();
             }
 
@@ -253,13 +281,13 @@ public class StoreController {
         
         String currentBaseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         
-        if (s.getLogoData() != null) {
+        if (s.getLogoPath() != null) {
             dto.setLogoUrl(currentBaseUrl + "/api/stores/" + s.getId() + "/logo");
         }
-        if (s.getLeftBannerData() != null) {
+        if (s.getLeftBannerPath() != null) {
             dto.setLeftBannerUrl(currentBaseUrl + "/api/stores/" + s.getId() + "/left-banner");
         }
-        if (s.getRightBannerData() != null) {
+        if (s.getRightBannerPath() != null) {
             dto.setRightBannerUrl(currentBaseUrl + "/api/stores/" + s.getId() + "/right-banner");
         }
 
@@ -306,14 +334,17 @@ public class StoreController {
         if (storeOpt.isPresent()) {
             Store store = storeOpt.get();
             if ("logo".equals(type)) {
-                store.setLogoData(null);
+                if (store.getLogoPath() != null) imageStorageService.deleteImage(store.getLogoPath());
                 store.setLogoType(null);
+                store.setLogoPath(null);
             } else if ("left-banner".equals(type)) {
-                store.setLeftBannerData(null);
+                if (store.getLeftBannerPath() != null) imageStorageService.deleteImage(store.getLeftBannerPath());
                 store.setLeftBannerType(null);
+                store.setLeftBannerPath(null);
             } else if ("right-banner".equals(type)) {
-                store.setRightBannerData(null);
+                if (store.getRightBannerPath() != null) imageStorageService.deleteImage(store.getRightBannerPath());
                 store.setRightBannerType(null);
+                store.setRightBannerPath(null);
             }
             
             storeRepository.save(store);
@@ -332,7 +363,16 @@ public class StoreController {
             // Delete analytics events associated with all products in this store
             for (Product product : store.getProducts()) {
                 analyticsEventRepository.deleteByProductId(product.getId());
+                // Delete product image files
+                for (com.onlineshop.backend.model.ProductImage img : product.getImages()) {
+                    if (img.getImagePath() != null) imageStorageService.deleteImage(img.getImagePath());
+                }
             }
+            // Delete store image files
+            if (store.getLogoPath() != null) imageStorageService.deleteImage(store.getLogoPath());
+            if (store.getLeftBannerPath() != null) imageStorageService.deleteImage(store.getLeftBannerPath());
+            if (store.getRightBannerPath() != null) imageStorageService.deleteImage(store.getRightBannerPath());
+            
             // Delete the store, which will cascade and delete all products and images
             storeRepository.delete(store);
             return ResponseEntity.ok().build();

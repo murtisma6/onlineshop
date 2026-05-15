@@ -2,6 +2,7 @@ package com.onlineshop.backend.controller;
 
 import com.onlineshop.backend.model.Promotion;
 import com.onlineshop.backend.repository.PromotionRepository;
+import com.onlineshop.backend.service.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,6 +20,9 @@ public class PromotionController {
     @Autowired
     private PromotionRepository promotionRepository;
 
+    @Autowired
+    private ImageStorageService imageStorageService;
+
     // Public endpoint for buyers
     @GetMapping("/active")
     public List<Promotion> getActivePromotions() {
@@ -29,11 +33,22 @@ public class PromotionController {
     @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getPromotionImage(@PathVariable Long id) {
         Optional<Promotion> opt = promotionRepository.findById(id);
-        if (opt.isPresent() && opt.get().getImageData() != null) {
+        if (opt.isPresent()) {
             Promotion promo = opt.get();
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, promo.getImageContentType())
-                    .body(promo.getImageData());
+            byte[] data = null;
+            try {
+                if (promo.getImagePath() != null) {
+                    data = imageStorageService.loadImage(promo.getImagePath());
+                }
+            } catch (IOException e) {
+                return ResponseEntity.status(500).build();
+            }
+
+            if (data != null) {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, promo.getImageContentType())
+                        .body(data);
+            }
         }
         return ResponseEntity.notFound().build();
     }
@@ -76,7 +91,12 @@ public class PromotionController {
         promotion.setOrderIndex(orderIndex);
 
         if (image != null && !image.isEmpty()) {
-            promotion.setImageData(image.getBytes());
+            // Delete old image if exists
+            if (promotion.getImagePath() != null) {
+                imageStorageService.deleteImage(promotion.getImagePath());
+            }
+            String path = imageStorageService.saveImage("promotions", image.getOriginalFilename(), image.getBytes());
+            promotion.setImagePath(path);
             promotion.setImageContentType(image.getContentType());
         }
 
@@ -86,7 +106,14 @@ public class PromotionController {
     
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<?> deletePromotion(@PathVariable Long id) {
-        promotionRepository.deleteById(id);
+        Optional<Promotion> opt = promotionRepository.findById(id);
+        if (opt.isPresent()) {
+            Promotion promo = opt.get();
+            if (promo.getImagePath() != null) {
+                imageStorageService.deleteImage(promo.getImagePath());
+            }
+            promotionRepository.delete(promo);
+        }
         return ResponseEntity.ok().build();
     }
 }

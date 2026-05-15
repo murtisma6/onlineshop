@@ -30,11 +30,11 @@ public class Store {
     @Column
     private String headerTagline = "Welcome to our store! Browse our collection below.";
 
-    @Column(columnDefinition = "bytea")
-    private byte[] logoData;
-    
     @Column
     private String logoType;
+
+    @Column
+    private String logoPath;
 
     @Column
     private String instagramUrl;
@@ -45,17 +45,17 @@ public class Store {
     @Column
     private String youtubeUrl;
     
-    @Column(columnDefinition = "bytea")
-    private byte[] leftBannerData;
-    
     @Column
     private String leftBannerType;
-    
-    @Column(columnDefinition = "bytea")
-    private byte[] rightBannerData;
+
+    @Column
+    private String leftBannerPath;
     
     @Column
     private String rightBannerType;
+
+    @Column
+    private String rightBannerPath;
 
     @Column
     private String rollingText;
