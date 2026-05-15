@@ -1,5 +1,6 @@
 package com.onlineshop.backend.controller;
 
+import com.onlineshop.backend.dto.PagedResponse;
 import com.onlineshop.backend.dto.ProductDto;
 import com.onlineshop.backend.model.Product;
 import com.onlineshop.backend.model.ProductImage;
@@ -13,7 +14,13 @@ import com.onlineshop.backend.repository.UserRepository;
 import com.onlineshop.backend.repository.ReviewRepository;
 import com.onlineshop.backend.model.Review;
 import com.onlineshop.backend.service.ImageStorageService;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -226,10 +234,59 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        List<ProductDto> dtos = products.stream().map(this::mapToDto).collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<PagedResponse<ProductDto>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String subcategory,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "newest") String sort) {
+
+        // Build sort direction
+        Sort sortSpec;
+        switch (sort) {
+            case "price-low":  sortSpec = Sort.by(Sort.Direction.ASC,  "price"); break;
+            case "price-high": sortSpec = Sort.by(Sort.Direction.DESC, "price"); break;
+            case "newest":     
+            default:           sortSpec = Sort.by(Sort.Direction.DESC, "id"); break;
+        }
+        Pageable pageable = PageRequest.of(page, size, sortSpec);
+
+        // Build dynamic specification for filters
+        Specification<Product> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (category != null && !category.isBlank()) {
+                predicates.add(cb.equal(root.get("category"), category));
+            }
+            if (subcategory != null && !subcategory.isBlank()) {
+                predicates.add(cb.equal(root.get("subcategory"), subcategory));
+            }
+            if (city != null && !city.isBlank()) {
+                predicates.add(cb.equal(root.join("store").join("seller").get("city"), city));
+            }
+            if (search != null && !search.isBlank()) {
+                String like = "%" + search.toLowerCase() + "%";
+                predicates.add(cb.or(
+                    cb.like(cb.lower(root.get("name")), like),
+                    cb.like(cb.lower(root.get("description")), like),
+                    cb.like(cb.lower(root.get("category")), like),
+                    cb.like(cb.lower(root.join("store").get("name")), like)
+                ));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Product> productPage = productRepository.findAll(spec, pageable);
+        List<ProductDto> dtos = productPage.getContent().stream().map(this::mapToDto).collect(Collectors.toList());
+
+        return ResponseEntity.ok(new PagedResponse<>(
+            dtos,
+            productPage.getNumber(),
+            productPage.getTotalPages(),
+            productPage.getTotalElements(),
+            size
+        ));
     }
 
     @GetMapping("/{id}")
@@ -242,10 +299,20 @@ public class ProductController {
     }
 
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<List<ProductDto>> getProductsByStore(@PathVariable Long storeId) {
-        List<Product> products = productRepository.findByStoreId(storeId);
-        List<ProductDto> dtos = products.stream().map(this::mapToDto).collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<PagedResponse<ProductDto>> getProductsByStore(
+            @PathVariable Long storeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Product> productPage = productRepository.findByStoreId(storeId, pageable);
+        List<ProductDto> dtos = productPage.getContent().stream().map(this::mapToDto).collect(Collectors.toList());
+        return ResponseEntity.ok(new PagedResponse<>(
+            dtos,
+            productPage.getNumber(),
+            productPage.getTotalPages(),
+            productPage.getTotalElements(),
+            size
+        ));
     }
 
     @DeleteMapping("/{id}")

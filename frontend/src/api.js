@@ -39,9 +39,9 @@ export const updateProduct = (id, data) => api.put(`/products/${id}`, data, {
   headers: { 'Content-Type': 'multipart/form-data' }
 });
 
-export const fetchProducts = () => api.get('/products');
+export const fetchProducts = (params = {}) => api.get('/products', { params });
 export const fetchProductById = (id) => api.get(`/products/${id}`);
-export const fetchStoreProducts = (storeId) => api.get(`/products/store/${storeId}`);
+export const fetchStoreProducts = (storeId, params = {}) => api.get(`/products/store/${storeId}`, { params });
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
 
 export const fetchSellerStores = (sellerId) => api.get(`/stores/seller/${sellerId}`);

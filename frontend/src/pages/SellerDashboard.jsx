@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchUser, uploadProduct, fetchStoreProducts, deleteProduct, fetchSellerStores, createStore, updateProduct, deleteStore, updateStore, deleteStoreLogo, deleteLeftBanner, deleteRightBanner } from '../api';
+import { usePageSize } from '../hooks/usePageSize';
 
 const SellerDashboard = ({ user: initialUser }) => {
   const [user, setUser] = useState(initialUser);
@@ -24,6 +25,8 @@ const SellerDashboard = ({ user: initialUser }) => {
   const [loading, setLoading] = useState(true);
   const [editingProductId, setEditingProductId] = useState(null);
   const [existingImages, setExistingImages] = useState([]);
+  const [inventoryPage, setInventoryPage] = useState(0);
+  const pageSize = usePageSize();
 
   // Store Settings State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -124,8 +127,10 @@ const SellerDashboard = ({ user: initialUser }) => {
   const loadMyProducts = async (storeId) => {
     try {
       setLoading(true);
-      const res = await fetchStoreProducts(storeId);
-      setMyProducts(res.data);
+      // Fetch all products for the store (client-side paginate, store has <=53 items)
+      const res = await fetchStoreProducts(storeId, { page: 0, size: 200 });
+      setMyProducts(res.data.content || []);
+      setInventoryPage(0);
     } catch (err) {
       console.error('Failed to load my products', err);
     } finally {
@@ -1000,8 +1005,9 @@ const SellerDashboard = ({ user: initialUser }) => {
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Use the form to list your first product.</p>
               </div>
             ) : (
+              <>
               <div className="inventory-list-scroll" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto', paddingRight: '0.5rem' }}>
-                {myProducts.map(product => (
+                {myProducts.slice(inventoryPage * pageSize, (inventoryPage + 1) * pageSize).map(product => (
                   <div key={product.id} className="inventory-card">
                     <div className="inventory-card-image">
                       <img 
@@ -1057,6 +1063,26 @@ const SellerDashboard = ({ user: initialUser }) => {
                   </div>
                 ))}
               </div>
+
+              {/* Inventory Pagination */}
+              {Math.ceil(myProducts.length / pageSize) > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => setInventoryPage(p => Math.max(0, p - 1))}
+                    disabled={inventoryPage === 0}
+                    style={{ padding: '0.4rem 0.9rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', background: inventoryPage === 0 ? '#f8fafc' : '#fff', color: inventoryPage === 0 ? '#cbd5e1' : '#475569', cursor: inventoryPage === 0 ? 'not-allowed' : 'pointer', fontWeight: '600', fontSize: '0.82rem' }}
+                  >← Prev</button>
+                  <span style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: '600' }}>
+                    Page {inventoryPage + 1} of {Math.ceil(myProducts.length / pageSize)} &nbsp;·&nbsp; {myProducts.length} products
+                  </span>
+                  <button
+                    onClick={() => setInventoryPage(p => Math.min(Math.ceil(myProducts.length / pageSize) - 1, p + 1))}
+                    disabled={inventoryPage >= Math.ceil(myProducts.length / pageSize) - 1}
+                    style={{ padding: '0.4rem 0.9rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', background: inventoryPage >= Math.ceil(myProducts.length / pageSize) - 1 ? '#f8fafc' : '#fff', color: inventoryPage >= Math.ceil(myProducts.length / pageSize) - 1 ? '#cbd5e1' : '#475569', cursor: inventoryPage >= Math.ceil(myProducts.length / pageSize) - 1 ? 'not-allowed' : 'pointer', fontWeight: '600', fontSize: '0.82rem' }}
+                  >Next →</button>
+                </div>
+              )}
+              </>
             )}
           </div>
         </div>
