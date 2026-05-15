@@ -295,14 +295,106 @@ public class AdminController {
     @Autowired
     private jakarta.persistence.EntityManager entityManager;
 
+    @Autowired
+    private com.onlineshop.backend.service.ImageStorageService imageStorageService;
+
     @PostMapping("/fix-db")
     @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<?> fixDb() {
         try {
             entityManager.createNativeQuery("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;").executeUpdate();
-            return ResponseEntity.ok("Constraint dropped!");
+            
+            // Make image_data columns nullable as we now use file storage
+            entityManager.createNativeQuery("ALTER TABLE product_images ALTER COLUMN image_data DROP NOT NULL;").executeUpdate();
+            entityManager.createNativeQuery("ALTER TABLE promotions ALTER COLUMN image_data DROP NOT NULL;").executeUpdate();
+            entityManager.createNativeQuery("ALTER TABLE stores ALTER COLUMN logo_data DROP NOT NULL;").executeUpdate();
+            entityManager.createNativeQuery("ALTER TABLE stores ALTER COLUMN left_banner_data DROP NOT NULL;").executeUpdate();
+            entityManager.createNativeQuery("ALTER TABLE stores ALTER COLUMN right_banner_data DROP NOT NULL;").executeUpdate();
+
+            // Migration logic: Move legacy BLOB data to file system
+            int migratedProducts = migrateProductImages();
+            int migratedStores = migrateStoreImages();
+            
+            return ResponseEntity.ok("Database schema updated and images migrated! " + 
+                "Migrated " + migratedProducts + " product images and " + migratedStores + " store images/banners.");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Fix failed: " + e.getMessage());
         }
+    }
+
+    private int migrateProductImages() {
+        List<Object[]> rows = entityManager.createNativeQuery(
+            "SELECT id, image_data, image_content_type FROM product_images WHERE image_path IS NULL AND image_data IS NOT NULL"
+        ).getResultList();
+        
+        int count = 0;
+        for (Object[] row : rows) {
+            Long id = ((Number) row[0]).longValue();
+            byte[] data = (byte[]) row[1];
+            String contentType = (String) row[2];
+            
+            try {
+                String ext = contentType != null && contentType.contains("/") ? "." + contentType.split("/")[1] : ".jpg";
+                String fileName = "migrated_" + id + ext;
+                String path = imageStorageService.saveImage("products", fileName, data);
+                entityManager.createNativeQuery("UPDATE product_images SET image_path = ? WHERE id = ?")
+                    .setParameter(1, path)
+                    .setParameter(2, id)
+                    .executeUpdate();
+                count++;
+            } catch (Exception e) {
+                System.err.println("Failed to migrate product image " + id + ": " + e.getMessage());
+            }
+        }
+        return count;
+    }
+
+    private int migrateStoreImages() {
+        List<Object[]> rows = entityManager.createNativeQuery(
+            "SELECT id, logo_data, logo_type, left_banner_data, left_banner_type, right_banner_data, right_banner_type FROM stores"
+        ).getResultList();
+        
+        int count = 0;
+        for (Object[] row : rows) {
+            Long id = ((Number) row[0]).longValue();
+            
+            // Migrate Logo
+            if (row[1] != null) {
+                try {
+                    String path = imageStorageService.saveImage("stores/logos", "migrated_logo_" + id + ".jpg", (byte[]) row[1]);
+                    entityManager.createNativeQuery("UPDATE stores SET logo_path = ? WHERE id = ?")
+                        .setParameter(1, path)
+                        .setParameter(2, id)
+                        .executeUpdate();
+                    count++;
+                } catch (Exception ignored) {}
+            }
+            
+            // Migrate Left Banner
+            if (row[3] != null) {
+                try {
+                    String path = imageStorageService.saveImage("stores/banners", "migrated_left_" + id + ".jpg", (byte[]) row[3]);
+                    entityManager.createNativeQuery("UPDATE stores SET left_banner_path = ? WHERE id = ?")
+                        .setParameter(1, path)
+                        .setParameter(2, id)
+                        .executeUpdate();
+                    count++;
+                } catch (Exception ignored) {}
+            }
+
+            // Migrate Right Banner
+            if (row[5] != null) {
+                try {
+                    String path = imageStorageService.saveImage("stores/banners", "migrated_right_" + id + ".jpg", (byte[]) row[5]);
+                    entityManager.createNativeQuery("UPDATE stores SET right_banner_path = ? WHERE id = ?")
+                        .setParameter(1, path)
+                        .setParameter(2, id)
+                        .executeUpdate();
+                    count++;
+                } catch (Exception ignored) {}
+            }
+        }
+        return count;
     }
 }

@@ -289,11 +289,16 @@ const SellerDashboard = ({ user: initialUser }) => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
+        console.log('Attempting to delete product:', id);
+        setStatus('Deleting product...');
         await deleteProduct(id);
         setStatus('Product deleted successfully');
         loadMyProducts(selectedStore.id);
       } catch (err) {
-        setStatus('Failed to delete product');
+        console.error('Error deleting product:', err);
+        const errorMessage = err.response?.data || err.message || 'Failed to delete product';
+        setStatus(`Error: ${errorMessage}`);
+        alert(`Failed to delete product: ${errorMessage}`);
       }
     }
   };

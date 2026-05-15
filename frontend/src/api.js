@@ -1,18 +1,21 @@
 import axios from 'axios';
 
 const getApiUrl = () => {
-  const { hostname, protocol } = window.location;
-  // If accessing via local network or localhost
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '192.168.0.105') {
-    return `http://${hostname}:8080/api`;
-  }
-  // Fallback to env variable (Cloudflare tunnel)
-  // Ensure we use the defined env variable if available
+  const { hostname, protocol, port } = window.location;
+  
+  // Use environment variable if provided (e.g., during build)
   const envUrl = import.meta.env.VITE_API_BASE_URL;
   if (envUrl) return envUrl;
 
-  // Last resort: dynamic fallback based on current protocol
-  return `${protocol}//${hostname}/api`;
+  // If running in development mode (Vite typically uses ports like 5173 or 3000)
+  // and we want to hit the backend directly on 8080
+  if (port === '5173' || port === '3000') {
+    return `http://${hostname}:8080/api`;
+  }
+
+  // Otherwise, use the Nginx proxy path (relative to current origin)
+  // This is the preferred way for Docker/Production
+  return `${protocol}//${hostname}${port ? ':' + port : ''}/api`;
 };
 
 export const API_URL = getApiUrl();

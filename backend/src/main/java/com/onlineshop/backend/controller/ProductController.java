@@ -249,11 +249,15 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         Optional<Product> productOpt = productRepository.findById(id);
         if (productOpt.isPresent()) {
             // Delete analytics events associated with this product first to avoid constraint violation
             analyticsEventRepository.deleteByProductId(id);
+            // Delete reviews associated with this product
+            reviewRepository.deleteByProductId(id);
+            
             Store store = productOpt.get().getStore();
             Product product = productOpt.get();
             
